@@ -1,0 +1,1215 @@
+{
+  "language": "en",
+  "levels": [
+    {
+      "id": "0",
+      "name": "0 — с нуля"
+    },
+    {
+      "id": "A1",
+      "name": "A1 — начальный"
+    },
+    {
+      "id": "A2",
+      "name": "A2 — базовый"
+    },
+    {
+      "id": "B1",
+      "name": "B1 — средний"
+    },
+    {
+      "id": "B2",
+      "name": "B2 — выше среднего"
+    },
+    {
+      "id": "C1",
+      "name": "C1 — продвинутый"
+    }
+  ],
+  "words": [
+    {
+      "id": 1,
+      "en": "I",
+      "ru": "я",
+      "pronunciationRu": "ай",
+      "level": "0",
+      "category": "pronoun"
+    },
+    {
+      "id": 2,
+      "en": "you",
+      "ru": "ты; вы",
+      "pronunciationRu": "ю",
+      "level": "0",
+      "category": "pronoun"
+    },
+    {
+      "id": 3,
+      "en": "he",
+      "ru": "он",
+      "pronunciationRu": "хи",
+      "level": "0",
+      "category": "pronoun"
+    },
+    {
+      "id": 4,
+      "en": "she",
+      "ru": "она",
+      "pronunciationRu": "ши",
+      "level": "0",
+      "category": "pronoun"
+    },
+    {
+      "id": 5,
+      "en": "it",
+      "ru": "это; оно",
+      "pronunciationRu": "ит",
+      "level": "0",
+      "category": "pronoun"
+    },
+    {
+      "id": 6,
+      "en": "we",
+      "ru": "мы",
+      "pronunciationRu": "уи",
+      "level": "0",
+      "category": "pronoun"
+    },
+    {
+      "id": 7,
+      "en": "they",
+      "ru": "они",
+      "pronunciationRu": "зэй",
+      "level": "0",
+      "category": "pronoun"
+    },
+    {
+      "id": 8,
+      "en": "this",
+      "ru": "это; этот",
+      "pronunciationRu": "зис",
+      "level": "0",
+      "category": "pronoun"
+    },
+    {
+      "id": 9,
+      "en": "that",
+      "ru": "то; тот",
+      "pronunciationRu": "зэт",
+      "level": "0",
+      "category": "pronoun"
+    },
+    {
+      "id": 10,
+      "en": "who",
+      "ru": "кто",
+      "pronunciationRu": "ху",
+      "level": "0",
+      "category": "question"
+    },
+    {
+      "id": 11,
+      "en": "what",
+      "ru": "что; какой",
+      "pronunciationRu": "уот",
+      "level": "0",
+      "category": "question"
+    },
+    {
+      "id": 12,
+      "en": "where",
+      "ru": "где; куда",
+      "pronunciationRu": "уэр",
+      "level": "0",
+      "category": "question"
+    },
+    {
+      "id": 13,
+      "en": "when",
+      "ru": "когда",
+      "pronunciationRu": "уэн",
+      "level": "0",
+      "category": "question"
+    },
+    {
+      "id": 14,
+      "en": "why",
+      "ru": "почему",
+      "pronunciationRu": "уай",
+      "level": "0",
+      "category": "question"
+    },
+    {
+      "id": 15,
+      "en": "how",
+      "ru": "как",
+      "pronunciationRu": "хау",
+      "level": "0",
+      "category": "question"
+    },
+    {
+      "id": 16,
+      "en": "yes",
+      "ru": "да",
+      "pronunciationRu": "йес",
+      "level": "0",
+      "category": "basic"
+    },
+    {
+      "id": 17,
+      "en": "no",
+      "ru": "нет",
+      "pronunciationRu": "ноу",
+      "level": "0",
+      "category": "basic"
+    },
+    {
+      "id": 18,
+      "en": "not",
+      "ru": "не",
+      "pronunciationRu": "нот",
+      "level": "0",
+      "category": "basic"
+    },
+    {
+      "id": 19,
+      "en": "please",
+      "ru": "пожалуйста",
+      "pronunciationRu": "плиз",
+      "level": "0",
+      "category": "basic"
+    },
+    {
+      "id": 20,
+      "en": "thanks",
+      "ru": "спасибо",
+      "pronunciationRu": "сэнкс",
+      "level": "0",
+      "category": "basic"
+    },
+    {
+      "id": 21,
+      "en": "sorry",
+      "ru": "извините",
+      "pronunciationRu": "сори",
+      "level": "0",
+      "category": "basic"
+    },
+    {
+      "id": 22,
+      "en": "hello",
+      "ru": "привет; здравствуйте",
+      "pronunciationRu": "хэлоу",
+      "level": "0",
+      "category": "basic"
+    },
+    {
+      "id": 23,
+      "en": "hi",
+      "ru": "привет",
+      "pronunciationRu": "хай",
+      "level": "0",
+      "category": "basic"
+    },
+    {
+      "id": 24,
+      "en": "goodbye",
+      "ru": "до свидания",
+      "pronunciationRu": "гудбай",
+      "level": "0",
+      "category": "basic"
+    },
+    {
+      "id": 25,
+      "en": "good",
+      "ru": "хороший",
+      "pronunciationRu": "гуд",
+      "level": "0",
+      "category": "adjective"
+    },
+    {
+      "id": 26,
+      "en": "bad",
+      "ru": "плохой",
+      "pronunciationRu": "бэд",
+      "level": "0",
+      "category": "adjective"
+    },
+    {
+      "id": 27,
+      "en": "big",
+      "ru": "большой",
+      "pronunciationRu": "биг",
+      "level": "0",
+      "category": "adjective"
+    },
+    {
+      "id": 28,
+      "en": "small",
+      "ru": "маленький",
+      "pronunciationRu": "смол",
+      "level": "0",
+      "category": "adjective"
+    },
+    {
+      "id": 29,
+      "en": "new",
+      "ru": "новый",
+      "pronunciationRu": "нью",
+      "level": "0",
+      "category": "adjective"
+    },
+    {
+      "id": 30,
+      "en": "old",
+      "ru": "старый",
+      "pronunciationRu": "оулд",
+      "level": "0",
+      "category": "adjective"
+    },
+    {
+      "id": 31,
+      "en": "hot",
+      "ru": "горячий; жарко",
+      "pronunciationRu": "хот",
+      "level": "0",
+      "category": "adjective"
+    },
+    {
+      "id": 32,
+      "en": "cold",
+      "ru": "холодный; холодно",
+      "pronunciationRu": "коулд",
+      "level": "0",
+      "category": "adjective"
+    },
+    {
+      "id": 33,
+      "en": "happy",
+      "ru": "счастливый",
+      "pronunciationRu": "хэпи",
+      "level": "0",
+      "category": "adjective"
+    },
+    {
+      "id": 34,
+      "en": "sad",
+      "ru": "грустный",
+      "pronunciationRu": "сэд",
+      "level": "0",
+      "category": "adjective"
+    },
+    {
+      "id": 35,
+      "en": "easy",
+      "ru": "лёгкий; простой",
+      "pronunciationRu": "изи",
+      "level": "0",
+      "category": "adjective"
+    },
+    {
+      "id": 36,
+      "en": "hard",
+      "ru": "трудный; твёрдый",
+      "pronunciationRu": "хард",
+      "level": "0",
+      "category": "adjective"
+    },
+    {
+      "id": 37,
+      "en": "right",
+      "ru": "правильный; правый",
+      "pronunciationRu": "райт",
+      "level": "0",
+      "category": "adjective"
+    },
+    {
+      "id": 38,
+      "en": "wrong",
+      "ru": "неправильный",
+      "pronunciationRu": "ронг",
+      "level": "0",
+      "category": "adjective"
+    },
+    {
+      "id": 39,
+      "en": "one",
+      "ru": "один",
+      "pronunciationRu": "уан",
+      "level": "0",
+      "category": "number"
+    },
+    {
+      "id": 40,
+      "en": "two",
+      "ru": "два",
+      "pronunciationRu": "ту",
+      "level": "0",
+      "category": "number"
+    },
+    {
+      "id": 41,
+      "en": "three",
+      "ru": "три",
+      "pronunciationRu": "сри",
+      "level": "0",
+      "category": "number"
+    },
+    {
+      "id": 42,
+      "en": "four",
+      "ru": "четыре",
+      "pronunciationRu": "фор",
+      "level": "0",
+      "category": "number"
+    },
+    {
+      "id": 43,
+      "en": "five",
+      "ru": "пять",
+      "pronunciationRu": "файв",
+      "level": "0",
+      "category": "number"
+    },
+    {
+      "id": 44,
+      "en": "six",
+      "ru": "шесть",
+      "pronunciationRu": "сикс",
+      "level": "0",
+      "category": "number"
+    },
+    {
+      "id": 45,
+      "en": "seven",
+      "ru": "семь",
+      "pronunciationRu": "сэвэн",
+      "level": "0",
+      "category": "number"
+    },
+    {
+      "id": 46,
+      "en": "eight",
+      "ru": "восемь",
+      "pronunciationRu": "эйт",
+      "level": "0",
+      "category": "number"
+    },
+    {
+      "id": 47,
+      "en": "nine",
+      "ru": "девять",
+      "pronunciationRu": "найн",
+      "level": "0",
+      "category": "number"
+    },
+    {
+      "id": 48,
+      "en": "ten",
+      "ru": "десять",
+      "pronunciationRu": "тэн",
+      "level": "0",
+      "category": "number"
+    },
+    {
+      "id": 49,
+      "en": "zero",
+      "ru": "ноль",
+      "pronunciationRu": "зиро",
+      "level": "0",
+      "category": "number"
+    },
+    {
+      "id": 50,
+      "en": "be",
+      "ru": "быть",
+      "pronunciationRu": "би",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 51,
+      "en": "have",
+      "ru": "иметь",
+      "pronunciationRu": "хэв",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 52,
+      "en": "do",
+      "ru": "делать",
+      "pronunciationRu": "ду",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 53,
+      "en": "go",
+      "ru": "идти; ехать",
+      "pronunciationRu": "гоу",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 54,
+      "en": "come",
+      "ru": "приходить",
+      "pronunciationRu": "кам",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 55,
+      "en": "want",
+      "ru": "хотеть",
+      "pronunciationRu": "уонт",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 56,
+      "en": "need",
+      "ru": "нуждаться; нужно",
+      "pronunciationRu": "нид",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 57,
+      "en": "like",
+      "ru": "нравиться",
+      "pronunciationRu": "лайк",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 58,
+      "en": "know",
+      "ru": "знать",
+      "pronunciationRu": "ноу",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 59,
+      "en": "understand",
+      "ru": "понимать",
+      "pronunciationRu": "андэрстэнд",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 60,
+      "en": "speak",
+      "ru": "говорить",
+      "pronunciationRu": "спик",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 61,
+      "en": "say",
+      "ru": "сказать",
+      "pronunciationRu": "сэй",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 62,
+      "en": "see",
+      "ru": "видеть",
+      "pronunciationRu": "си",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 63,
+      "en": "look",
+      "ru": "смотреть",
+      "pronunciationRu": "лук",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 64,
+      "en": "hear",
+      "ru": "слышать",
+      "pronunciationRu": "хир",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 65,
+      "en": "listen",
+      "ru": "слушать",
+      "pronunciationRu": "лисэн",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 66,
+      "en": "read",
+      "ru": "читать",
+      "pronunciationRu": "рид",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 67,
+      "en": "write",
+      "ru": "писать",
+      "pronunciationRu": "райт",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 68,
+      "en": "eat",
+      "ru": "есть",
+      "pronunciationRu": "ит",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 69,
+      "en": "drink",
+      "ru": "пить",
+      "pronunciationRu": "дринк",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 70,
+      "en": "sleep",
+      "ru": "спать",
+      "pronunciationRu": "слип",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 71,
+      "en": "work",
+      "ru": "работать; работа",
+      "pronunciationRu": "уорк",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 72,
+      "en": "live",
+      "ru": "жить",
+      "pronunciationRu": "лив",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 73,
+      "en": "help",
+      "ru": "помогать; помощь",
+      "pronunciationRu": "хэлп",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 74,
+      "en": "give",
+      "ru": "давать",
+      "pronunciationRu": "гив",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 75,
+      "en": "take",
+      "ru": "брать",
+      "pronunciationRu": "тэйк",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 76,
+      "en": "open",
+      "ru": "открывать",
+      "pronunciationRu": "оупэн",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 77,
+      "en": "close",
+      "ru": "закрывать",
+      "pronunciationRu": "клоуз",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 78,
+      "en": "stop",
+      "ru": "останавливаться",
+      "pronunciationRu": "стоп",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 79,
+      "en": "wait",
+      "ru": "ждать",
+      "pronunciationRu": "уэйт",
+      "level": "0",
+      "category": "verb"
+    },
+    {
+      "id": 80,
+      "en": "name",
+      "ru": "имя",
+      "pronunciationRu": "нэйм",
+      "level": "0",
+      "category": "people"
+    },
+    {
+      "id": 81,
+      "en": "man",
+      "ru": "мужчина",
+      "pronunciationRu": "мэн",
+      "level": "0",
+      "category": "people"
+    },
+    {
+      "id": 82,
+      "en": "woman",
+      "ru": "женщина",
+      "pronunciationRu": "вумэн",
+      "level": "0",
+      "category": "people"
+    },
+    {
+      "id": 83,
+      "en": "boy",
+      "ru": "мальчик",
+      "pronunciationRu": "бой",
+      "level": "0",
+      "category": "people"
+    },
+    {
+      "id": 84,
+      "en": "girl",
+      "ru": "девочка",
+      "pronunciationRu": "гёрл",
+      "level": "0",
+      "category": "people"
+    },
+    {
+      "id": 85,
+      "en": "friend",
+      "ru": "друг",
+      "pronunciationRu": "фрэнд",
+      "level": "0",
+      "category": "people"
+    },
+    {
+      "id": 86,
+      "en": "family",
+      "ru": "семья",
+      "pronunciationRu": "фэмили",
+      "level": "0",
+      "category": "people"
+    },
+    {
+      "id": 87,
+      "en": "mother",
+      "ru": "мать",
+      "pronunciationRu": "мазэр",
+      "level": "0",
+      "category": "people"
+    },
+    {
+      "id": 88,
+      "en": "father",
+      "ru": "отец",
+      "pronunciationRu": "фазэр",
+      "level": "0",
+      "category": "people"
+    },
+    {
+      "id": 89,
+      "en": "brother",
+      "ru": "брат",
+      "pronunciationRu": "бразэр",
+      "level": "0",
+      "category": "people"
+    },
+    {
+      "id": 90,
+      "en": "sister",
+      "ru": "сестра",
+      "pronunciationRu": "систэр",
+      "level": "0",
+      "category": "people"
+    },
+    {
+      "id": 91,
+      "en": "home",
+      "ru": "дом; дома",
+      "pronunciationRu": "хоум",
+      "level": "0",
+      "category": "place"
+    },
+    {
+      "id": 92,
+      "en": "house",
+      "ru": "дом",
+      "pronunciationRu": "хаус",
+      "level": "0",
+      "category": "place"
+    },
+    {
+      "id": 93,
+      "en": "room",
+      "ru": "комната",
+      "pronunciationRu": "рум",
+      "level": "0",
+      "category": "place"
+    },
+    {
+      "id": 94,
+      "en": "school",
+      "ru": "школа",
+      "pronunciationRu": "скул",
+      "level": "0",
+      "category": "place"
+    },
+    {
+      "id": 95,
+      "en": "shop",
+      "ru": "магазин",
+      "pronunciationRu": "шоп",
+      "level": "0",
+      "category": "place"
+    },
+    {
+      "id": 96,
+      "en": "street",
+      "ru": "улица",
+      "pronunciationRu": "стрит",
+      "level": "0",
+      "category": "place"
+    },
+    {
+      "id": 97,
+      "en": "city",
+      "ru": "город",
+      "pronunciationRu": "сити",
+      "level": "0",
+      "category": "place"
+    },
+    {
+      "id": 98,
+      "en": "country",
+      "ru": "страна",
+      "pronunciationRu": "кантри",
+      "level": "0",
+      "category": "place"
+    },
+    {
+      "id": 99,
+      "en": "car",
+      "ru": "машина",
+      "pronunciationRu": "кар",
+      "level": "0",
+      "category": "transport"
+    },
+    {
+      "id": 100,
+      "en": "bus",
+      "ru": "автобус",
+      "pronunciationRu": "бас",
+      "level": "0",
+      "category": "transport"
+    },
+    {
+      "id": 101,
+      "en": "train",
+      "ru": "поезд",
+      "pronunciationRu": "трэйн",
+      "level": "0",
+      "category": "transport"
+    },
+    {
+      "id": 102,
+      "en": "taxi",
+      "ru": "такси",
+      "pronunciationRu": "такси",
+      "level": "0",
+      "category": "transport"
+    },
+    {
+      "id": 103,
+      "en": "water",
+      "ru": "вода",
+      "pronunciationRu": "уотэр",
+      "level": "0",
+      "category": "food"
+    },
+    {
+      "id": 104,
+      "en": "food",
+      "ru": "еда",
+      "pronunciationRu": "фуд",
+      "level": "0",
+      "category": "food"
+    },
+    {
+      "id": 105,
+      "en": "bread",
+      "ru": "хлеб",
+      "pronunciationRu": "брэд",
+      "level": "0",
+      "category": "food"
+    },
+    {
+      "id": 106,
+      "en": "milk",
+      "ru": "молоко",
+      "pronunciationRu": "милк",
+      "level": "0",
+      "category": "food"
+    },
+    {
+      "id": 107,
+      "en": "coffee",
+      "ru": "кофе",
+      "pronunciationRu": "кофи",
+      "level": "0",
+      "category": "food"
+    },
+    {
+      "id": 108,
+      "en": "tea",
+      "ru": "чай",
+      "pronunciationRu": "ти",
+      "level": "0",
+      "category": "food"
+    },
+    {
+      "id": 109,
+      "en": "apple",
+      "ru": "яблоко",
+      "pronunciationRu": "эпл",
+      "level": "0",
+      "category": "food"
+    },
+    {
+      "id": 110,
+      "en": "meat",
+      "ru": "мясо",
+      "pronunciationRu": "мит",
+      "level": "0",
+      "category": "food"
+    },
+    {
+      "id": 111,
+      "en": "day",
+      "ru": "день",
+      "pronunciationRu": "дэй",
+      "level": "0",
+      "category": "time"
+    },
+    {
+      "id": 112,
+      "en": "night",
+      "ru": "ночь",
+      "pronunciationRu": "найт",
+      "level": "0",
+      "category": "time"
+    },
+    {
+      "id": 113,
+      "en": "morning",
+      "ru": "утро",
+      "pronunciationRu": "морнинг",
+      "level": "0",
+      "category": "time"
+    },
+    {
+      "id": 114,
+      "en": "evening",
+      "ru": "вечер",
+      "pronunciationRu": "ивнинг",
+      "level": "0",
+      "category": "time"
+    },
+    {
+      "id": 115,
+      "en": "today",
+      "ru": "сегодня",
+      "pronunciationRu": "тудэй",
+      "level": "0",
+      "category": "time"
+    },
+    {
+      "id": 116,
+      "en": "tomorrow",
+      "ru": "завтра",
+      "pronunciationRu": "тумороу",
+      "level": "0",
+      "category": "time"
+    },
+    {
+      "id": 117,
+      "en": "now",
+      "ru": "сейчас",
+      "pronunciationRu": "нау",
+      "level": "0",
+      "category": "time"
+    },
+    {
+      "id": 118,
+      "en": "time",
+      "ru": "время",
+      "pronunciationRu": "тайм",
+      "level": "0",
+      "category": "time"
+    },
+    {
+      "id": 119,
+      "en": "here",
+      "ru": "здесь",
+      "pronunciationRu": "хир",
+      "level": "0",
+      "category": "place"
+    },
+    {
+      "id": 120,
+      "en": "there",
+      "ru": "там",
+      "pronunciationRu": "зэр",
+      "level": "0",
+      "category": "place"
+    },
+    {
+      "id": 121,
+      "en": "in",
+      "ru": "в",
+      "pronunciationRu": "ин",
+      "level": "0",
+      "category": "preposition"
+    },
+    {
+      "id": 122,
+      "en": "on",
+      "ru": "на",
+      "pronunciationRu": "он",
+      "level": "0",
+      "category": "preposition"
+    },
+    {
+      "id": 123,
+      "en": "at",
+      "ru": "в; у; на",
+      "pronunciationRu": "эт",
+      "level": "0",
+      "category": "preposition"
+    },
+    {
+      "id": 124,
+      "en": "to",
+      "ru": "к; в; чтобы",
+      "pronunciationRu": "ту",
+      "level": "0",
+      "category": "preposition"
+    },
+    {
+      "id": 125,
+      "en": "from",
+      "ru": "из; от",
+      "pronunciationRu": "фром",
+      "level": "0",
+      "category": "preposition"
+    },
+    {
+      "id": 126,
+      "en": "with",
+      "ru": "с",
+      "pronunciationRu": "уиз",
+      "level": "0",
+      "category": "preposition"
+    },
+    {
+      "id": 127,
+      "en": "for",
+      "ru": "для; за",
+      "pronunciationRu": "фор",
+      "level": "0",
+      "category": "preposition"
+    },
+    {
+      "id": 128,
+      "en": "and",
+      "ru": "и",
+      "pronunciationRu": "энд",
+      "level": "0",
+      "category": "basic"
+    },
+    {
+      "id": 129,
+      "en": "or",
+      "ru": "или",
+      "pronunciationRu": "ор",
+      "level": "0",
+      "category": "basic"
+    },
+    {
+      "id": 130,
+      "en": "but",
+      "ru": "но",
+      "pronunciationRu": "бат",
+      "level": "0",
+      "category": "basic"
+    },
+    {
+      "id": 131,
+      "en": "my",
+      "ru": "мой",
+      "pronunciationRu": "май",
+      "level": "0",
+      "category": "pronoun"
+    },
+    {
+      "id": 132,
+      "en": "your",
+      "ru": "твой; ваш",
+      "pronunciationRu": "ёр",
+      "level": "0",
+      "category": "pronoun"
+    },
+    {
+      "id": 133,
+      "en": "his",
+      "ru": "его",
+      "pronunciationRu": "хиз",
+      "level": "0",
+      "category": "pronoun"
+    },
+    {
+      "id": 134,
+      "en": "her",
+      "ru": "её",
+      "pronunciationRu": "хёр",
+      "level": "0",
+      "category": "pronoun"
+    },
+    {
+      "id": 135,
+      "en": "our",
+      "ru": "наш",
+      "pronunciationRu": "ауэр",
+      "level": "0",
+      "category": "pronoun"
+    },
+    {
+      "id": 136,
+      "en": "their",
+      "ru": "их",
+      "pronunciationRu": "зэр",
+      "level": "0",
+      "category": "pronoun"
+    },
+    {
+      "id": 137,
+      "en": "money",
+      "ru": "деньги",
+      "pronunciationRu": "мани",
+      "level": "0",
+      "category": "daily"
+    },
+    {
+      "id": 138,
+      "en": "phone",
+      "ru": "телефон",
+      "pronunciationRu": "фоун",
+      "level": "0",
+      "category": "daily"
+    },
+    {
+      "id": 139,
+      "en": "book",
+      "ru": "книга",
+      "pronunciationRu": "бук",
+      "level": "0",
+      "category": "daily"
+    },
+    {
+      "id": 140,
+      "en": "word",
+      "ru": "слово",
+      "pronunciationRu": "уёрд",
+      "level": "0",
+      "category": "daily"
+    },
+    {
+      "id": 141,
+      "en": "question",
+      "ru": "вопрос",
+      "pronunciationRu": "куэсчэн",
+      "level": "0",
+      "category": "daily"
+    },
+    {
+      "id": 142,
+      "en": "answer",
+      "ru": "ответ",
+      "pronunciationRu": "ансэр",
+      "level": "0",
+      "category": "daily"
+    },
+    {
+      "id": 143,
+      "en": "number",
+      "ru": "номер; число",
+      "pronunciationRu": "намбэр",
+      "level": "0",
+      "category": "daily"
+    },
+    {
+      "id": 144,
+      "en": "price",
+      "ru": "цена",
+      "pronunciationRu": "прайс",
+      "level": "0",
+      "category": "daily"
+    },
+    {
+      "id": 145,
+      "en": "toilet",
+      "ru": "туалет",
+      "pronunciationRu": "тойлэт",
+      "level": "0",
+      "category": "daily"
+    },
+    {
+      "id": 146,
+      "en": "doctor",
+      "ru": "врач",
+      "pronunciationRu": "доктэр",
+      "level": "0",
+      "category": "daily"
+    },
+    {
+      "id": 147,
+      "en": "hospital",
+      "ru": "больница",
+      "pronunciationRu": "хоспитэл",
+      "level": "0",
+      "category": "daily"
+    },
+    {
+      "id": 148,
+      "en": "police",
+      "ru": "полиция",
+      "pronunciationRu": "пэлис",
+      "level": "0",
+      "category": "daily"
+    }
+  ]
+}
