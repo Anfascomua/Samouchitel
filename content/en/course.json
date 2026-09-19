@@ -11,32 +11,27 @@
         {
           "en": "Hello!",
           "ru": "Здравствуйте! / Привет!",
-          "example": "Hello, Anna!",
-          "pronunciation": "/həˈloʊ/"
+          "example": "Hello, Anna!"
         },
         {
           "en": "Hi!",
           "ru": "Привет!",
-          "example": "Hi, Tom!",
-          "pronunciation": "/haɪ/"
+          "example": "Hi, Tom!"
         },
         {
           "en": "Good morning!",
           "ru": "Доброе утро!",
-          "example": "Good morning, everyone!",
-          "pronunciation": "/ɡʊd ˈmɔːrnɪŋ/"
+          "example": "Good morning, everyone!"
         },
         {
           "en": "Good evening!",
           "ru": "Добрый вечер!",
-          "example": "Good evening, John!",
-          "pronunciation": "/ɡʊd ˈiːvnɪŋ/"
+          "example": "Good evening, John!"
         },
         {
           "en": "Goodbye!",
           "ru": "До свидания!",
-          "example": "Goodbye! See you tomorrow.",
-          "pronunciation": "/ˌɡʊdˈbaɪ/"
+          "example": "Goodbye! See you tomorrow."
         }
       ]
     },
@@ -49,26 +44,22 @@
         {
           "en": "My name is Alex.",
           "ru": "Меня зовут Алекс.",
-          "example": "My name is Alex.",
-          "pronunciation": "/maɪ neɪm ɪz ˈælɪks/"
+          "example": "My name is Alex."
         },
         {
           "en": "What's your name?",
           "ru": "Как вас зовут?",
-          "example": "Hi! What's your name?",
-          "pronunciation": "/wʌts jʊr neɪm/"
+          "example": "Hi! What's your name?"
         },
         {
           "en": "Nice to meet you.",
           "ru": "Приятно познакомиться.",
-          "example": "Nice to meet you, Kate.",
-          "pronunciation": "/naɪs tə miːt juː/"
+          "example": "Nice to meet you, Kate."
         },
         {
           "en": "I am from Ukraine.",
           "ru": "Я из Украины.",
-          "example": "I am from Ukraine.",
-          "pronunciation": "/aɪ æm frəm juːˈkreɪn/"
+          "example": "I am from Ukraine."
         }
       ]
     },
@@ -81,32 +72,27 @@
         {
           "en": "Yes.",
           "ru": "Да.",
-          "example": "Yes, please.",
-          "pronunciation": "/jes/"
+          "example": "Yes, please."
         },
         {
           "en": "No.",
           "ru": "Нет.",
-          "example": "No, thank you.",
-          "pronunciation": "/noʊ/"
+          "example": "No, thank you."
         },
         {
           "en": "Please.",
           "ru": "Пожалуйста.",
-          "example": "Coffee, please.",
-          "pronunciation": "/pliːz/"
+          "example": "Coffee, please."
         },
         {
           "en": "Thank you.",
           "ru": "Спасибо.",
-          "example": "Thank you very much.",
-          "pronunciation": "/θæŋk juː/"
+          "example": "Thank you very much."
         },
         {
           "en": "Sorry.",
           "ru": "Извините.",
-          "example": "Sorry, I don't understand.",
-          "pronunciation": "/ˈsɑːri/"
+          "example": "Sorry, I don't understand."
         }
       ]
     },
@@ -119,26 +105,22 @@
         {
           "en": "I don't understand.",
           "ru": "Я не понимаю.",
-          "example": "Sorry, I don't understand.",
-          "pronunciation": "/aɪ doʊnt ˌʌndərˈstænd/"
+          "example": "Sorry, I don't understand."
         },
         {
           "en": "Please repeat.",
           "ru": "Повторите, пожалуйста.",
-          "example": "Please repeat that.",
-          "pronunciation": "/pliːz rɪˈpiːt/"
+          "example": "Please repeat that."
         },
         {
           "en": "Speak slowly, please.",
           "ru": "Говорите медленнее, пожалуйста.",
-          "example": "Speak slowly, please.",
-          "pronunciation": "/spiːk ˈsloʊli pliːz/"
+          "example": "Speak slowly, please."
         },
         {
           "en": "What does it mean?",
           "ru": "Что это значит?",
-          "example": "What does this word mean?",
-          "pronunciation": "/wʌt dʌz ɪt miːn/"
+          "example": "What does this word mean?"
         }
       ]
     }
