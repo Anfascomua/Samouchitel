@@ -1,1 +1,1 @@
-{"name":"Самоучитель языков","short_name":"Самоучитель","start_url":"./","display":"standalone","background_color":"#f4f7fb","theme_color":"#111827","lang":"ru"}
+{"name":"Самоучитель языков","short_name":"Самоучитель","id":"/","start_url":"/","scope":"/","display":"standalone","background_color":"#f4f7fb","theme_color":"#111827","lang":"ru","icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
