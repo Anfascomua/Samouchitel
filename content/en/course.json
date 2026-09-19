@@ -1,0 +1,128 @@
+{
+  "language": "en",
+  "level": "A1",
+  "lessons": [
+    {
+      "id": "hello",
+      "title": "Приветствие",
+      "subtitle": "Hello, Hi, Good morning",
+      "explain": "Начнём с самых частых приветствий.",
+      "words": [
+        {
+          "en": "Hello!",
+          "ru": "Здравствуйте! / Привет!",
+          "example": "Hello, Anna!"
+        },
+        {
+          "en": "Hi!",
+          "ru": "Привет!",
+          "example": "Hi, Tom!"
+        },
+        {
+          "en": "Good morning!",
+          "ru": "Доброе утро!",
+          "example": "Good morning, everyone!"
+        },
+        {
+          "en": "Good evening!",
+          "ru": "Добрый вечер!",
+          "example": "Good evening, John!"
+        },
+        {
+          "en": "Goodbye!",
+          "ru": "До свидания!",
+          "example": "Goodbye! See you tomorrow."
+        }
+      ]
+    },
+    {
+      "id": "meet",
+      "title": "Знакомство",
+      "subtitle": "My name is… / Nice to meet you",
+      "explain": "Учимся представляться.",
+      "words": [
+        {
+          "en": "My name is Alex.",
+          "ru": "Меня зовут Алекс.",
+          "example": "My name is Alex."
+        },
+        {
+          "en": "What's your name?",
+          "ru": "Как вас зовут?",
+          "example": "Hi! What's your name?"
+        },
+        {
+          "en": "Nice to meet you.",
+          "ru": "Приятно познакомиться.",
+          "example": "Nice to meet you, Kate."
+        },
+        {
+          "en": "I am from Ukraine.",
+          "ru": "Я из Украины.",
+          "example": "I am from Ukraine."
+        }
+      ]
+    },
+    {
+      "id": "basic",
+      "title": "Первые фразы",
+      "subtitle": "Yes, No, Please, Thank you",
+      "explain": "Слова, которые понадобятся с первого дня.",
+      "words": [
+        {
+          "en": "Yes.",
+          "ru": "Да.",
+          "example": "Yes, please."
+        },
+        {
+          "en": "No.",
+          "ru": "Нет.",
+          "example": "No, thank you."
+        },
+        {
+          "en": "Please.",
+          "ru": "Пожалуйста.",
+          "example": "Coffee, please."
+        },
+        {
+          "en": "Thank you.",
+          "ru": "Спасибо.",
+          "example": "Thank you very much."
+        },
+        {
+          "en": "Sorry.",
+          "ru": "Извините.",
+          "example": "Sorry, I don't understand."
+        }
+      ]
+    },
+    {
+      "id": "understand",
+      "title": "Если не понимаете",
+      "subtitle": "Repeat, slower, I don't understand",
+      "explain": "Фразы для реального разговора.",
+      "words": [
+        {
+          "en": "I don't understand.",
+          "ru": "Я не понимаю.",
+          "example": "Sorry, I don't understand."
+        },
+        {
+          "en": "Please repeat.",
+          "ru": "Повторите, пожалуйста.",
+          "example": "Please repeat that."
+        },
+        {
+          "en": "Speak slowly, please.",
+          "ru": "Говорите медленнее, пожалуйста.",
+          "example": "Speak slowly, please."
+        },
+        {
+          "en": "What does it mean?",
+          "ru": "Что это значит?",
+          "example": "What does this word mean?"
+        }
+      ]
+    }
+  ]
+}
