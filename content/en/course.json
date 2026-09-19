@@ -11,27 +11,32 @@
         {
           "en": "Hello!",
           "ru": "Здравствуйте! / Привет!",
-          "example": "Hello, Anna!"
+          "example": "Hello, Anna!",
+          "pronunciation": "/həˈloʊ/"
         },
         {
           "en": "Hi!",
           "ru": "Привет!",
-          "example": "Hi, Tom!"
+          "example": "Hi, Tom!",
+          "pronunciation": "/haɪ/"
         },
         {
           "en": "Good morning!",
           "ru": "Доброе утро!",
-          "example": "Good morning, everyone!"
+          "example": "Good morning, everyone!",
+          "pronunciation": "/ɡʊd ˈmɔːrnɪŋ/"
         },
         {
           "en": "Good evening!",
           "ru": "Добрый вечер!",
-          "example": "Good evening, John!"
+          "example": "Good evening, John!",
+          "pronunciation": "/ɡʊd ˈiːvnɪŋ/"
         },
         {
           "en": "Goodbye!",
           "ru": "До свидания!",
-          "example": "Goodbye! See you tomorrow."
+          "example": "Goodbye! See you tomorrow.",
+          "pronunciation": "/ˌɡʊdˈbaɪ/"
         }
       ]
     },
@@ -44,22 +49,26 @@
         {
           "en": "My name is Alex.",
           "ru": "Меня зовут Алекс.",
-          "example": "My name is Alex."
+          "example": "My name is Alex.",
+          "pronunciation": "/maɪ neɪm ɪz ˈælɪks/"
         },
         {
           "en": "What's your name?",
           "ru": "Как вас зовут?",
-          "example": "Hi! What's your name?"
+          "example": "Hi! What's your name?",
+          "pronunciation": "/wʌts jʊr neɪm/"
         },
         {
           "en": "Nice to meet you.",
           "ru": "Приятно познакомиться.",
-          "example": "Nice to meet you, Kate."
+          "example": "Nice to meet you, Kate.",
+          "pronunciation": "/naɪs tə miːt juː/"
         },
         {
           "en": "I am from Ukraine.",
           "ru": "Я из Украины.",
-          "example": "I am from Ukraine."
+          "example": "I am from Ukraine.",
+          "pronunciation": "/aɪ æm frəm juːˈkreɪn/"
         }
       ]
     },
@@ -72,27 +81,32 @@
         {
           "en": "Yes.",
           "ru": "Да.",
-          "example": "Yes, please."
+          "example": "Yes, please.",
+          "pronunciation": "/jes/"
         },
         {
           "en": "No.",
           "ru": "Нет.",
-          "example": "No, thank you."
+          "example": "No, thank you.",
+          "pronunciation": "/noʊ/"
         },
         {
           "en": "Please.",
           "ru": "Пожалуйста.",
-          "example": "Coffee, please."
+          "example": "Coffee, please.",
+          "pronunciation": "/pliːz/"
         },
         {
           "en": "Thank you.",
           "ru": "Спасибо.",
-          "example": "Thank you very much."
+          "example": "Thank you very much.",
+          "pronunciation": "/θæŋk juː/"
         },
         {
           "en": "Sorry.",
           "ru": "Извините.",
-          "example": "Sorry, I don't understand."
+          "example": "Sorry, I don't understand.",
+          "pronunciation": "/ˈsɑːri/"
         }
       ]
     },
@@ -105,22 +119,26 @@
         {
           "en": "I don't understand.",
           "ru": "Я не понимаю.",
-          "example": "Sorry, I don't understand."
+          "example": "Sorry, I don't understand.",
+          "pronunciation": "/aɪ doʊnt ˌʌndərˈstænd/"
         },
         {
           "en": "Please repeat.",
           "ru": "Повторите, пожалуйста.",
-          "example": "Please repeat that."
+          "example": "Please repeat that.",
+          "pronunciation": "/pliːz rɪˈpiːt/"
         },
         {
           "en": "Speak slowly, please.",
           "ru": "Говорите медленнее, пожалуйста.",
-          "example": "Speak slowly, please."
+          "example": "Speak slowly, please.",
+          "pronunciation": "/spiːk ˈsloʊli pliːz/"
         },
         {
           "en": "What does it mean?",
           "ru": "Что это значит?",
-          "example": "What does this word mean?"
+          "example": "What does this word mean?",
+          "pronunciation": "/wʌt dʌz ɪt miːn/"
         }
       ]
     }
