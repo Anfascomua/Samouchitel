@@ -45,8 +45,9 @@ def main():
                 sc=score(en,w)
                 if sc>-900:cand[w].append((sc,en,ru))
     filled=0
+    force={w["en"].lower() for w in d["words"] if 1 <= int(w.get("id",999999)) <= 148}
     for key,w in words.items():
-        if len(w.get("examples",[]))==3:continue
+        if len(w.get("examples",[]))==3 and key not in force:continue
         seen=set(); chosen=[]
         for sc,en,ru in sorted(cand[key],reverse=True):
             norm=re.sub(r"[^a-z ]","",en.lower())
