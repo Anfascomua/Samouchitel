@@ -19,12 +19,17 @@ function speak(t,button=null){
   const words=[...target.querySelectorAll(".spoken-word")];
   const ranges=[];let cursor=0;
   for(const w of words){const raw=w.dataset.raw||w.textContent,start=t.indexOf(raw,cursor);if(start>=0){ranges.push({start,end:start+raw.length,el:w});cursor=start+raw.length}}
+  let lastBoundary=-1;
   u.onboundary=e=>{
    if(typeof e.charIndex!=="number")return;
+   let idx=e.charIndex;
+   if(idx===lastBoundary)return;
+   lastBoundary=idx;
+   let hit=ranges.find(r=>idx>=r.start&&idx<r.end);
+   if(!hit)hit=ranges.find(r=>r.start>=idx);
+   if(!hit)return;
    words.forEach(x=>x.classList.remove("active"));
-   let hit=ranges.find(r=>e.charIndex>=r.start&&e.charIndex<r.end);
-   if(!hit)hit=[...ranges].reverse().find(r=>e.charIndex>=r.start);
-   if(hit)hit.el.classList.add("active");
+   hit.el.classList.add("active");
   };
  }
  if(button){activeSpeechButton=button;button.dataset.stopIcon=button.textContent;button.textContent="■";button.classList.add("speaking")}
