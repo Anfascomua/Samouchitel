@@ -48,3 +48,6 @@ body.library-reading{overflow:hidden!important;height:100vh!important}.library-r
 .google-native-field,.library-translation.google-native-field{display:none!important}.reader p,.dialogueline .dialogue-text{-webkit-user-select:text!important;user-select:text!important;-webkit-touch-callout:default!important}
 
 .reader p::selection,.dialogueline .dialogue-text::selection{background:var(--native-selection,var(--word-light))!important;color:inherit!important}html[data-theme="dark"] .reader p::selection,html[data-theme="dark"] .dialogueline .dialogue-text::selection{background:var(--native-selection,var(--word-dark))!important;color:inherit!important}
+
+/* Selected Library word: color letters only, never paint a selection block. */
+.reader p::selection,.dialogueline .dialogue-text::selection{background:transparent!important;color:var(--word-light)!important;text-shadow:none!important}html[data-theme="dark"] .reader p::selection,html[data-theme="dark"] .dialogueline .dialogue-text::selection{background:transparent!important;color:var(--word-dark)!important;text-shadow:none!important}
