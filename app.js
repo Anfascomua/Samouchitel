@@ -12,27 +12,17 @@ function stopSpeech(){speechSynthesis.cancel();clearSpeechHighlight();if(activeS
 function speak(t,button=null){
  if(button&&activeSpeechButton===button&&speechSynthesis.speaking){stopSpeech();return}
  stopSpeech();
- const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=Number(S.settings.voiceRate??.88);
  const target=button?.closest(".readpara,.dialogueline");
- if(target){
-  activeSpeechTarget=target;
-  const words=[...target.querySelectorAll(".spoken-word")];
-  const ranges=[];let cursor=0;
-  for(const w of words){const raw=w.dataset.raw||w.textContent,start=t.indexOf(raw,cursor);if(start>=0){ranges.push({start,end:start+raw.length,el:w});cursor=start+raw.length}}
-  let lastBoundary=-1;
-  u.onboundary=e=>{
-   if(typeof e.charIndex!=="number")return;
-   let idx=e.charIndex;
-   if(idx===lastBoundary)return;
-   lastBoundary=idx;
-   let hit=ranges.find(r=>idx>=r.start&&idx<r.end);
-   if(!hit)hit=ranges.find(r=>r.start>=idx);
-   if(!hit)return;
-   words.forEach(x=>x.classList.remove("active"));
-   hit.el.classList.add("active");
-  };
- }
+ const words=target?[...target.querySelectorAll(".spoken-word")]:[];
+ const ranges=[];let cursor=0;
+ for(const w of words){const raw=w.dataset.raw||w.textContent,start=t.indexOf(raw,cursor);if(start>=0){ranges.push({start,end:start+raw.length,el:w});cursor=start+raw.length}}
+ const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=Number(S.settings.voiceRate??.88);
+ if(target){activeSpeechTarget=target}
  if(button){activeSpeechButton=button;button.dataset.stopIcon=button.textContent;button.textContent="■";button.classList.add("speaking")}
+ let last=-1;
+ const mark=idx=>{if(!ranges.length)return;let hit=ranges.find(r=>idx>=r.start&&idx<r.end)||ranges.find(r=>r.start>=idx);if(!hit)return;words.forEach(x=>x.classList.remove("active"));hit.el.classList.add("active")};
+ u.onstart=()=>mark(0);
+ u.onboundary=e=>{if(typeof e.charIndex!=="number"||e.charIndex===last)return;last=e.charIndex;mark(e.charIndex)};
  const finish=()=>{clearSpeechHighlight();if(activeSpeechButton===button){button.textContent=button.dataset.stopIcon||"▶";button.classList.remove("speaking");activeSpeechButton=null}};
  u.onend=finish;u.onerror=finish;
  speechSynthesis.speak(u);
