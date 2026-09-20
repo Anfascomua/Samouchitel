@@ -24,7 +24,7 @@ jobs:
         run: pip install lemminflect
       - name: Fill examples
         run: python scripts/fill_examples.py
-      - name: Validate
+      - name: Fix verb tenses\n        run: python scripts/fix_verbs.py\n      - name: Validate
         run: |
           python - <<'PY'
           import json
