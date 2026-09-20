@@ -54,3 +54,6 @@ body.library-reading{overflow:hidden!important;height:100vh!important}.library-r
 
 /* Native Google/Android translation selection: no custom word translation panel. */
 .reader p,.dialogueline .dialogue-text{-webkit-user-select:text!important;user-select:text!important;-webkit-touch-callout:default!important}
+
+/* Bottom selected-word Google translation bar. */
+#libraryWordTranslation.library-translation{display:none!important;position:fixed!important;left:16px!important;right:16px!important;bottom:78px!important;z-index:2147483646!important;padding:14px 18px!important;border-radius:16px!important;background:#fff!important;border:1px solid #d7deea!important;box-shadow:0 8px 24px #0f172a33!important;text-align:center!important;font-size:1.35rem!important;font-weight:700!important;color:var(--word-light)!important}#libraryWordTranslation.library-translation.show{display:block!important}html[data-theme="dark"] #libraryWordTranslation.library-translation{background:#151e2f!important;border-color:#34435c!important;color:var(--word-dark)!important}
