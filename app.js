@@ -17,13 +17,15 @@ function speak(t,button=null){
  const ranges=[];let cursor=0;
  for(const w of words){const raw=w.dataset.raw||w.textContent,start=t.indexOf(raw,cursor);if(start>=0){ranges.push({start,end:start+raw.length,el:w});cursor=start+raw.length}}
  const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=Number(S.settings.voiceRate??.88);
- if(target){activeSpeechTarget=target}
+ if(target)activeSpeechTarget=target;
  if(button){activeSpeechButton=button;button.dataset.stopIcon=button.textContent;button.textContent="■";button.classList.add("speaking")}
- let last=-1;
- const mark=idx=>{if(!ranges.length)return;let hit=ranges.find(r=>idx>=r.start&&idx<r.end)||ranges.find(r=>r.start>=idx);if(!hit)return;words.forEach(x=>x.classList.remove("active"));hit.el.classList.add("active")};
- u.onstart=()=>mark(0);
- u.onboundary=e=>{if(typeof e.charIndex!=="number"||e.charIndex===last)return;last=e.charIndex;mark(e.charIndex)};
- const finish=()=>{clearSpeechHighlight();if(activeSpeechButton===button){button.textContent=button.dataset.stopIcon||"▶";button.classList.remove("speaking");activeSpeechButton=null}};
+ let last=-1,gotBoundaries=0,fallbackTimer=null,fallbackIndex=0;
+ const markByIndex=idx=>{if(!ranges.length)return;let hit=ranges.find(r=>idx>=r.start&&idx<r.end)||ranges.find(r=>r.start>=idx);if(!hit)return;words.forEach(x=>x.classList.remove("active"));hit.el.classList.add("active")};
+ const markWord=n=>{if(!words.length)return;words.forEach(x=>x.classList.remove("active"));words[Math.min(n,words.length-1)].classList.add("active")};
+ const startFallback=()=>{if(!words.length||gotBoundaries>1||fallbackTimer)return;const rate=Number(S.settings.voiceRate??.88),base=330/rate;markWord(0);fallbackTimer=setInterval(()=>{if(gotBoundaries>1){clearInterval(fallbackTimer);fallbackTimer=null;return}fallbackIndex++;if(fallbackIndex<words.length)markWord(fallbackIndex);else{clearInterval(fallbackTimer);fallbackTimer=null}},base)};
+ u.onstart=()=>{markByIndex(0);setTimeout(startFallback,500)};
+ u.onboundary=e=>{if(typeof e.charIndex!=="number"||e.charIndex===last)return;last=e.charIndex;gotBoundaries++;if(gotBoundaries>1&&fallbackTimer){clearInterval(fallbackTimer);fallbackTimer=null}markByIndex(e.charIndex)};
+ const finish=()=>{if(fallbackTimer)clearInterval(fallbackTimer);clearSpeechHighlight();if(activeSpeechButton===button){button.textContent=button.dataset.stopIcon||"▶";button.classList.remove("speaking");activeSpeechButton=null}};
  u.onend=finish;u.onerror=finish;
  speechSynthesis.speak(u);
 }
