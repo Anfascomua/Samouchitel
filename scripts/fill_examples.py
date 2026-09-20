@@ -30,7 +30,7 @@ def main():
     d=json.loads(DICT.read_text(encoding="utf-8"))
     words={w["en"].lower():w for w in d["words"] if re.fullmatch(r"[A-Za-z]+(?:'[A-Za-z]+)?",w["en"])}
     cand={k:[] for k in words}
-    data=urllib.request.urlopen(URL,timeout=120).read()
+    req=urllib.request.Request(URL,headers={"User-Agent":"Mozilla/5.0 (Samouchitel dictionary builder)","Accept":"*/*"})\n    data=urllib.request.urlopen(req,timeout=120).read()
     with zipfile.ZipFile(io.BytesIO(data)) as z:
         name=[n for n in z.namelist() if n.endswith(".txt")][0]
         for raw in z.read(name).decode("utf-8",errors="ignore").splitlines():
