@@ -2,8 +2,7 @@ name: Fill dictionary examples
 on:
   workflow_dispatch:
   push:
-    paths:
-      - scripts/fill_examples.py
+    branches: [main]
 jobs:
   fill:
     runs-on: ubuntu-latest
