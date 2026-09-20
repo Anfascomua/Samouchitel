@@ -1,0 +1,170 @@
+{
+  "books": [
+    {
+      "id": "book1",
+      "title": "A New Day",
+      "level": "A1",
+      "ru": "Новый день",
+      "text": [
+        "Tom wakes up at seven o’clock. He opens the window and looks outside. The sun is shining.",
+        "He makes tea and eats bread with cheese. Then Tom takes his bag and walks to work.",
+        "In the evening he comes home, cooks dinner and reads a book. It was a simple but good day."
+      ]
+    },
+    {
+      "id": "book2",
+      "title": "The Little Red House",
+      "level": "A1",
+      "ru": "Маленький красный дом",
+      "text": [
+        "Anna lives in a little red house near a park. There are two rooms, a kitchen and a small garden.",
+        "Every morning Anna waters the flowers. Her cat, Max, sits near the door and watches the birds.",
+        "Anna likes her home because it is quiet, warm and full of happy memories."
+      ]
+    },
+    {
+      "id": "book3",
+      "title": "Weekend by the Sea",
+      "level": "A1–A2",
+      "ru": "Выходные у моря",
+      "text": [
+        "Mike and Lisa go to the sea for the weekend. They arrive on Saturday morning and leave their bags at a small hotel.",
+        "They walk along the beach, swim in the warm water and have lunch in a cafe.",
+        "On Sunday they watch the sunrise. They are tired when they go home, but they are very happy."
+      ]
+    }
+  ],
+  "stories": [
+    {
+      "id": "story1",
+      "title": "The Lost Key",
+      "level": "A1",
+      "ru": "Потерянный ключ",
+      "text": [
+        "Emma comes home after work, but she cannot find her key. She looks in her bag and in her pockets.",
+        "Her neighbour sees her and asks, “Are you looking for this?” He has found the key near the stairs.",
+        "Emma smiles and thanks him. Now she can finally go home."
+      ]
+    },
+    {
+      "id": "story2",
+      "title": "A Cup of Coffee",
+      "level": "A1",
+      "ru": "Чашка кофе",
+      "text": [
+        "David enters a small cafe. It is raining outside and he is cold.",
+        "He orders a cup of coffee and sits near the window. A woman at the next table smiles at him.",
+        "They start talking about the weather. Twenty minutes later, David has a new friend."
+      ]
+    },
+    {
+      "id": "story3",
+      "title": "The Wrong Bus",
+      "level": "A1–A2",
+      "ru": "Не тот автобус",
+      "text": [
+        "Nina gets on bus number twelve. She wants to go to the city centre.",
+        "After ten minutes she sees streets she does not know. She asks the driver and learns that she is going in the wrong direction.",
+        "Nina gets off, crosses the road and takes the right bus. This time she checks the number twice."
+      ]
+    }
+  ],
+  "dialogues": [
+    {
+      "id": "dialogue1",
+      "title": "At a Café",
+      "level": "A1",
+      "ru": "В кафе",
+      "lines": [
+        [
+          "Waiter",
+          "Good morning. What would you like?"
+        ],
+        [
+          "Customer",
+          "A coffee and a cheese sandwich, please."
+        ],
+        [
+          "Waiter",
+          "Would you like milk in your coffee?"
+        ],
+        [
+          "Customer",
+          "Yes, please. No sugar."
+        ],
+        [
+          "Waiter",
+          "Anything else?"
+        ],
+        [
+          "Customer",
+          "No, thank you."
+        ]
+      ]
+    },
+    {
+      "id": "dialogue2",
+      "title": "At the Hotel",
+      "level": "A1",
+      "ru": "В гостинице",
+      "lines": [
+        [
+          "Receptionist",
+          "Hello. How can I help you?"
+        ],
+        [
+          "Guest",
+          "I have a reservation for two nights."
+        ],
+        [
+          "Receptionist",
+          "What is your name, please?"
+        ],
+        [
+          "Guest",
+          "Alex Brown."
+        ],
+        [
+          "Receptionist",
+          "Here is your key. Your room is on the second floor."
+        ],
+        [
+          "Guest",
+          "Thank you."
+        ]
+      ]
+    },
+    {
+      "id": "dialogue3",
+      "title": "Asking the Way",
+      "level": "A1–A2",
+      "ru": "Как спросить дорогу",
+      "lines": [
+        [
+          "Tourist",
+          "Excuse me, where is the train station?"
+        ],
+        [
+          "Local",
+          "Go straight and turn left at the traffic lights."
+        ],
+        [
+          "Tourist",
+          "Is it far from here?"
+        ],
+        [
+          "Local",
+          "No. It is about five minutes on foot."
+        ],
+        [
+          "Tourist",
+          "Thank you very much."
+        ],
+        [
+          "Local",
+          "You’re welcome."
+        ]
+      ]
+    }
+  ]
+}
