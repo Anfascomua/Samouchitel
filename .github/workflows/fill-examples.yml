@@ -39,3 +39,5 @@ jobs:
             git commit -m "Fill dictionary with real-life examples"
             git push origin HEAD:main
           fi
+
+# rerun latest main
