@@ -40,3 +40,6 @@
 
 /* On Android WebView keep body stationary; scroll only the book content viewport. */
 body.library-reading{overflow:hidden!important;height:100vh!important}.library-reading #app{position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;padding-top:58px!important}.library-reading .reader-fixed-header{position:fixed!important;top:0!important;left:0!important;right:0!important;transform:none!important;z-index:2147483647!important}
+
+/* Native Android/Chrome text selection is enabled for Library word translation. */
+.reader p,.dialogueline .dialogue-text{-webkit-user-select:text!important;user-select:text!important;-webkit-touch-callout:default!important}
