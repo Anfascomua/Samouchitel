@@ -27,3 +27,5 @@
 .library-translation{color:var(--word-light)!important}html[data-theme="dark"] .library-translation{color:var(--word-dark)!important}
 
 .sentence-reader{padding-right:62px}.sentence-pair{margin:0 0 14px}.sentence-pair>p{margin:0 0 5px}.sentence-translation{display:block;width:100%;border:0;background:transparent;text-align:left;padding:2px 0;font:inherit;line-height:1.45;cursor:pointer;transition:opacity .15s,color .15s}.sentence-translation.dim{opacity:.34;color:inherit}.sentence-translation.bright{opacity:1;color:var(--word-light);font-weight:600}html[data-theme="dark"] .sentence-translation.bright{color:var(--word-dark)}.dialoguepair{margin-bottom:10px}.dialoguepair>.sentence-translation{padding:6px 12px}
+
+.reader-top{display:flex;align-items:center;justify-content:space-between;gap:12px}.bookmark-btn{border:1px solid #d7deea;background:#fff;color:inherit;border-radius:14px;padding:10px 13px;font:inherit;font-weight:700;cursor:pointer}html[data-theme="dark"] .bookmark-btn{background:#151e2f;border-color:#34435c}
