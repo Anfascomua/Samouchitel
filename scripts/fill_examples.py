@@ -19,7 +19,7 @@ def verb_tense(en):
 
 def score(en,word):
     toks=TOKEN.findall(en.lower()); n=len(toks)
-    if not 3<=n<=18:return -999
+    if not 2<=n<=22:return -999
     sc=100-abs(n-8)*5
     if toks.count(word.lower())>=1:sc+=10
     if en.endswith((".","?","!")):sc+=4
@@ -66,7 +66,7 @@ def main():
             elif len(chosen)>=3:
                 w["examples"]=chosen[:3];filled+=1
         elif len(chosen)>=3:w["examples"]=chosen[:3];filled+=1
-    DICT.write_text(json.dumps(d,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
+    missing=[{"id":w.get("id"),"en":w.get("en"),"ru":w.get("ru"),"category":w.get("category")} for w in d["words"] if len(w.get("examples",[]))!=3]\n    (ROOT/"content/en/missing_examples.json").write_text(json.dumps(missing,ensure_ascii=False,indent=2),encoding="utf-8")\n    DICT.write_text(json.dumps(d,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
     total=sum(1 for w in d["words"] if len(w.get("examples",[]))==3)
     print(f"filled this run={filled}; total with 3 examples={total}/{len(d['words'])}")
 if __name__=="__main__":main()
