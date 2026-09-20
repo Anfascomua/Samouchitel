@@ -20,8 +20,21 @@ def good(en,word):
 def main():
     d=json.loads(DP.read_text(encoding="utf-8"))
     missing={w["en"].lower():w for w in d["words"] if len(w.get("examples",[]))!=3}
-    single={k for k in missing if re.fullmatch(r"[a-z]+(?:'[a-z]+)?",k)}
     cand={k:[] for k in missing}
+    variants={}
+    special={"enquire":["inquire"],"enrol":["enroll"],"flavour":["flavor"],"kilometre":["kilometer"],"sceptical":["skeptical"],"film-maker":["filmmaker"],"make-up":["makeup"],"line-up":["lineup"],"set-up":["setup"],"t-shirt":["t shirt"]}
+    for k,w in missing.items():
+        vs={k,k.replace("-"," ")}
+        vs.update(special.get(k,[]))
+        cat=(w.get("category") or "").lower()
+        if cat=="verb":
+            vs.update([k+"s",k+"ed",k+"ing"])
+            if k.endswith("e"): vs.update([k[:-1]+"ed",k[:-1]+"ing"])
+            if k.endswith("y"): vs.update([k[:-1]+"ies",k[:-1]+"ied"])
+        if cat=="noun":
+            vs.add(k+"s")
+            if k.endswith("y"): vs.add(k[:-1]+"ies")
+        for v in vs: variants.setdefault(v,k)
     req=urllib.request.Request(URL,headers={"User-Agent":"Mozilla/5.0"})
     raw=urllib.request.urlopen(req,timeout=120).read()
     with tarfile.open(fileobj=io.BytesIO(raw),mode="r:gz") as tf:
@@ -33,9 +46,15 @@ def main():
             ens=tf.extractfile(ef).read().decode("utf-8","ignore").splitlines()
             rus=tf.extractfile(rf).read().decode("utf-8","ignore").splitlines()
             for en,ru in zip(ens,rus):
+                low=en.lower()
                 toks=set(x.lower() for x in TOK.findall(en))
-                for k in toks & single:
-                    if len(cand[k])<12 and good(en,k): cand[k].append((en.strip(),ru.strip()))
+                hits=set()
+                for v,k in variants.items():
+                    if " " in v or "-" in v:
+                        if v in low: hits.add(k)
+                    elif v in toks: hits.add(k)
+                for k in hits:
+                    if len(cand[k])<20: cand[k].append((en.strip(),ru.strip()))
     filled=0
     for k,w in missing.items():
         rows=cand.get(k,[])
