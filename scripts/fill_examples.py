@@ -45,7 +45,7 @@ def main():
                 sc=score(en,w)
                 if sc>-900:cand[w].append((sc,en,ru))
     filled=0
-    force={w["en"].lower() for w in d["words"] if 1849 <= int(w.get("id",999999)) <= 2348}
+    force={w["en"].lower() for w in d["words"] if 2349 <= int(w.get("id",999999)) <= 2848}
     for key,w in words.items():
         if len(w.get("examples",[]))==3 and key not in force:continue
         seen=set(); chosen=[]
