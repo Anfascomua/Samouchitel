@@ -20,6 +20,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install inflection helper
+        run: pip install lemminflect
       - name: Fill examples
         run: python scripts/fill_examples.py
       - name: Validate
