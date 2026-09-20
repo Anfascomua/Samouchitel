@@ -51,3 +51,5 @@ body.library-reading{overflow:hidden!important;height:100vh!important}.library-r
 
 /* Selected Library word: color letters only, never paint a selection block. */
 .reader p::selection,.dialogueline .dialogue-text::selection{background:transparent!important;color:var(--word-light)!important;text-shadow:none!important}html[data-theme="dark"] .reader p::selection,html[data-theme="dark"] .dialogueline .dialogue-text::selection{background:transparent!important;color:var(--word-dark)!important;text-shadow:none!important}
+
+.picked-translation-word{color:var(--word-light)!important;background:transparent!important}html[data-theme="dark"] .picked-translation-word{color:var(--word-dark)!important;background:transparent!important}
