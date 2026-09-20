@@ -15,25 +15,15 @@ function speak(t,button=null){
  const target=button?.closest(".readpara,.dialogueline");
  const words=target?[...target.querySelectorAll(".spoken-word")]:[];
  const ranges=[];let cursor=0;
- for(const w of words){const raw=w.dataset.raw||w.textContent,start=t.indexOf(raw,cursor);if(start>=0){ranges.push({start,end:start+raw.length,el:w,raw});cursor=start+raw.length}}
+ for(const w of words){const raw=w.dataset.raw||w.textContent,start=t.indexOf(raw,cursor);if(start>=0){ranges.push({start,end:start+raw.length,el:w});cursor=start+raw.length}}
  const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=Number(S.settings.voiceRate??.88);
  if(target)activeSpeechTarget=target;
  if(button){activeSpeechButton=button;button.dataset.stopIcon=button.textContent;button.textContent="■";button.classList.add("speaking")}
- let last=-1,gotBoundary=false,fallbackTimer=null,fallbackIndex=0,startAt=0;
- const markWord=n=>{if(!ranges.length)return;ranges.forEach(r=>r.el.classList.remove("active"));ranges[Math.min(n,ranges.length-1)].el.classList.add("active")};
- const markByIndex=idx=>{if(!ranges.length)return;let n=ranges.findIndex(r=>idx>=r.start&&idx<r.end);if(n<0)n=ranges.findIndex(r=>r.start>=idx);if(n>=0){fallbackIndex=n;markWord(n)}};
- const punctuationPause=w=>/[.!?]["'’”)]?$/.test(w)?170:/[,;:]["'’”)]?$/.test(w)?75:0;
- const scheduleFallback=()=>{
-  if(gotBoundary||fallbackIndex>=ranges.length)return;
-  markWord(fallbackIndex);
-  const w=ranges[fallbackIndex].raw.replace(/[^A-Za-z']/g,"");
-  const rate=Number(S.settings.voiceRate??.88);
-  const ms=Math.max(105,Math.min(390,(85+w.length*19+punctuationPause(ranges[fallbackIndex].raw))/rate));
-  fallbackTimer=setTimeout(()=>{fallbackIndex++;scheduleFallback()},ms);
- };
- u.onstart=()=>{startAt=performance.now();markWord(0);fallbackTimer=setTimeout(()=>{if(!gotBoundary)scheduleFallback()},220)};
- u.onboundary=e=>{if(typeof e.charIndex!=="number"||e.charIndex===last)return;last=e.charIndex;gotBoundary=true;if(fallbackTimer){clearTimeout(fallbackTimer);fallbackTimer=null}markByIndex(e.charIndex)};
- const finish=()=>{if(fallbackTimer)clearTimeout(fallbackTimer);clearSpeechHighlight();if(activeSpeechButton===button){button.textContent=button.dataset.stopIcon||"▶";button.classList.remove("speaking");activeSpeechButton=null}};
+ let last=-1;
+ const mark=idx=>{if(!ranges.length)return;let hit=ranges.find(r=>idx>=r.start&&idx<r.end)||ranges.find(r=>r.start>=idx);if(!hit)return;ranges.forEach(r=>r.el.classList.remove("active"));hit.el.classList.add("active")};
+ u.onstart=()=>mark(0);
+ u.onboundary=e=>{if(typeof e.charIndex!=="number"||e.charIndex===last)return;last=e.charIndex;mark(e.charIndex)};
+ const finish=()=>{clearSpeechHighlight();if(activeSpeechButton===button){button.textContent=button.dataset.stopIcon||"▶";button.classList.remove("speaking");activeSpeechButton=null}};
  u.onend=finish;u.onerror=finish;
  speechSynthesis.speak(u);
 }
