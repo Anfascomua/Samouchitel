@@ -33,7 +33,7 @@ def api_candidates(word):
     url="https://tatoeba.org/eng/api_v0/search?from=eng&to=rus&trans_filter=limit&trans_link=direct&trans_to=rus&sort=relevance&query="+q
     try:
         req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0","Accept":"application/json"})
-        obj=json.loads(urllib.request.urlopen(req,timeout=30).read().decode("utf-8"))
+        obj=json.loads(urllib.request.urlopen(req,timeout=5).read().decode("utf-8"))
         out=[]
         for row in obj.get("results",[]):
             en=(row.get("text") or "").strip()
@@ -65,7 +65,7 @@ def main():
                 sc=score(en,w)
                 if sc>-900:cand[w].append((sc,en,ru))
     filled=0
-    force={w["en"].lower() for w in d["words"] if len(w.get("examples",[]))!=3}
+    missing_words=[w for w in d["words"] if len(w.get("examples",[]))!=3][:50]\n    force={w["en"].lower() for w in missing_words}
     for key,w in words.items():
         if len(w.get("examples",[]))==3 and key not in force:continue
         if len(cand[key])<3:
