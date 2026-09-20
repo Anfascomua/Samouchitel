@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'scripts/fill_examples.py'
+      - 'scripts/fix_verbs.py'
       - '.github/workflows/fill-examples.yml'
 permissions:
   contents: write
