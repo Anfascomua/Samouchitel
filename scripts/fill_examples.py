@@ -19,9 +19,9 @@ def verb_tense(en):
 
 def score(en,word):
     toks=TOKEN.findall(en.lower()); n=len(toks)
-    if not 4<=n<=14:return -999
+    if not 3<=n<=18:return -999
     sc=100-abs(n-8)*5
-    if toks.count(word.lower())==1:sc+=10
+    if toks.count(word.lower())>=1:sc+=10
     if en.endswith((".","?","!")):sc+=4
     if any(ch.isdigit() for ch in en):sc-=20
     if re.search(r"https?://|www\.|@",en,re.I):sc-=100
@@ -45,7 +45,7 @@ def main():
                 sc=score(en,w)
                 if sc>-900:cand[w].append((sc,en,ru))
     filled=0
-    force={w["en"].lower() for w in d["words"] if 4402 <= int(w.get("id",999999)) <= 4954}
+    force={w["en"].lower() for w in d["words"] if len(w.get("examples",[]))!=3}
     for key,w in words.items():
         if len(w.get("examples",[]))==3 and key not in force:continue
         seen=set(); chosen=[]
@@ -63,7 +63,9 @@ def main():
             tense_examples=buckets["present"]+buckets["past"]+buckets["future"]
             if len(tense_examples)==3:
                 w["examples"]=tense_examples;filled+=1
-        elif len(chosen)==3:w["examples"]=chosen;filled+=1
+            elif len(chosen)>=3:
+                w["examples"]=chosen[:3];filled+=1
+        elif len(chosen)>=3:w["examples"]=chosen[:3];filled+=1
     DICT.write_text(json.dumps(d,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
     total=sum(1 for w in d["words"] if len(w.get("examples",[]))==3)
     print(f"filled this run={filled}; total with 3 examples={total}/{len(d['words'])}")
