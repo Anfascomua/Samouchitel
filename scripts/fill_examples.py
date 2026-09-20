@@ -26,6 +26,26 @@ def score(en,word):
     if any(ch.isdigit() for ch in en):sc-=20
     if re.search(r"https?://|www\.|@",en,re.I):sc-=100
     return sc
+
+def api_candidates(word):
+    import urllib.parse
+    q=urllib.parse.quote("="+word)
+    url="https://tatoeba.org/eng/api_v0/search?from=eng&to=rus&trans_filter=limit&trans_link=direct&trans_to=rus&sort=relevance&query="+q
+    try:
+        req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0","Accept":"application/json"})
+        obj=json.loads(urllib.request.urlopen(req,timeout=30).read().decode("utf-8"))
+        out=[]
+        for row in obj.get("results",[]):
+            en=(row.get("text") or "").strip()
+            rus=[]
+            for group in row.get("translations",[]):
+                for tr in group:
+                    if tr.get("lang")=="rus" and tr.get("text"): rus.append(tr["text"].strip())
+            if en and rus: out.append((score(en,word),en,rus[0]))
+        return [x for x in out if x[0]>-900]
+    except Exception:
+        return []
+
 def main():
     d=json.loads(DICT.read_text(encoding="utf-8"))
     words={w["en"].lower():w for w in d["words"] if re.fullmatch(r"[A-Za-z]+(?:'[A-Za-z]+)?",w["en"])}
@@ -48,7 +68,7 @@ def main():
     force={w["en"].lower() for w in d["words"] if len(w.get("examples",[]))!=3}
     for key,w in words.items():
         if len(w.get("examples",[]))==3 and key not in force:continue
-        seen=set(); chosen=[]
+        if len(cand[key])<3:\n            cand[key].extend(api_candidates(key))\n        seen=set(); chosen=[]
         for sc,en,ru in sorted(cand[key],reverse=True):
             norm=re.sub(r"[^a-z ]","",en.lower())
             stem=" ".join(norm.split()[:3])
