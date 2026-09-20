@@ -68,7 +68,9 @@ def main():
     force={w["en"].lower() for w in d["words"] if len(w.get("examples",[]))!=3}
     for key,w in words.items():
         if len(w.get("examples",[]))==3 and key not in force:continue
-        if len(cand[key])<3:\n            cand[key].extend(api_candidates(key))\n        seen=set(); chosen=[]
+        if len(cand[key])<3:
+            cand[key].extend(api_candidates(key))
+        seen=set(); chosen=[]
         for sc,en,ru in sorted(cand[key],reverse=True):
             norm=re.sub(r"[^a-z ]","",en.lower())
             stem=" ".join(norm.split()[:3])
