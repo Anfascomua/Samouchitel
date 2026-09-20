@@ -11,18 +11,20 @@ function clearSpeechHighlight(){if(activeSpeechTarget){activeSpeechTarget.queryS
 function stopSpeech(){activeSpeechToken++;speechSynthesis.cancel();clearSpeechHighlight();if(activeSpeechButton){activeSpeechButton.textContent=activeSpeechButton.dataset.stopIcon||"▶";activeSpeechButton.classList.remove("speaking");activeSpeechButton=null}}
 function speak(t,button=null){
  if(button&&activeSpeechButton===button&&speechSynthesis.speaking){stopSpeech();return}
- stopSpeech();const token=++activeSpeechToken,u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=Number(S.settings.voiceRate??.88);
- const target=button?.closest(".readpara,.dialogueline"),words=target?[...target.querySelectorAll(".spoken-word")]:[];
- if(target){activeSpeechTarget=target}
+ stopSpeech();const token=++activeSpeechToken,target=button?.closest(".readpara,.dialogueline"),words=target?[...target.querySelectorAll(".spoken-word")]:[];
+ if(target&&words.length){activeSpeechTarget=target;speakLibraryWords(words,button,token);return}
+ const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=Number(S.settings.voiceRate??.88);
  if(button){activeSpeechButton=button;button.dataset.stopIcon=button.textContent;button.textContent="■";button.classList.add("speaking")}
- let boundarySeen=false,fallbackTimer=null,fallbackIndex=0;
- const clearFallback=()=>{if(fallbackTimer){clearInterval(fallbackTimer);fallbackTimer=null}};
- const mark=i=>{if(token!==activeSpeechToken||!words.length)return;words.forEach(x=>x.classList.remove("active"));const w=words[Math.max(0,Math.min(i,words.length-1))];if(w)w.classList.add("active")};
- const ranges=[];let cursor=0;for(const w of words){const raw=w.dataset.raw||w.textContent,start=t.indexOf(raw,cursor);if(start>=0){ranges.push([start,start+raw.length,w]);cursor=start+raw.length}}
- u.onstart=()=>{if(!words.length)return;mark(0);const avg=Math.max(170,430/Math.max(.5,u.rate));fallbackTimer=setInterval(()=>{if(boundarySeen||token!==activeSpeechToken){clearFallback();return}fallbackIndex=Math.min(fallbackIndex+1,words.length-1);mark(fallbackIndex)},avg)};
- u.onboundary=e=>{if(token!==activeSpeechToken||typeof e.charIndex!=="number")return;boundarySeen=true;clearFallback();words.forEach(x=>x.classList.remove("active"));const hit=ranges.find(r=>e.charIndex>=r[0]&&e.charIndex<r[1])||[...ranges].reverse().find(r=>e.charIndex>=r[0]);if(hit)hit[2].classList.add("active")};
- const finish=()=>{clearFallback();if(token!==activeSpeechToken)return;clearSpeechHighlight();if(activeSpeechButton===button){button.textContent=button.dataset.stopIcon||"▶";button.classList.remove("speaking");activeSpeechButton=null}};
+ const finish=()=>{if(token!==activeSpeechToken)return;if(activeSpeechButton===button){button.textContent=button.dataset.stopIcon||"▶";button.classList.remove("speaking");activeSpeechButton=null}};
  u.onend=finish;u.onerror=finish;speechSynthesis.speak(u)
+}
+function speakLibraryWords(words,button,token){
+ if(button){activeSpeechButton=button;button.dataset.stopIcon=button.textContent;button.textContent="■";button.classList.add("speaking")}
+ let i=0;
+ const next=()=>{if(token!==activeSpeechToken||i>=words.length){if(token===activeSpeechToken){clearSpeechHighlight();if(activeSpeechButton===button){button.textContent=button.dataset.stopIcon||"▶";button.classList.remove("speaking");activeSpeechButton=null}}return}
+  words.forEach(x=>x.classList.remove("active"));const w=words[i++];w.classList.add("active");
+  const u=new SpeechSynthesisUtterance(w.dataset.raw||w.textContent);u.lang="en-US";u.rate=Number(S.settings.voiceRate??.88);u.onend=next;u.onerror=next;speechSynthesis.speak(u)
+ };next()
 }
 function word(w){return '<div class="word"><div class="wordline"><div><div class="en">'+w.en+'</div><div class="pron">'+(w.pronunciationRu||"")+'</div><div class="ru">'+w.ru+'</div></div><button class="speaker" data-say="'+w.en.replaceAll('"',"&quot;")+'">▶</button></div><small class="muted">'+w.example+'</small></div>'}
 function wireSpeak(){document.querySelectorAll("[data-say]").forEach(x=>x.onclick=()=>speak(x.dataset.say,x))}
