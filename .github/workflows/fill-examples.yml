@@ -1,0 +1,24 @@
+name: Fill dictionary examples
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - scripts/fill_examples.py
+jobs:
+  fill:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/fill_examples.py
+      - name: Commit generated examples
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/en/dictionary.json
+          git diff --cached --quiet || git commit -m "Fill dictionary with Tatoeba life examples"
+          git push
