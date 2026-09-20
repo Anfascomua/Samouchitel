@@ -1,99 +1,62 @@
-import json,re,zipfile,io,urllib.request,os,subprocess
+import io,json,re,tarfile,urllib.request
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-DICT=ROOT/"content/en/dictionary.json"
-URL="https://www.manythings.org/anki/rus-eng.zip"
-CYR=re.compile(r"[А-Яа-яЁё]")
-TOKEN=re.compile(r"[A-Za-z]+(?:'[A-Za-z]+)?")
+DP=ROOT/"content/en/dictionary.json"
+URL="https://object.pouta.csc.fi/OPUS-100/v1.0/opus-100-corpus-en-ru-v1.0.tar.gz"
+TOK=re.compile(r"[A-Za-z]+(?:'[A-Za-z]+)?")
 def pron(s):
     x=s.lower()
-    rules=[("tion","шэн"),("sion","жэн"),("ture","чэр"),("ough","оу"),("igh","ай"),("ee","и"),("oo","у"),("ea","и"),("ai","эй"),("ay","эй"),("ow","оу"),("ou","ау"),("oi","ой"),("oy","ой"),("th","з"),("sh","ш"),("ch","ч"),("ph","ф"),("wh","у"),("ck","к"),("ng","нг"),("qu","кв")]
-    for a,b in rules:x=x.replace(a,b)
-    mp={"a":"э","b":"б","c":"к","d":"д","e":"э","f":"ф","g":"г","h":"х","i":"и","j":"дж","k":"к","l":"л","m":"м","n":"н","o":"о","p":"п","q":"к","r":"р","s":"с","t":"т","u":"у","v":"в","w":"у","x":"кс","y":"й","z":"з"}
-    return "".join(mp.get(c,c) for c in x)
-def verb_tense(en):
-    e=en.lower()
-    if re.search(r"\\b(yesterday|last |ago|did|was|were|had)\\b",e) or re.search(r"\\b\\w+ed\\b",e): return "past"
-    if re.search(r"\\b(tomorrow|next |will|shall|going to)\\b",e): return "future"
+    for a,b in [("tion","шэн"),("sion","жэн"),("ture","чэр"),("igh","ай"),("ee","и"),("oo","у"),("ea","и"),("ai","эй"),("ay","эй"),("sh","ш"),("ch","ч"),("th","з"),("ph","ф"),("ng","нг"),("qu","кв")]: x=x.replace(a,b)
+    m=dict(zip("abcdefghijklmnopqrstuvwxyz",["э","б","к","д","э","ф","г","х","и","дж","к","л","м","н","о","п","к","р","с","т","у","в","у","кс","й","з"]))
+    return "".join(m.get(c,c) for c in x)
+def tense(s):
+    e=s.lower()
+    if re.search(r"\b(will|shall|tomorrow|next week|next year|going to)\b",e): return "future"
+    if re.search(r"\b(yesterday|last week|last year|ago|did|was|were|had)\b",e) or re.search(r"\b[a-z]+ed\b",e): return "past"
     return "present"
-
-def score(en,word):
-    toks=TOKEN.findall(en.lower()); n=len(toks)
-    if not 2<=n<=22:return -999
-    sc=100-abs(n-8)*5
-    if toks.count(word.lower())>=1:sc+=10
-    if en.endswith((".","?","!")):sc+=4
-    if any(ch.isdigit() for ch in en):sc-=20
-    if re.search(r"https?://|www\.|@",en,re.I):sc-=100
-    return sc
-
-def api_candidates(word):
-    import urllib.parse
-    q=urllib.parse.quote("="+word)
-    url="https://tatoeba.org/eng/api_v0/search?from=eng&to=rus&trans_filter=limit&trans_link=direct&trans_to=rus&sort=relevance&query="+q
-    try:
-        req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0","Accept":"application/json"})
-        obj=json.loads(urllib.request.urlopen(req,timeout=5).read().decode("utf-8"))
-        out=[]
-        for row in obj.get("results",[]):
-            en=(row.get("text") or "").strip()
-            rus=[]
-            for group in row.get("translations",[]):
-                for tr in group:
-                    if tr.get("lang")=="rus" and tr.get("text"): rus.append(tr["text"].strip())
-            if en and rus: out.append((score(en,word),en,rus[0]))
-        return [x for x in out if x[0]>-900]
-    except Exception:
-        return []
-
+def good(en,word):
+    n=len(TOK.findall(en))
+    return 3<=n<=18 and re.search(r"(?<![A-Za-z])"+re.escape(word)+r"(?![A-Za-z])",en,re.I)
 def main():
-    d=json.loads(DICT.read_text(encoding="utf-8"))
-    words={w["en"].lower():w for w in d["words"] if re.fullmatch(r"[A-Za-z]+(?:'[A-Za-z]+)?",w["en"])}
-    cand={k:[] for k in words}
-    req=urllib.request.Request(URL,headers={"User-Agent":"Mozilla/5.0 (Samouchitel dictionary builder)","Accept":"*/*"})
-    data=urllib.request.urlopen(req,timeout=120).read()
-    with zipfile.ZipFile(io.BytesIO(data)) as z:
-        name=[n for n in z.namelist() if n.endswith(".txt")][0]
-        for raw in z.read(name).decode("utf-8",errors="ignore").splitlines():
-            p=raw.split("\t")
-            if len(p)<2:continue
-            a,b=p[0].strip(),p[1].strip()
-            en,ru=(b,a) if CYR.search(a) and not CYR.search(b) else (a,b)
-            if not CYR.search(ru):continue
-            toks=set(TOKEN.findall(en.lower()))
-            for w in toks & words.keys():
-                sc=score(en,w)
-                if sc>-900:cand[w].append((sc,en,ru))
+    d=json.loads(DP.read_text(encoding="utf-8"))
+    missing={w["en"].lower():w for w in d["words"] if len(w.get("examples",[]))!=3}
+    single={k for k in missing if re.fullmatch(r"[a-z]+(?:'[a-z]+)?",k)}
+    cand={k:[] for k in missing}
+    req=urllib.request.Request(URL,headers={"User-Agent":"Mozilla/5.0"})
+    raw=urllib.request.urlopen(req,timeout=120).read()
+    with tarfile.open(fileobj=io.BytesIO(raw),mode="r:gz") as tf:
+        names=tf.getnames()
+        enfiles=sorted([n for n in names if n.endswith(".en")])
+        for ef in enfiles:
+            rf=ef[:-3]+".ru"
+            if rf not in names: continue
+            ens=tf.extractfile(ef).read().decode("utf-8","ignore").splitlines()
+            rus=tf.extractfile(rf).read().decode("utf-8","ignore").splitlines()
+            for en,ru in zip(ens,rus):
+                toks=set(x.lower() for x in TOK.findall(en))
+                for k in toks & single:
+                    if len(cand[k])<12 and good(en,k): cand[k].append((en.strip(),ru.strip()))
     filled=0
-    missing_words=[w for w in d["words"] if len(w.get("examples",[]))!=3][:50]
-    force={w["en"].lower() for w in missing_words}
-    for key,w in words.items():
-        if len(w.get("examples",[]))==3 and key not in force:continue
-        if len(cand[key])<3:
-            cand[key].extend(api_candidates(key))
-        seen=set(); chosen=[]
-        for sc,en,ru in sorted(cand[key],reverse=True):
-            norm=re.sub(r"[^a-z ]","",en.lower())
-            stem=" ".join(norm.split()[:3])
-            if stem in seen:continue
-            seen.add(stem);chosen.append({"en":en,"pronunciationRu":pron(en),"ru":ru,"source":"Tatoeba / ManyThings"})
-            if len(chosen)==3:break
+    for k,w in missing.items():
+        rows=cand.get(k,[])
+        seen=set(); uniq=[]
+        for en,ru in rows:
+            sig=re.sub(r"[^a-z ]","",en.lower())
+            if sig in seen or not ru: continue
+            seen.add(sig); uniq.append((en,ru))
         if (w.get("category") or "").lower()=="verb":
             buckets={"present":[],"past":[],"future":[]}
-            for sc,en,ru in sorted(cand[key],reverse=True):
-                t=verb_tense(en)
-                if not buckets[t]: buckets[t]=[{"en":en,"pronunciationRu":pron(en),"ru":ru,"source":"Tatoeba / ManyThings","tense":t}]
-            tense_examples=buckets["present"]+buckets["past"]+buckets["future"]
-            if len(tense_examples)==3:
-                w["examples"]=tense_examples;filled+=1
-            elif len(chosen)>=3:
-                w["examples"]=chosen[:3];filled+=1
-        elif len(chosen)>=3:w["examples"]=chosen[:3];filled+=1
-    missing=[{"id":w.get("id"),"en":w.get("en"),"ru":w.get("ru"),"category":w.get("category")} for w in d["words"] if len(w.get("examples",[]))!=3]
-    (ROOT/"content/en/missing_examples.json").write_text(json.dumps(missing,ensure_ascii=False,indent=2),encoding="utf-8")
-    DICT.write_text(json.dumps(d,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
-    total=sum(1 for w in d["words"] if len(w.get("examples",[]))==3)
-    print(f"filled this run={filled}; total with 3 examples={total}/{len(d['words'])}")
-if __name__=="__main__":main()
-
-# workflow trigger
+            for en,ru in uniq:
+                t=tense(en)
+                if not buckets[t]: buckets[t]=[(en,ru)]
+            chosen=buckets["present"]+buckets["past"]+buckets["future"]
+            if len(chosen)!=3: chosen=uniq[:3]
+        else: chosen=uniq[:3]
+        if len(chosen)==3:
+            w["examples"]=[{"en":en,"pronunciationRu":pron(en),"ru":ru,"source":"OPUS-100 internet corpus"} for en,ru in chosen]
+            filled+=1
+    DP.write_text(json.dumps(d,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
+    left=[{"id":w.get("id"),"en":w.get("en"),"ru":w.get("ru"),"category":w.get("category")} for w in d["words"] if len(w.get("examples",[]))!=3]
+    (ROOT/"content/en/missing_examples.json").write_text(json.dumps(left,ensure_ascii=False,indent=2),encoding="utf-8")
+    print("filled",filled,"total",len(d["words"])-len(left),"/",len(d["words"]),"left",len(left))
+if __name__=="__main__": main()
