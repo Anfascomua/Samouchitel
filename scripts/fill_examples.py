@@ -11,6 +11,12 @@ def pron(s):
     for a,b in rules:x=x.replace(a,b)
     mp={"a":"э","b":"б","c":"к","d":"д","e":"э","f":"ф","g":"г","h":"х","i":"и","j":"дж","k":"к","l":"л","m":"м","n":"н","o":"о","p":"п","q":"к","r":"р","s":"с","t":"т","u":"у","v":"в","w":"у","x":"кс","y":"й","z":"з"}
     return "".join(mp.get(c,c) for c in x)
+def verb_tense(en):
+    e=en.lower()
+    if re.search(r"\\b(yesterday|last |ago|did|was|were|had)\\b",e) or re.search(r"\\b\\w+ed\\b",e): return "past"
+    if re.search(r"\\b(tomorrow|next |will|shall|going to)\\b",e): return "future"
+    return "present"
+
 def score(en,word):
     toks=TOKEN.findall(en.lower()); n=len(toks)
     if not 4<=n<=14:return -999
@@ -47,7 +53,15 @@ def main():
             if stem in seen:continue
             seen.add(stem);chosen.append({"en":en,"pronunciationRu":pron(en),"ru":ru,"source":"Tatoeba / ManyThings"})
             if len(chosen)==3:break
-        if len(chosen)==3:w["examples"]=chosen;filled+=1
+        if (w.get("category") or "").lower()=="verb":
+            buckets={"present":[],"past":[],"future":[]}
+            for sc,en,ru in sorted(cand[key],reverse=True):
+                t=verb_tense(en)
+                if not buckets[t]: buckets[t]=[{"en":en,"pronunciationRu":pron(en),"ru":ru,"source":"Tatoeba / ManyThings","tense":t}]
+            tense_examples=buckets["present"]+buckets["past"]+buckets["future"]
+            if len(tense_examples)==3:
+                w["examples"]=tense_examples;filled+=1
+        elif len(chosen)==3:w["examples"]=chosen;filled+=1
     DICT.write_text(json.dumps(d,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
     total=sum(1 for w in d["words"] if len(w.get("examples",[]))==3)
     print(f"filled this run={filled}; total with 3 examples={total}/{len(d['words'])}")
