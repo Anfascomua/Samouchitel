@@ -24,7 +24,7 @@ function cleanLookupWord(t){return t.toLowerCase().replace(/^[^a-z']+|[^a-z']+$/
 function showWordTranslation(word){
  const key=cleanLookupWord(word),entry=dictionary.words.find(x=>cleanLookupWord(x.en)===key);
  let bar=document.querySelector("#word-translation");
- if(!bar){bar=document.createElement("div");bar.id="word-translation";bar.className="word-translation";document.body.appendChild(bar)}
+ if(!bar){bar=document.createElement("div");bar.id="word-translation";bar.className="word-translation translation-v2";document.body.appendChild(bar)}
  bar.innerHTML='<div class="translation-only">'+(entry?entry.ru:"Перевод не найден")+'</div><button class="translation-close" aria-label="Закрыть">×</button>';
  bar.classList.add("show");
  bar.querySelector(".translation-close").onclick=()=>{bar.classList.remove("show");document.querySelectorAll(".select-word.selected").forEach(x=>x.classList.remove("selected"))}
