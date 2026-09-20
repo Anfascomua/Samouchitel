@@ -32,3 +32,6 @@
 
 /* Keep Library reader navigation visible while scrolling. */
 .reader-top{position:sticky;top:0;z-index:60;background:var(--bg,#f6f7fb);padding:10px 0 8px;margin-top:-4px}html[data-theme="dark"] .reader-top{background:#0b1220}
+
+/* Library reader fixed header: stays attached to viewport, not document flow. */
+.reader-top{position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:1000!important;box-sizing:border-box;display:flex!important;align-items:center;justify-content:space-between;padding:10px max(14px,calc((100vw - 760px)/2 + 14px))!important;margin:0!important;background:#f6f7fb!important;border-bottom:1px solid #e5e9f0;box-shadow:0 2px 10px #0f172a12}html[data-theme="dark"] .reader-top{background:#0b1220!important;border-bottom-color:#263248}.reader-top+ .lessonlabel{margin-top:64px}
