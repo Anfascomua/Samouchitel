@@ -65,7 +65,8 @@ def main():
                 sc=score(en,w)
                 if sc>-900:cand[w].append((sc,en,ru))
     filled=0
-    missing_words=[w for w in d["words"] if len(w.get("examples",[]))!=3][:50]\n    force={w["en"].lower() for w in missing_words}
+    missing_words=[w for w in d["words"] if len(w.get("examples",[]))!=3][:50]
+    force={w["en"].lower() for w in missing_words}
     for key,w in words.items():
         if len(w.get("examples",[]))==3 and key not in force:continue
         if len(cand[key])<3:
