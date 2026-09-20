@@ -52,3 +52,5 @@ def main():
     total=sum(1 for w in d["words"] if len(w.get("examples",[]))==3)
     print(f"filled this run={filled}; total with 3 examples={total}/{len(d['words'])}")
 if __name__=="__main__":main()
+
+# workflow trigger
