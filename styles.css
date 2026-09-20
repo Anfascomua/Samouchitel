@@ -20,3 +20,5 @@
 .reader ::selection{background:transparent;color:inherit}.reader ::-moz-selection{background:transparent;color:inherit}
 
 .library-translation{display:none;position:sticky;bottom:76px;z-index:30;margin:14px 0 0;padding:14px 18px;border-radius:16px;background:#fff;border:1px solid #d7deea;box-shadow:0 8px 24px #0f172a22;font-size:1.35rem;font-weight:700;text-align:center}.library-translation.show{display:block}html[data-theme="dark"] .library-translation{background:#151e2f;border-color:#34435c;color:#f5f7fb}.reader p,.dialogueline span{-webkit-user-select:none;user-select:none}
+
+.picked-word{color:var(--word-light);font-weight:inherit;background:transparent}html[data-theme="dark"] .picked-word{color:var(--word-dark);background:transparent}
