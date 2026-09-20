@@ -2,35 +2,170 @@
   "books": [
     {
       "id": "book1",
-      "title": "A New Day",
+      "title": "The House on Green Street",
+      "ru": "Дом на Грин-стрит",
       "level": "A1",
-      "ru": "Новый день",
-      "text": [
-        "Tom wakes up at seven o’clock. He opens the window and looks outside. The sun is shining.",
-        "He makes tea and eats bread with cheese. Then Tom takes his bag and walks to work.",
-        "In the evening he comes home, cooks dinner and reads a book. It was a simple but good day."
+      "chapters": [
+        {
+          "title": "Chapter 1. A New Home",
+          "text": [
+            "Tom Miller is twenty-four years old. He works in a small computer shop in Bristol. For three years he lives with his parents, but now he wants a place of his own. One Monday morning he sees an advertisement for a room in a house on Green Street.",
+            "After work Tom walks to Green Street. Number eighteen is an old red-brick house with a blue door. There is a small garden in front and a large tree beside the gate. A woman named Mrs Green opens the door. She is about sixty and has a warm smile.",
+            "Mrs Green shows Tom a bright room on the second floor. It has a bed, a desk, two chairs and a window looking over the garden. The kitchen and bathroom are downstairs. Tom likes the room immediately. He pays the first month's rent and receives a small silver key.",
+            "That evening Tom carries two bags and a box into his new room. He puts his books on the shelf and a photograph of his family on the desk. The house is quiet. For the first time in his life, Tom is living away from his parents. He feels excited and a little nervous."
+          ]
+        },
+        {
+          "title": "Chapter 2. The People in the House",
+          "text": [
+            "At breakfast Tom meets the other people who live in the house. Sarah is a university student. She studies history and talks very quickly. Mr Lee is a chef in a Chinese restaurant and usually works in the evenings. On the ground floor lives an older man called Peter, who repairs bicycles.",
+            "Mrs Green has one important rule: everyone cleans the kitchen after using it. Sarah laughs and tells Tom that this rule is more important than any law in England. Tom promises to remember it.",
+            "During the first week Tom learns the rhythm of the house. Sarah leaves early for university. Peter opens his workshop at nine. Mr Lee sleeps late because he returns from work after midnight. In the evening they sometimes meet in the kitchen and drink tea together.",
+            "Tom begins to enjoy his new life. He can walk to work in fifteen minutes, there is a supermarket around the corner, and a bus stops near the house. Green Street starts to feel like home."
+          ]
+        },
+        {
+          "title": "Chapter 3. The Noise at Night",
+          "text": [
+            "One rainy Thursday Tom wakes at two in the morning. He hears a strange sound downstairs: a short knock, then silence, then another knock. He sits up and listens. The sound comes again.",
+            "Tom opens his door. Sarah is standing in the corridor in her dressing gown. She has heard it too. Together they go downstairs. The kitchen is empty, but the back door is moving in the wind. It has not closed properly.",
+            "They close the door and laugh at themselves. Then they notice a wet cat under the kitchen table. It is small, grey and very frightened. Sarah gives it some water while Tom finds an old towel.",
+            "In the morning Mrs Green recognizes the cat. It belongs to a family two streets away. Tom carries it home before work. A little girl opens the door and is delighted to see her pet again. Tom realizes that even a strange noise at night can lead to a good morning."
+          ]
+        },
+        {
+          "title": "Chapter 4. The Garden Party",
+          "text": [
+            "Spring arrives and the garden behind the house fills with flowers. Mrs Green decides to have a Saturday garden party. Everyone has a job. Peter brings tables and chairs, Mr Lee prepares food, Sarah makes lemonade, and Tom hangs lights between the trees.",
+            "The weather forecast says rain, but Saturday afternoon is warm and clear. Neighbours come with cakes, fruit and music. Tom's parents visit too. They are pleased to see his new home and meet his friends.",
+            "Later, clouds appear and a few drops of rain begin to fall. Nobody wants to leave. Peter moves the food under a large tree, and Sarah starts dancing in the rain. Soon everyone is laughing.",
+            "That night, after the guests go home, Tom helps Mrs Green collect the cups. She asks if he is happy on Green Street. Tom looks at the lights, the wet garden and the people cleaning together. “Yes,” he says. “I think I found the right place.”"
+          ]
+        },
+        {
+          "title": "Chapter 5. A Door Opens",
+          "text": [
+            "Several months pass. Tom becomes more confident at work, and his manager offers him a new position. The job brings more responsibility and a little more money. Tom is proud, but the new office is on the other side of the city.",
+            "For a few days he thinks about moving. A flat near the new office would save time. When he tells the others, Sarah says they will miss him. Peter offers him an old bicycle for the journey. Mrs Green simply tells him to choose what is best for his life.",
+            "Tom tries the bicycle route on Sunday morning. It takes thirty-five minutes through two parks and along the river. He likes it much more than sitting on a bus. On Monday he tells Mrs Green that he wants to keep his room.",
+            "A year after he first saw the advertisement, Tom still has the small silver key. Green Street is no longer just an address. It is the place where he learned to live independently, met new friends and understood that a home is made by people as much as by walls."
+          ]
+        }
       ]
     },
     {
       "id": "book2",
-      "title": "The Little Red House",
-      "level": "A1",
-      "ru": "Маленький красный дом",
-      "text": [
-        "Anna lives in a little red house near a park. There are two rooms, a kitchen and a small garden.",
-        "Every morning Anna waters the flowers. Her cat, Max, sits near the door and watches the birds.",
-        "Anna likes her home because it is quiet, warm and full of happy memories."
+      "title": "Anna's First Job",
+      "ru": "Первая работа Анны",
+      "level": "A1–A2",
+      "chapters": [
+        {
+          "title": "Chapter 1. The Interview",
+          "text": [
+            "Anna finishes college in June and begins looking for work. She sends applications to shops, offices and hotels. After two weeks a small travel company invites her for an interview.",
+            "Anna is nervous. She chooses a simple blue dress and arrives twenty minutes early. The manager, Ms Brown, asks about her studies, computer skills and languages. Anna speaks English and a little Spanish.",
+            "At the end Ms Brown says the company needs an assistant who can answer emails, speak to customers and organize documents. Anna says she learns quickly and likes helping people.",
+            "The next morning her phone rings. She has the job. Anna writes the starting date on her calendar and calls her mother. Her first real job begins on Monday."
+          ]
+        },
+        {
+          "title": "Chapter 2. Monday Morning",
+          "text": [
+            "Anna arrives at eight forty-five. Her colleague Ben shows her the office, the kitchen and the booking system. There are only eight employees, so everyone knows each other.",
+            "Her first task is simple: answer three customer emails. Anna checks every sentence twice before sending it. Then the telephone rings. A man wants information about a trip to Scotland. Anna finds the details and explains the price and dates.",
+            "At lunch Ben and two colleagues take her to a cafe nearby. They tell funny stories about their first days at the company. Anna relaxes and begins to feel part of the team.",
+            "At five thirty she turns off her computer. She is tired because she has learned many new things, but she is also happy. The first day was not perfect, yet it was better than she expected."
+          ]
+        },
+        {
+          "title": "Chapter 3. A Difficult Customer",
+          "text": [
+            "On Wednesday afternoon a customer calls because his hotel reservation is wrong. He is angry and speaks very fast. Anna wants to pass the call to Ms Brown, but the manager is in a meeting.",
+            "Anna listens carefully and writes down the important facts. The customer booked a double room, but the hotel has recorded a single room. Anna apologizes and promises to check immediately.",
+            "She calls the hotel, explains the problem and finds that there was a typing error. The hotel changes the reservation and sends a new confirmation. Anna calls the customer back ten minutes later.",
+            "His voice is calm now. He thanks Anna for solving the problem quickly. When Ms Brown returns, she hears what happened and says, “Good work. You listened first and acted second.” Anna remembers those words."
+          ]
+        },
+        {
+          "title": "Chapter 4. The Big Booking",
+          "text": [
+            "A month later a local sports club asks the company to organize a trip for twenty people. It is the largest booking Anna has worked on. She helps compare hotels, trains and activities.",
+            "There are many details: some people need single rooms, two are vegetarian, and one person cannot walk long distances. Anna makes a checklist and updates it every day.",
+            "Two days before the trip, a train is cancelled. The office becomes very busy. Anna finds another route and contacts every traveller with the new departure time.",
+            "The group returns a week later and sends a message saying the trip was excellent. Anna prints the message and keeps it in her desk. It reminds her that careful work matters."
+          ]
+        },
+        {
+          "title": "Chapter 5. Six Months Later",
+          "text": [
+            "By December Anna no longer feels like the new employee. She answers difficult questions, trains a new assistant and sometimes opens the office in the morning.",
+            "At the company Christmas lunch, Ms Brown thanks the team for a successful year. She tells Anna that customers often mention her patience and clear explanations.",
+            "Walking home, Anna thinks about her first interview. Six months ago she was afraid of making mistakes. She still makes some, but now she knows how to correct them and learn from them.",
+            "Anna understands that a first job is not only about earning money. It is also a place to discover what you can do, what you still need to learn, and what kind of person you want to become."
+          ]
+        }
       ]
     },
     {
       "id": "book3",
-      "title": "Weekend by the Sea",
-      "level": "A1–A2",
-      "ru": "Выходные у моря",
-      "text": [
-        "Mike and Lisa go to the sea for the weekend. They arrive on Saturday morning and leave their bags at a small hotel.",
-        "They walk along the beach, swim in the warm water and have lunch in a cafe.",
-        "On Sunday they watch the sunrise. They are tired when they go home, but they are very happy."
+      "title": "Journey to the North",
+      "ru": "Путешествие на север",
+      "level": "A2",
+      "chapters": [
+        {
+          "title": "Chapter 1. The Plan",
+          "text": [
+            "Daniel and his sister Lucy have talked for years about travelling through northern England and Scotland. In September they finally have ten free days at the same time. Instead of flying, they decide to travel by train and carry only small backpacks.",
+            "Their plan is simple: start in York, continue to Edinburgh, then go farther north to a village near the Highlands. They book the first two nights but leave the rest of the journey flexible.",
+            "Their father thinks they should plan every hotel in advance. Daniel prefers freedom. Lucy agrees with both of them, so she writes a list of possible places and keeps it on her phone.",
+            "On Friday evening they board a northbound train. As the city disappears behind them, Lucy says, “Now the holiday really starts.”"
+          ]
+        },
+        {
+          "title": "Chapter 2. York",
+          "text": [
+            "They arrive in York after dark. The next morning they walk along the old city walls and through narrow streets filled with small shops. A guide tells them stories about Romans, Vikings and medieval merchants.",
+            "In the afternoon rain begins. Daniel wants to continue walking, but Lucy suggests visiting a museum. Inside they spend three hours learning about the history of the railway.",
+            "At dinner they meet an Australian couple travelling around Europe. The four travellers compare routes and recommendations. The couple tells them about a quiet coastal town north of Edinburgh.",
+            "Daniel adds the town to their plan. Already the journey is changing, and that is exactly what he hoped would happen."
+          ]
+        },
+        {
+          "title": "Chapter 3. Edinburgh",
+          "text": [
+            "The train to Edinburgh follows the coast. For part of the journey the sea is visible from the window. Lucy takes photographs while Daniel reads about the city.",
+            "Edinburgh is busier than York. They climb the hill to the castle, walk down the Royal Mile and listen to a street musician playing the violin. In the evening they find a small restaurant away from the tourist streets.",
+            "The next day strong wind closes several attractions. Instead of being disappointed, they take a local bus to the coast and walk on the beach. The wind is cold, but the sky is bright.",
+            "That evening they decide to follow the Australian couple's advice and change their next destination. They book a morning train to the small coastal town."
+          ]
+        },
+        {
+          "title": "Chapter 4. The Unexpected Stop",
+          "text": [
+            "Halfway to the coast, their train stops at a small station. An announcement says there is a problem on the line and the delay may last several hours.",
+            "Some passengers complain, but an elderly woman named Margaret starts talking to Daniel and Lucy. She lives nearby and suggests a village cafe ten minutes from the station.",
+            "They leave the station with Margaret and have soup and fresh bread at the cafe. She tells them about the area and shows them a walking path to an old stone bridge.",
+            "By the time they return, the trains are running again. Daniel realizes that the delay gave them one of the most memorable afternoons of the trip."
+          ]
+        },
+        {
+          "title": "Chapter 5. Farther North",
+          "text": [
+            "The final part of their journey takes them into the Highlands. Mountains rise beside the railway and lakes appear between the trees. Their village has one shop, one pub and a small guest house.",
+            "They spend three days walking. On the longest walk they climb a hill above a wide lake. The weather changes every hour: sun, cloud, rain and sun again.",
+            "At the top they sit behind a rock to escape the wind and eat sandwiches. There is no city noise, no traffic and almost no phone signal. Lucy says she wishes they could stay another week.",
+            "On their last evening the guest-house owner lights a fire. Travellers from four countries sit together and share stories. Daniel thinks this is what he likes most about travel: places are important, but people make the memories."
+          ]
+        },
+        {
+          "title": "Chapter 6. Home",
+          "text": [
+            "Ten days after leaving, Daniel and Lucy take the long train south. Their clothes need washing, their legs are tired and their phones contain hundreds of photographs.",
+            "They talk about the best moments. Lucy chooses the windy beach in Edinburgh. Daniel chooses the unexpected afternoon with Margaret. Both agree that the quiet days in the Highlands were special.",
+            "When they reach home, their father asks whether they followed the original plan. Daniel laughs and shows him the route on a map. Several parts are completely different.",
+            "The journey teaches them something useful: planning gives a trip direction, but leaving some space for change can turn ordinary days into stories worth remembering."
+          ]
+        }
       ]
     }
   ],
