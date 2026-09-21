@@ -51,7 +51,11 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             stopService(Intent(this@MainActivity, PlaybackService::class.java))
         }
         @JavascriptInterface fun control(action: String) = runOnUiThread {
-            startForegroundService(Intent(this@MainActivity, PlaybackService::class.java).setAction(action))
+            // The service is already running while a drill is playing. Calling it
+            // directly keeps controls responsive and avoids starting a second service.
+            if (!PlaybackService.controlActive(action)) {
+                startService(Intent(this@MainActivity, PlaybackService::class.java).setAction(action))
+            }
         }
     }
 
