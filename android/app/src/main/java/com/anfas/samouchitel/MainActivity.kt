@@ -8,6 +8,9 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import java.io.File
+import java.io.FileOutputStream
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.util.Locale
 
 class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
@@ -40,12 +43,15 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             val words = sequence.split("\u001f").filter { it.isNotBlank() }
             val directory = File(cacheDir, "drill").apply { deleteRecursively(); mkdirs() }
             tts.language = Locale.US
-            tts.setSpeechRate(rate.coerceIn(0.5f, 1.5f))
+            tts.setSpeechRate((rate * 0.8f).coerceIn(0.5f, 1.2f))
             synthesize(words, 0, directory)
         }
         @JavascriptInterface fun stop() = runOnUiThread {
             tts.stop()
             stopService(Intent(this@MainActivity, PlaybackService::class.java))
+        }
+        @JavascriptInterface fun control(action: String) = runOnUiThread {
+            startForegroundService(Intent(this@MainActivity, PlaybackService::class.java).setAction(action))
         }
     }
 
@@ -54,13 +60,23 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             startForegroundService(Intent(this, PlaybackService::class.java).putExtra("dir", directory.absolutePath))
             return
         }
-        val file = File(directory, "%04d.wav".format(index))
+        val file = File(directory, "%04d-voice.wav".format(index * 2))
         tts.setOnUtteranceProgressListener(object : android.speech.tts.UtteranceProgressListener() {
             override fun onStart(id: String) = Unit
             override fun onError(id: String) = runOnUiThread { synthesize(parts, index + 1, directory) }
-            override fun onDone(id: String) = runOnUiThread { synthesize(parts, index + 1, directory) }
+            override fun onDone(id: String) = runOnUiThread { writeSilence(File(directory, "%04d-gap.wav".format(index * 2 + 1))); synthesize(parts, index + 1, directory) }
         })
         tts.synthesizeToFile(parts[index], Bundle(), file, "drill-$index")
+    }
+
+    private fun writeSilence(file: File) {
+        val sampleRate = 8_000
+        val dataSize = sampleRate * 700 / 1_000 * 2
+        val header = ByteBuffer.allocate(44).order(ByteOrder.LITTLE_ENDIAN)
+        header.put("RIFF".toByteArray()).putInt(36 + dataSize).put("WAVE".toByteArray()).put("fmt ".toByteArray())
+        header.putInt(16).putShort(1).putShort(1).putInt(sampleRate).putInt(sampleRate * 2).putShort(2).putShort(16)
+        header.put("data".toByteArray()).putInt(dataSize)
+        FileOutputStream(file).use { it.write(header.array()); it.write(ByteArray(dataSize)) }
     }
 
     override fun onDestroy() { tts.shutdown(); super.onDestroy() }
