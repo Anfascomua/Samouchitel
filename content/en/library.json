@@ -167,6 +167,192 @@
           ]
         }
       ]
+    },
+    {
+      "id": "book4",
+      "title": "The Lighthouse Keeper",
+      "ru": "Смотритель маяка",
+      "level": "A2",
+      "chapters": [
+        {
+          "title": "Chapter 1. The Island",
+          "text": [
+            "Thomas Reed arrives on Grey Island at the end of October. The ferry leaves him beside a narrow road, two wooden boxes and a suitcase. Above the harbour, a white lighthouse stands on a dark hill.",
+            "Thomas has agreed to replace the old lighthouse keeper for three months. He expects quiet days, simple work and enough free time to finish the book he has been writing for years.",
+            "The island village is small. There is a post office, a grocery shop, a school and a cafe that closes before sunset. About two hundred people live there through the winter.",
+            "At the lighthouse Thomas meets Nora Bell, the keeper who is leaving. She shows him the generator, the radio, the weather instruments and the heavy lamp at the top of the tower. Before she goes, she tells him one rule: every evening he must write down everything he sees at sea."
+          ]
+        },
+        {
+          "title": "Chapter 2. The First Storm",
+          "text": [
+            "For the first week the weather is calm. Thomas wakes early, checks the equipment and walks around the cliffs. In the afternoons he writes at a desk beside the kitchen window.",
+            "Then a storm arrives from the west. The wind shakes the windows and waves break against the rocks below. Thomas checks the lamp twice and keeps the radio beside him.",
+            "Near midnight he sees a small light far from the normal shipping route. It appears, disappears and appears again. He writes the time and direction in the lighthouse log.",
+            "The next morning fishermen in the village say that no local boat was at sea. Thomas looks again at his notes and wonders what he saw."
+          ]
+        },
+        {
+          "title": "Chapter 3. The Old Logbooks",
+          "text": [
+            "Rain keeps Thomas indoors for two days. In a cupboard under the stairs he finds old lighthouse logbooks. Some are more than eighty years old.",
+            "Most pages contain ordinary notes about wind, ships and repairs. But one keeper repeatedly mentions a small light near the northern rocks during winter storms.",
+            "Thomas takes the oldest book to the kitchen. The handwriting is difficult, but the dates are clear. The strange light appears every few years, always between October and January.",
+            "He tells himself that there must be a simple explanation. Still, that evening he watches the northern sea longer than usual."
+          ]
+        },
+        {
+          "title": "Chapter 4. A Visitor",
+          "text": [
+            "A week later a woman named Maya arrives from the mainland. She is a marine biologist studying seals and seabirds around the island. Bad weather has delayed her work, so she asks Thomas whether she can use the lighthouse radio.",
+            "Thomas shows her the recent entry about the strange light. Maya does not laugh. She says currents near the northern rocks are dangerous and that several old shipwrecks lie under the water there.",
+            "They spend the afternoon comparing maps with the old logbooks. One repeated position is close to a reef that is hidden at high tide.",
+            "Maya suggests that the light may come from something reflecting the lighthouse beam. They decide to investigate when the sea becomes calm."
+          ]
+        },
+        {
+          "title": "Chapter 5. North Reef",
+          "text": [
+            "Three days later they take a small research boat around the island. The sea is cold but quiet. Maya follows the coordinates while Thomas watches the rocks.",
+            "Near North Reef they find an old metal marker fixed to a broken stone wall below the waterline. Its glass surface catches sunlight and flashes brightly toward the lighthouse.",
+            "The mystery is less dramatic than Thomas imagined, but the discovery matters. The marker once warned fishing boats about the reef, and nobody in the village knew it was still there.",
+            "Back at the lighthouse Thomas writes a long entry explaining what they found. For the first time, an old mystery in the logbooks has an answer."
+          ]
+        },
+        {
+          "title": "Chapter 6. Winter Friends",
+          "text": [
+            "As November passes, Thomas becomes part of island life. He helps at the school, drinks coffee with fishermen and gives Maya weather reports for her research.",
+            "His own book also changes. Instead of the city story he planned to finish, he begins writing about an island, a lighthouse and the people who depend on one another during winter.",
+            "When Nora returns in January, Thomas is surprised by how difficult it feels to pack his suitcase. The island that seemed empty three months earlier now feels full of stories.",
+            "On the ferry home he opens his notebook. At the top of a new page he writes a title: The Lighthouse Keeper."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "book5",
+      "title": "The Long Road Home",
+      "ru": "Долгая дорога домой",
+      "level": "A2–B1",
+      "chapters": [
+        {
+          "title": "Chapter 1. A Letter",
+          "text": [
+            "Anna Mercer has lived in London for twelve years when a letter arrives from her aunt. Her grandmother's house in the north of England is going to be sold in six weeks.",
+            "Anna has not visited the village since she was twenty. Work, travel and ordinary life always gave her a reason to postpone the journey.",
+            "The letter says there are boxes of family photographs and papers that Anna may want to keep. On Friday evening she buys a train ticket for the following morning.",
+            "She expects to stay for one weekend. She does not know that the visit will change the next year of her life."
+          ]
+        },
+        {
+          "title": "Chapter 2. The House",
+          "text": [
+            "The stone house stands at the end of a lane beside fields and an old railway bridge. Inside, dust covers the furniture, but the rooms look almost exactly as Anna remembers them.",
+            "Her aunt has already sorted the kitchen and bedrooms. Anna begins in the attic, where dozens of boxes contain school books, letters, tools and clothes from several generations.",
+            "In a small wooden case she finds photographs taken by her grandfather. Many show a railway line that once crossed the valley. The line closed before Anna was born.",
+            "Behind the photographs is a notebook containing names, dates and short descriptions of journeys. Anna reads until late at night."
+          ]
+        },
+        {
+          "title": "Chapter 3. Following the Railway",
+          "text": [
+            "On Sunday Anna walks along the route of the old railway. Parts have become footpaths, while other sections disappear under grass and trees.",
+            "At a ruined station she meets Ben Carter, a local history teacher. He is photographing the building before volunteers begin repairing the roof.",
+            "Ben recognizes Anna's grandfather in one of the photographs. He explains that her grandfather helped organize the final passenger journey before the railway closed.",
+            "Anna had never heard this story. She delays her train home and spends the afternoon listening to people who remember the line."
+          ]
+        },
+        {
+          "title": "Chapter 4. Six Weekends",
+          "text": [
+            "Anna returns to London on Monday, but the village stays in her thoughts. The next weekend she travels north again with a scanner and records interviews with three former railway workers.",
+            "One weekend becomes six. She scans hundreds of photographs and adds names to faces. Ben finds newspaper articles, maps and old tickets in the local archive.",
+            "Together they create a small website about the railway. Messages begin arriving from people who moved away decades ago and still remember travelling through the valley.",
+            "The project makes Anna understand that the boxes in the attic are not only family memories. They are part of the history of the whole community."
+          ]
+        },
+        {
+          "title": "Chapter 5. The Decision",
+          "text": [
+            "The date of the house sale approaches. Anna cannot keep the building herself, but she no longer wants its contents to disappear into private collections.",
+            "She proposes giving the photographs and documents to the village library if volunteers help catalogue them. Her aunt agrees immediately.",
+            "Ben suggests using one room in the repaired station as a permanent exhibition. Local businesses offer money for display cases and printing.",
+            "On the final evening in the house, Anna sits by the window where her grandmother used to sew. Losing the house still feels sad, but she knows the stories inside it will remain."
+          ]
+        },
+        {
+          "title": "Chapter 6. A Different Home",
+          "text": [
+            "A year later Anna returns for the opening of the railway exhibition. The station walls are covered with photographs, maps and quotations from the interviews.",
+            "Children press buttons to hear recordings of old railway workers. Visitors point at pictures and tell one another new stories that Anna has never heard.",
+            "Ben gives Anna a small framed copy of her grandfather's last railway ticket. On the back he has written, Every road home can become a new road forward.",
+            "Anna takes the evening train to London. She still lives in the city, but now she knows that home can be more than one place."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "book6",
+      "title": "The City Under the Hill",
+      "ru": "Город под холмом",
+      "level": "B1",
+      "chapters": [
+        {
+          "title": "Chapter 1. The Survey",
+          "text": [
+            "Daniel Foster works for a small engineering company that studies old buildings. His newest job takes him to Bellford, a town built around a steep green hill.",
+            "The council plans to repair the central square. Before construction begins, Daniel's team must map old pipes, tunnels and foundations below the streets.",
+            "Historical plans show several underground rooms, but the drawings are incomplete. Some passages appear on one map and disappear on the next.",
+            "During the first survey Daniel's scanner detects a large empty space beneath a closed bookshop. There is no entrance marked on any modern plan."
+          ]
+        },
+        {
+          "title": "Chapter 2. Behind the Wall",
+          "text": [
+            "The bookshop owner, Mrs Green, allows the engineers into her basement. Behind shelves of damaged books they find a brick wall that sounds hollow when Daniel taps it.",
+            "The council gives permission to remove several loose bricks. Behind them is a narrow passage filled with cold air and dust.",
+            "Daniel enters with a helmet, lights and a gas detector. Stone steps descend beneath the square and end at a heavy wooden door.",
+            "The door is locked, but above it someone has carved the date 1891. Daniel photographs everything and closes the passage until the site can be made safe."
+          ]
+        },
+        {
+          "title": "Chapter 3. The Hidden Market",
+          "text": [
+            "Old newspapers provide the first clue. In the 1890s Bellford had an underground market where food could be stored at a cool temperature during summer.",
+            "A fire damaged part of the market in 1912. After that, entrances were closed and new buildings covered them. Within a generation most residents had forgotten the rooms existed.",
+            "Engineers strengthen the passage and finally open the wooden door. Beyond it lies a long hall with stone stalls on both sides.",
+            "Broken signs still show the names of bakers, farmers and fish sellers. Coins and bottles remain in corners where they were left more than a century ago."
+          ]
+        },
+        {
+          "title": "Chapter 4. More Than a Tunnel",
+          "text": [
+            "News of the discovery spreads quickly. Some councillors want to close the rooms permanently because restoration will cost money. Others see an opportunity for tourism.",
+            "Daniel argues that the first task is safety, not publicity. His team maps every room and finds cracks caused by modern traffic above.",
+            "Local historians begin documenting objects before anything is moved. Mrs Green discovers that her great-grandfather once owned one of the underground stalls.",
+            "The project brings together engineers, historians, shop owners and students. Each group sees the place differently, but all agree it should not simply be forgotten again."
+          ]
+        },
+        {
+          "title": "Chapter 5. The Flood",
+          "text": [
+            "Heavy rain creates an unexpected emergency. Water enters an unmapped drain and begins filling the lowest chamber.",
+            "Daniel's maps show a blocked nineteenth-century outlet running toward the river. Workers locate it behind another wall and clear the channel before serious damage occurs.",
+            "The incident proves that understanding the old tunnels is important for the modern town as well. Several unexplained damp problems in nearby buildings suddenly make sense.",
+            "The council approves a larger project: repair the drainage, strengthen the market and create a safe public route through part of the underground complex."
+          ]
+        },
+        {
+          "title": "Chapter 6. Opening Day",
+          "text": [
+            "Eighteen months later the restored entrance opens beside the central library. Visitors descend in small groups with guides and hear stories about everyday life in Victorian Bellford.",
+            "Mrs Green has donated photographs and family documents to the exhibition. Her bookshop now sells a history of the market written by local students.",
+            "Daniel stands in the square and watches people entering the place his scanner first revealed as an empty shape beneath the ground.",
+            "He knows engineering usually remains invisible when it works well. This time, however, careful engineering has helped an invisible part of the town become visible again."
+          ]
+        }
+      ]
     }
   ],
   "stories": [
