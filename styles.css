@@ -74,3 +74,6 @@ body.library-reading{overflow:hidden!important;height:100vh!important}.library-r
 
 .listen-selected,.clear-drill{width:calc(50% - 6px)!important;margin:4px 4px 12px 0!important}.clear-drill{background:#64748b!important}.listen-selected+.clear-drill{margin-left:8px!important;margin-right:0!important}html[data-theme="dark"] .clear-drill{background:#475569!important}
 .voice-select{width:100%;margin:10px 0 2px;padding:12px;border:1px solid #d7deea;border-radius:12px;background:#fff;color:inherit;font:inherit}html[data-theme="dark"] .voice-select{background:#1d293d;border-color:#34435c}
+
+/* Keep the two-column home sections centred on wider phone screens. */
+@media (min-width:361px) and (max-width:599px){.grid{grid-template-columns:repeat(2,minmax(0,160px));justify-content:center}}
