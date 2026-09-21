@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Тест Samsung Galaxy S23 — Самоучитель</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      min-height: 100vh; margin: 0; display: grid; place-items: center;
+      background: radial-gradient(circle at 50% 20%, #3b4049, #111318 66%);
+      font-family: system-ui, sans-serif;
+    }
+    .phone {
+      width: 384px; height: 820px; padding: 12px; position: relative;
+      border-radius: 48px; background: #090a0c;
+      box-shadow: 0 30px 80px #000a, inset 0 0 0 2px #545963;
+    }
+    .camera {
+      position: absolute; z-index: 2; top: 22px; left: 50%; width: 12px; height: 12px;
+      transform: translateX(-50%); border-radius: 50%; background: #060709;
+      box-shadow: 0 0 0 2px #161a21;
+    }
+    iframe {
+      width: 360px; height: 780px; border: 0; border-radius: 37px;
+      background: #fff; overflow: hidden;
+    }
+    .label {
+      position: fixed; bottom: 20px; color: #c7ccd7; font-weight: 700;
+      font-size: 14px; letter-spacing: .02em;
+    }
+    @media (max-height: 860px), (max-width: 420px) {
+      body { display: block; background: #090a0c; }
+      .phone { transform-origin: top left; transform: scale(calc(min(100vw / 384, 100vh / 820))); }
+      .label { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="phone" aria-label="Samsung Galaxy S23">
+    <i class="camera" aria-hidden="true"></i>
+    <iframe src="/" title="Самоучитель — Samsung Galaxy S23"></iframe>
+  </main>
+  <div class="label">Samsung Galaxy S23 · 360 × 780</div>
+</body>
+</html>
