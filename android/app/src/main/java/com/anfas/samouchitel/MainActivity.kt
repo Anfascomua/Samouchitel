@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun writeSilence(file: File) {
         val sampleRate = 8_000
-        val dataSize = sampleRate * 700 / 1_000 * 2
+        val dataSize = sampleRate * 3_000 / 1_000 * 2
         val header = ByteBuffer.allocate(44).order(ByteOrder.LITTLE_ENDIAN)
         header.put("RIFF".toByteArray()).putInt(36 + dataSize).put("WAVE".toByteArray()).put("fmt ".toByteArray())
         header.putInt(16).putShort(1).putShort(1).putInt(sampleRate).putInt(sampleRate * 2).putShort(2).putShort(16)
