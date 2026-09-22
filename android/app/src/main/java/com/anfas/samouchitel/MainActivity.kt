@@ -6,8 +6,6 @@ import android.Manifest
 import android.os.Build
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
-import android.view.Gravity
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import java.io.File
 import java.io.FileOutputStream
@@ -24,12 +22,6 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(TextView(this).apply {
-            text = "Самоучитель Аудио\n\nОткройте «Самоучитель» в Chrome, выберите слова и нажмите «В фоне».\n\nВоспроизведение и кнопки находятся в уведомлении."
-            textSize = 18f
-            gravity = Gravity.CENTER
-            setPadding(36, 36, 36, 36)
-        })
         tts = TextToSpeech(this, this)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 10)

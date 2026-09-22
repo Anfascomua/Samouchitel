@@ -77,4 +77,4 @@ body.library-reading{overflow:hidden!important;height:100vh!important}.library-r
 .voice-select{width:100%;margin:10px 0 2px;padding:12px;border:1px solid #d7deea;border-radius:12px;background:#fff;color:inherit;font:inherit}html[data-theme="dark"] .voice-select{background:#1d293d;border-color:#34435c}
 
 /* Keep the two-column home sections centred on wider phone screens. */
-@media (max-width:599px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));width:100%;max-width:332px;margin-inline:auto}}
+@media (max-width:599px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));width:100%;max-width:332px;margin-inline:auto}}.background-drill-card{width:100%;margin-top:10px}
