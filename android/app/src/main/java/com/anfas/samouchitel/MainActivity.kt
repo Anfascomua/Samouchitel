@@ -1,6 +1,9 @@
 package com.anfas.samouchitel
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.view.Gravity
@@ -28,6 +31,9 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             setPadding(36, 36, 36, 36)
         })
         tts = TextToSpeech(this, this)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 10)
+        }
         receive(intent)
     }
 
