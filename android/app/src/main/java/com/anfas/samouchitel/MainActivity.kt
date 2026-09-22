@@ -50,6 +50,14 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts.stop()
             stopService(Intent(this@MainActivity, PlaybackService::class.java))
         }
+        @JavascriptInterface fun speak(text: String, rate: Float) = runOnUiThread {
+            if (!ready) return@runOnUiThread
+            tts.stop()
+            tts.language = Locale.US
+            tts.setSpeechRate(rate.coerceIn(0.5f, 1.2f))
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "page-speech")
+        }
+        @JavascriptInterface fun stopSpeech() = runOnUiThread { tts.stop() }
         @JavascriptInterface fun control(action: String) = runOnUiThread {
             // The service is already running while a drill is playing. Calling it
             // directly keeps controls responsive and avoids starting a second service.

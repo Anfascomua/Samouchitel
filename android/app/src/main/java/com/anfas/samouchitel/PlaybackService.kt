@@ -47,9 +47,24 @@ class PlaybackService : MediaSessionService() {
         when (action) {
             "pause" -> player?.pause()
             "resume" -> player?.play()
-            "next" -> { player?.seekToNextMediaItem(); player?.play() }
-            "previous" -> { player?.seekToPreviousMediaItem(); player?.play() }
+            // The playlist alternates: voice, 3-second silence, voice…
+            // Skip controls must always land on a voice item, not on silence.
+            "next" -> seekVoice(1)
+            "previous" -> seekVoice(-1)
         }
+    }
+
+    private fun seekVoice(direction: Int) {
+        val playback = player ?: return
+        val count = playback.mediaItemCount
+        if (count == 0) return
+        val current = playback.currentMediaItemIndex.coerceAtLeast(0)
+        val voiceIndex = if (current % 2 == 0) current else current + direction
+        var target = voiceIndex + direction * 2
+        target = ((target % count) + count) % count
+        if (target % 2 != 0) target = (target + direction + count) % count
+        playback.seekTo(target, 0)
+        playback.play()
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = session
