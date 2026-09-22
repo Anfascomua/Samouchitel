@@ -62,6 +62,8 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun startQueuedPlayback() {
         if (!ready || queuedWords.isEmpty()) return
+        // Never let an earlier selection continue while a new list is being prepared.
+        stopService(Intent(this, PlaybackService::class.java))
         val directory = File(cacheDir, "drill").apply { deleteRecursively(); mkdirs() }
         tts.stop()
         tts.setSpeechRate(queuedRate)
