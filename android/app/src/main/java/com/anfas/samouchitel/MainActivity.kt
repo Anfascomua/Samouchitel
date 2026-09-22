@@ -1,11 +1,10 @@
 package com.anfas.samouchitel
 
+import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.Manifest
 import android.os.Build
 import android.os.Bundle
-import android.speech.tts.TextToSpeech
 import androidx.appcompat.app.AppCompatActivity
 import java.io.File
 import java.io.FileOutputStream
@@ -13,19 +12,15 @@ import java.net.URL
 import java.net.URLEncoder
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.util.Locale
 
-/** Receives selected words from the browser PWA and keeps audio alive in a media service. */
-class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
-    private lateinit var tts: TextToSpeech
-    private var ready = false
-    private data class Phrase(val text: String, val locale: Locale, val isEnglish: Boolean, val pauseAfterMs: Int)
-    private var queuedWords: List<Phrase> = emptyList()
-    private var queuedRate = 0.82f
+/** Builds a deterministic local playlist: English audio, silence, Russian audio, silence. */
+class MainActivity : AppCompatActivity() {
+    private data class Clip(val text: String, val lang: String, val kind: String, val pauseAfterMs: Int)
+    private var clips: List<Clip> = emptyList()
+    private var speechRate = 0.82f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        tts = TextToSpeech(this, this)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 10)
         }
@@ -38,75 +33,53 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         receive(intent)
     }
 
-    override fun onInit(status: Int) {
-        ready = status == TextToSpeech.SUCCESS
-        if (ready) {
-            tts.language = Locale.US
-            startQueuedPlayback()
-        }
-    }
-
     private fun receive(intent: Intent?) {
         val raw = intent?.data?.getQueryParameter("words") ?: return
-        queuedWords = raw.split('\u001f').flatMap { item ->
+        clips = raw.split('\u001f').flatMap { item ->
             val pair = item.split('\u001e', limit = 2)
+            val english = pair.getOrNull(0)?.trim().orEmpty()
             val translations = pair.getOrNull(1).orEmpty().split(';').map { it.trim() }.filter { it.isNotBlank() }
             buildList {
-                pair.getOrNull(0)?.trim()?.takeIf { it.isNotBlank() }?.let { add(Phrase(it, Locale.US, true, 2000)) }
+                if (english.isNotBlank()) add(Clip(english, "en", "en", 2000))
                 translations.forEachIndexed { index, translation ->
-                    add(Phrase(translation, Locale("ru", "RU"), false, if (index == translations.lastIndex) 2000 else 1000))
+                    add(Clip(translation, "ru", "ru", if (index == translations.lastIndex) 2000 else 1000))
                 }
             }
         }.take(200)
-        queuedRate = intent.data?.getQueryParameter("rate")?.toFloatOrNull()?.coerceIn(0.5f, 1.2f) ?: 0.82f
-        startQueuedPlayback()
+        speechRate = intent.data?.getQueryParameter("rate")?.toFloatOrNull()?.coerceIn(0.5f, 1.2f) ?: 0.82f
+        buildFiles()
     }
 
-    private fun startQueuedPlayback() {
-        if (!ready || queuedWords.isEmpty()) return
-        // Never let an earlier selection continue while a new list is being prepared.
+    private fun buildFiles() {
+        if (clips.isEmpty()) return
         stopService(Intent(this, PlaybackService::class.java))
         val directory = File(cacheDir, "drill").apply { deleteRecursively(); mkdirs() }
-        tts.stop()
-        tts.setSpeechRate(queuedRate)
-        synthesize(queuedWords, 0, directory)
+        downloadClip(directory, 0)
     }
 
-    private fun synthesize(parts: List<Phrase>, index: Int, directory: File) {
-        if (index >= parts.size) {
-            startForegroundService(Intent(this, PlaybackService::class.java).putExtra("dir", directory.absolutePath))
+    private fun downloadClip(directory: File, index: Int) {
+        if (index >= clips.size) {
+            startForegroundService(Intent(this, PlaybackService::class.java).putExtra("dir", directory.absolutePath).putExtra("rate", speechRate))
+            finish()
             return
         }
-        val phrase = parts[index]
-        val languageResult = tts.setLanguage(phrase.locale)
-        val suffix = if (phrase.isEnglish) "en" else "ru"
-        if (languageResult == TextToSpeech.LANG_MISSING_DATA || languageResult == TextToSpeech.LANG_NOT_SUPPORTED) {
-            val file = File(directory, "%04d-%s.mp3".format(index * 2, suffix))
-            Thread {
-                try {
-                    val lang = if (phrase.isEnglish) "en" else "ru"
-                    val text = URLEncoder.encode(phrase.text, Charsets.UTF_8.name()).replace("+", "%20")
-                    URL("https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=$lang&q=$text").openStream().use { input ->
-                        file.outputStream().use { output -> input.copyTo(output) }
-                    }
-                } catch (_: Exception) { }
-                runOnUiThread {
-                    writeSilence(File(directory, "%04d-gap.wav".format(index * 2 + 1)), phrase.pauseAfterMs)
-                    synthesize(parts, index + 1, directory)
-                }
-            }.start()
-            return
-        }
-        val file = File(directory, "%04d-%s.wav".format(index * 2, suffix))
-        tts.setOnUtteranceProgressListener(object : android.speech.tts.UtteranceProgressListener() {
-            override fun onStart(id: String) = Unit
-            override fun onError(id: String) = runOnUiThread { synthesize(parts, index + 1, directory) }
-            override fun onDone(id: String) = runOnUiThread {
-                writeSilence(File(directory, "%04d-gap.wav".format(index * 2 + 1)), phrase.pauseAfterMs)
-                synthesize(parts, index + 1, directory)
+        val clip = clips[index]
+        val audioFile = File(directory, "%04d-%s.mp3".format(index * 2, clip.kind))
+        Thread {
+            try {
+                val text = URLEncoder.encode(clip.text, Charsets.UTF_8.name()).replace("+", "%20")
+                URL("https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${clip.lang}&q=$text").openConnection().apply {
+                    setRequestProperty("User-Agent", "Mozilla/5.0")
+                    connectTimeout = 15000
+                    readTimeout = 30000
+                }.getInputStream().use { input -> audioFile.outputStream().use { output -> input.copyTo(output) } }
+            } catch (_: Exception) {
+                // Keep positions stable even if one network clip failed; the surrounding clips still play.
+                writeSilence(audioFile, 250)
             }
-        })
-        tts.synthesizeToFile(parts[index].text, Bundle(), file, "drill-$index")
+            writeSilence(File(directory, "%04d-gap.wav".format(index * 2 + 1)), clip.pauseAfterMs)
+            runOnUiThread { downloadClip(directory, index + 1) }
+        }.start()
     }
 
     private fun writeSilence(file: File, durationMs: Int) {
@@ -118,6 +91,4 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         header.put("data".toByteArray()).putInt(dataSize)
         FileOutputStream(file).use { it.write(header.array()); it.write(ByteArray(dataSize)) }
     }
-
-    override fun onDestroy() { tts.shutdown(); super.onDestroy() }
 }

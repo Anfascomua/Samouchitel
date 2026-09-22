@@ -42,18 +42,19 @@ class PlaybackService : Service() {
             "next" -> seekWord(1)
             "previous" -> seekWord(-1)
             "stop" -> { stopForeground(STOP_FOREGROUND_REMOVE); stopSelf() }
-            else -> intent?.getStringExtra("dir")?.let(::startPlaylist)
+            else -> intent?.getStringExtra("dir")?.let { startPlaylist(it, intent.getFloatExtra("rate", 0.82f)) }
         }
         return START_STICKY
     }
 
-    private fun startPlaylist(directory: String) {
+    private fun startPlaylist(directory: String, rate: Float) {
         val files = File(directory).listFiles()?.sortedBy { it.name }.orEmpty()
         wordStarts = files.mapIndexedNotNull { index, file -> index.takeIf { file.name.contains("-en.") } }
         if (files.isEmpty()) { stopSelf(); return }
         startForeground(NOTIFICATION_ID, notification())
         player?.setMediaItems(files.map { MediaItem.fromUri(it.toURI().toString()) })
         player?.prepare()
+        player?.setPlaybackSpeed(rate)
         player?.play()
         refreshNotification()
     }
