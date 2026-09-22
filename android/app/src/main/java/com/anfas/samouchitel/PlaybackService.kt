@@ -20,6 +20,7 @@ class PlaybackService : MediaSessionService() {
 
     private var player: ExoPlayer? = null
     private var session: MediaSession? = null
+    private var groupSize = 2
 
     override fun onCreate() {
         super.onCreate()
@@ -34,6 +35,7 @@ class PlaybackService : MediaSessionService() {
             applyControl(action)
         } else {
             intent?.getStringExtra("dir")?.let { directory ->
+                groupSize = intent.getIntExtra("groupSize", 2).coerceAtLeast(2)
                 val files = File(directory).listFiles()?.sortedBy { it.name }.orEmpty()
                 player?.setMediaItems(files.map { MediaItem.fromUri(it.toURI().toString()) })
                 player?.prepare()
@@ -47,8 +49,7 @@ class PlaybackService : MediaSessionService() {
         when (action) {
             "pause" -> player?.pause()
             "resume" -> player?.play()
-            // The playlist alternates: voice, 3-second silence, voice…
-            // Skip controls must always land on a voice item, not on silence.
+            // A word group contains English, a pause, translation, then a pause.
             "next" -> seekVoice(1)
             "previous" -> seekVoice(-1)
         }
@@ -59,10 +60,9 @@ class PlaybackService : MediaSessionService() {
         val count = playback.mediaItemCount
         if (count == 0) return
         val current = playback.currentMediaItemIndex.coerceAtLeast(0)
-        val voiceIndex = if (current % 2 == 0) current else current + direction
-        var target = voiceIndex + direction * 2
+        val groupStart = current - (current % groupSize)
+        var target = groupStart + direction * groupSize
         target = ((target % count) + count) % count
-        if (target % 2 != 0) target = (target + direction + count) % count
         playback.seekTo(target, 0)
         playback.play()
     }

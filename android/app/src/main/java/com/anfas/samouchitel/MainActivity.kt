@@ -17,7 +17,8 @@ import java.util.Locale
 class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private lateinit var tts: TextToSpeech
     private var ready = false
-    private var queuedWords: List<String> = emptyList()
+    private data class Phrase(val text: String, val locale: Locale)
+    private var queuedWords: List<Phrase> = emptyList()
     private var queuedRate = 0.82f
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +46,13 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun receive(intent: Intent?) {
         val raw = intent?.data?.getQueryParameter("words") ?: return
-        queuedWords = raw.split('\u001f').map { it.trim() }.filter { it.isNotBlank() }.take(100)
+        queuedWords = raw.split('\u001f').flatMap { item ->
+            val pair = item.split('\u001e', limit = 2)
+            listOfNotNull(
+                pair.getOrNull(0)?.trim()?.takeIf { it.isNotBlank() }?.let { Phrase(it, Locale.US) },
+                pair.getOrNull(1)?.trim()?.takeIf { it.isNotBlank() }?.let { Phrase(it, Locale("ru", "RU")) }
+            )
+        }.take(200)
         queuedRate = intent.data?.getQueryParameter("rate")?.toFloatOrNull()?.coerceIn(0.5f, 1.2f) ?: 0.82f
         startQueuedPlayback()
     }
@@ -54,17 +61,17 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (!ready || queuedWords.isEmpty()) return
         val directory = File(cacheDir, "drill").apply { deleteRecursively(); mkdirs() }
         tts.stop()
-        tts.language = Locale.US
         tts.setSpeechRate(queuedRate)
         synthesize(queuedWords, 0, directory)
     }
 
-    private fun synthesize(parts: List<String>, index: Int, directory: File) {
+    private fun synthesize(parts: List<Phrase>, index: Int, directory: File) {
         if (index >= parts.size) {
-            startForegroundService(Intent(this, PlaybackService::class.java).putExtra("dir", directory.absolutePath))
+            startForegroundService(Intent(this, PlaybackService::class.java).putExtra("dir", directory.absolutePath).putExtra("groupSize", 4))
             return
         }
         val file = File(directory, "%04d-voice.wav".format(index * 2))
+        tts.language = parts[index].locale
         tts.setOnUtteranceProgressListener(object : android.speech.tts.UtteranceProgressListener() {
             override fun onStart(id: String) = Unit
             override fun onError(id: String) = runOnUiThread { synthesize(parts, index + 1, directory) }
@@ -73,7 +80,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 synthesize(parts, index + 1, directory)
             }
         })
-        tts.synthesizeToFile(parts[index], Bundle(), file, "drill-$index")
+        tts.synthesizeToFile(parts[index].text, Bundle(), file, "drill-$index")
     }
 
     private fun writeSilence(file: File) {
