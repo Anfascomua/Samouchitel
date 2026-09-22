@@ -37,8 +37,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun receive(intent: Intent?) {
+        val mode = intent?.data?.getQueryParameter("mode") ?: "play"
+        if (mode == "stop") {
+            stopService(Intent(this, PlaybackService::class.java))
+            finish()
+            return
+        }
         val raw = intent?.data?.getQueryParameter("words") ?: return
-        val mode = intent.data?.getQueryParameter("mode") ?: "play"
         playlistKey = raw
         clips = raw.split('\u001f').flatMap { item ->
             val pair = item.split('\u001e', limit = 2)

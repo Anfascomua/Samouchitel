@@ -21,6 +21,8 @@ class PlaybackService : Service() {
 
     private var player: ExoPlayer? = null
     private var wordStarts: List<Int> = emptyList()
+    private var playlistFiles: List<File> = emptyList()
+    private var baseSpeed = 0.9f
 
     override fun onCreate() {
         super.onCreate()
@@ -31,6 +33,10 @@ class PlaybackService : Service() {
             repeatMode = Player.REPEAT_MODE_ALL
             addListener(object : Player.Listener {
                 override fun onIsPlayingChanged(isPlaying: Boolean) = refreshNotification()
+                override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                    val file = playlistFiles.getOrNull(player?.currentMediaItemIndex ?: -1)
+                    player?.setPlaybackSpeed(if (file?.name?.contains("-ru.") == true) baseSpeed * 2f else baseSpeed)
+                }
             })
         }
     }
@@ -49,6 +55,8 @@ class PlaybackService : Service() {
 
     private fun startPlaylist(directory: String, rate: Float) {
         val files = File(directory).listFiles()?.sortedBy { it.name }.orEmpty()
+        playlistFiles = files
+        baseSpeed = rate
         wordStarts = files.mapIndexedNotNull { index, file -> index.takeIf { file.name.contains("-en.") } }
         if (files.isEmpty()) { stopSelf(); return }
         startForeground(NOTIFICATION_ID, notification())
