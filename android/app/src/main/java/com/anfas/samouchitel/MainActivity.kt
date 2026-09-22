@@ -6,6 +6,7 @@ import android.speech.tts.TextToSpeech
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.webkit.WebSettings
 import androidx.appcompat.app.AppCompatActivity
 import java.io.File
 import java.io.FileOutputStream
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         web.settings.javaScriptEnabled = true
         web.settings.domStorageEnabled = true
         web.settings.mediaPlaybackRequiresUserGesture = false
+        web.settings.cacheMode = WebSettings.LOAD_NO_CACHE
         web.addJavascriptInterface(Bridge(), "AndroidAudio")
         web.webViewClient = WebViewClient()
         web.loadUrl("https://samouchitel.pages.dev")
