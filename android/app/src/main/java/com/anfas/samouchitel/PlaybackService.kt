@@ -49,7 +49,7 @@ class PlaybackService : Service() {
 
     private fun startPlaylist(directory: String) {
         val files = File(directory).listFiles()?.sortedBy { it.name }.orEmpty()
-        wordStarts = files.mapIndexedNotNull { index, file -> index.takeIf { file.name.endsWith("-en.wav") } }
+        wordStarts = files.mapIndexedNotNull { index, file -> index.takeIf { file.name.contains("-en.") } }
         if (files.isEmpty()) { stopSelf(); return }
         startForeground(NOTIFICATION_ID, notification())
         player?.setMediaItems(files.map { MediaItem.fromUri(it.toURI().toString()) })

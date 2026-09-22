@@ -9,6 +9,8 @@ import android.speech.tts.TextToSpeech
 import androidx.appcompat.app.AppCompatActivity
 import java.io.File
 import java.io.FileOutputStream
+import java.net.URL
+import java.net.URLEncoder
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.Locale
@@ -75,13 +77,32 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             startForegroundService(Intent(this, PlaybackService::class.java).putExtra("dir", directory.absolutePath))
             return
         }
-        val file = File(directory, "%04d-%s.wav".format(index * 2, if (parts[index].isEnglish) "en" else "ru"))
-        tts.language = parts[index].locale
+        val phrase = parts[index]
+        val languageResult = tts.setLanguage(phrase.locale)
+        val suffix = if (phrase.isEnglish) "en" else "ru"
+        if (languageResult == TextToSpeech.LANG_MISSING_DATA || languageResult == TextToSpeech.LANG_NOT_SUPPORTED) {
+            val file = File(directory, "%04d-%s.mp3".format(index * 2, suffix))
+            Thread {
+                try {
+                    val lang = if (phrase.isEnglish) "en" else "ru"
+                    val text = URLEncoder.encode(phrase.text, Charsets.UTF_8.name()).replace("+", "%20")
+                    URL("https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=$lang&q=$text").openStream().use { input ->
+                        file.outputStream().use { output -> input.copyTo(output) }
+                    }
+                } catch (_: Exception) { }
+                runOnUiThread {
+                    writeSilence(File(directory, "%04d-gap.wav".format(index * 2 + 1)), phrase.pauseAfterMs)
+                    synthesize(parts, index + 1, directory)
+                }
+            }.start()
+            return
+        }
+        val file = File(directory, "%04d-%s.wav".format(index * 2, suffix))
         tts.setOnUtteranceProgressListener(object : android.speech.tts.UtteranceProgressListener() {
             override fun onStart(id: String) = Unit
             override fun onError(id: String) = runOnUiThread { synthesize(parts, index + 1, directory) }
             override fun onDone(id: String) = runOnUiThread {
-                writeSilence(File(directory, "%04d-gap.wav".format(index * 2 + 1)), parts[index].pauseAfterMs)
+                writeSilence(File(directory, "%04d-gap.wav".format(index * 2 + 1)), phrase.pauseAfterMs)
                 synthesize(parts, index + 1, directory)
             }
         })
