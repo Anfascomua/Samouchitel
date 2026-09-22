@@ -20,7 +20,7 @@ class PlaybackService : MediaSessionService() {
 
     private var player: ExoPlayer? = null
     private var session: MediaSession? = null
-    private var groupSize = 2
+    private var wordStarts: List<Int> = emptyList()
 
     override fun onCreate() {
         super.onCreate()
@@ -35,8 +35,8 @@ class PlaybackService : MediaSessionService() {
             applyControl(action)
         } else {
             intent?.getStringExtra("dir")?.let { directory ->
-                groupSize = intent.getIntExtra("groupSize", 2).coerceAtLeast(2)
                 val files = File(directory).listFiles()?.sortedBy { it.name }.orEmpty()
+                wordStarts = files.mapIndexedNotNull { index, file -> index.takeIf { file.name.endsWith("-en.wav") } }
                 player?.setMediaItems(files.map { MediaItem.fromUri(it.toURI().toString()) })
                 player?.prepare()
                 player?.play()
@@ -49,7 +49,7 @@ class PlaybackService : MediaSessionService() {
         when (action) {
             "pause" -> player?.pause()
             "resume" -> player?.play()
-            // A word group contains English, a pause, translation, then a pause.
+            // Jump by English words, regardless of how many translation variants follow.
             "next" -> seekVoice(1)
             "previous" -> seekVoice(-1)
         }
@@ -57,12 +57,13 @@ class PlaybackService : MediaSessionService() {
 
     private fun seekVoice(direction: Int) {
         val playback = player ?: return
-        val count = playback.mediaItemCount
-        if (count == 0) return
+        if (playback.mediaItemCount == 0 || wordStarts.isEmpty()) return
         val current = playback.currentMediaItemIndex.coerceAtLeast(0)
-        val groupStart = current - (current % groupSize)
-        var target = groupStart + direction * groupSize
-        target = ((target % count) + count) % count
+        val target = if (direction > 0) {
+            wordStarts.firstOrNull { it > current } ?: wordStarts.first()
+        } else {
+            wordStarts.lastOrNull { it < current } ?: wordStarts.last()
+        }
         playback.seekTo(target, 0)
         playback.play()
     }
