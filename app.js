@@ -14,7 +14,7 @@ const LANGUAGES = {
     code: "ES",
     label: "Español",
     title: "Испанский с нуля",
-    speech: "es-US",
+    speech: "es-419",
     tts: "es",
     count: "5 000 слов",
   },
