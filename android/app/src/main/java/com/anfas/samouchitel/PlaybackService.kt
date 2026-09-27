@@ -9,7 +9,9 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.common.AudioAttributes
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.MediaSession
 import java.io.File
 
 /** Keeps the currently selected drill list playing after the phone screen turns off. */
@@ -20,6 +22,7 @@ class PlaybackService : Service() {
     }
 
     private var player: ExoPlayer? = null
+    private var mediaSession: MediaSession? = null
     private var wordStarts: List<Int> = emptyList()
     private var playlistFiles: List<File> = emptyList()
     private var baseSpeed = 0.9f
@@ -30,15 +33,25 @@ class PlaybackService : Service() {
             NotificationChannel(CHANNEL_ID, "Зубрёжка в фоне", NotificationManager.IMPORTANCE_LOW)
         )
         player = ExoPlayer.Builder(this).build().apply {
+            // Media3 handles end-of-playlist looping reliably, including with the screen locked.
             repeatMode = Player.REPEAT_MODE_ALL
+            setAudioAttributes(AudioAttributes.DEFAULT, true)
             addListener(object : Player.Listener {
                 override fun onIsPlayingChanged(isPlaying: Boolean) = refreshNotification()
                 override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                     val file = playlistFiles.getOrNull(player?.currentMediaItemIndex ?: -1)
-                    player?.setPlaybackSpeed(if (file?.name?.contains("-ru.") == true) baseSpeed * 2f else baseSpeed)
+                    player?.setPlaybackSpeed(if (file?.name?.contains("-ru.") == true) baseSpeed * 1.8f else baseSpeed)
+                }
+                override fun onPlaybackStateChanged(state: Int) {
+                    // Fallback for devices that report END before applying repeat mode.
+                    if (state == Player.STATE_ENDED && (player?.mediaItemCount ?: 0) > 0) {
+                        player?.seekTo(0, 0)
+                        player?.play()
+                    }
                 }
             })
         }
+        mediaSession = MediaSession.Builder(this, player!!).build()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -54,7 +67,8 @@ class PlaybackService : Service() {
     }
 
     private fun startPlaylist(directory: String, rate: Float) {
-        val files = File(directory).listFiles()?.sortedBy { it.name }.orEmpty()
+        // playlist.key stores the selected-word signature; only playable audio may enter ExoPlayer.
+        val files = File(directory).listFiles()?.filter { it.extension.lowercase() in setOf("mp3", "wav") }?.sortedBy { it.name }.orEmpty()
         playlistFiles = files
         baseSpeed = rate
         wordStarts = files.mapIndexedNotNull { index, file -> index.takeIf { file.name.contains("-en.") } }
@@ -97,5 +111,5 @@ class PlaybackService : Service() {
     )
 
     override fun onBind(intent: Intent?): IBinder? = null
-    override fun onDestroy() { player?.release(); super.onDestroy() }
+    override fun onDestroy() { mediaSession?.release(); player?.release(); super.onDestroy() }
 }
