@@ -293,11 +293,11 @@ function spanishPhonetic(value) {
   if (!t) return "";
   return t
     .replace(/güe/g, "гвэ").replace(/güi/g, "гви")
-    .replace(/que/g, "ке").replace(/qui/g, "ки")
-    .replace(/gue/g, "ге").replace(/gui/g, "ги")
+    .replace(/que/g, "кэ").replace(/qui/g, "ки")
+    .replace(/gue/g, "гэ").replace(/gui/g, "ги")
     .replace(/ch/g, "ч").replace(/ll/g, "й").replace(/rr/g, "р")
-    .replace(/ñ/g, "нь").replace(/ce/g, "се").replace(/ci/g, "си")
-    .replace(/ge/g, "хе").replace(/gi/g, "хи").replace(/h/g, "")
+    .replace(/ñ/g, "нь").replace(/ce/g, "сэ").replace(/ci/g, "си")
+    .replace(/ge/g, "хэ").replace(/gi/g, "хи").replace(/h/g, "")
     .replace(/j/g, "х").replace(/z/g, "с").replace(/v/g, "б")
     .replace(/x/g, "кс").replace(/y\b/g, "и").replace(/y/g, "й")
     .replace(/c/g, "к")
