@@ -1251,11 +1251,7 @@ function launchBackgroundAudio() {
   const words = dictionary.words.filter((w) => S.drill.has(w.id)).slice(0, 100);
   if (!words.length) return;
   const sequence = words
-    .map((w) =>
-      (activeLanguage === "es" ? spanishPhonetic(w.en) : w.en) +
-      "\u001e" +
-      (w.ru || ""),
-    )
+    .map((w) => w.en + "\u001e" + (w.ru || ""))
     .join("\u001f");
   const url =
     "intent://play?words=" +
@@ -1263,7 +1259,7 @@ function launchBackgroundAudio() {
     "&rate=" +
     encodeURIComponent(Number(S.settings.voiceRate ?? 0.82)) +
     "&lang=" +
-    encodeURIComponent(activeLanguage === "es" ? "ru" : LANGUAGES[activeLanguage].tts) +
+    encodeURIComponent(activeLanguage === "es" ? "es" : LANGUAGES[activeLanguage].tts) +
     "#Intent;scheme=samouchitel-audio;package=com.anfas.samouchitel.audio;end";
   location.href = url;
 }

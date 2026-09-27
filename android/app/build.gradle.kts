@@ -1,6 +1,6 @@
 plugins { id("com.android.application"); id("org.jetbrains.kotlin.android") }
 android { namespace="com.anfas.samouchitel"; compileSdk=35
- defaultConfig { applicationId="com.anfas.samouchitel.audio"; minSdk=26; targetSdk=35; versionCode=19; versionName="4.2" }
+ defaultConfig { applicationId="com.anfas.samouchitel.audio"; minSdk=26; targetSdk=35; versionCode=20; versionName="4.3" }
  compileOptions { sourceCompatibility=JavaVersion.VERSION_17; targetCompatibility=JavaVersion.VERSION_17 }
  kotlinOptions { jvmTarget="17" }
 }
