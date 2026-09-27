@@ -43,7 +43,7 @@ function refreshDrillUi() {
       S.learned.size;
   if (button) {
     button.disabled = !S.drill.size;
-    button.textContent = "🧠 Зубрить (" + S.drill.size + ")";
+    button.textContent = "▶ Прослушать выбранное (" + S.drill.size + ")";
   }
 }
 document.addEventListener("change", (e) => {
@@ -327,14 +327,25 @@ function speak(t, button = null) {
     button.textContent = "■";
     button.classList.add("speaking");
   }
-  // Spanish words are read from their phonetic Cyrillic form, not letter by
-  // letter from Latin spelling: allí -> айи, hola -> ола.
+  // Spanish is spoken from the same Cyrillic transcription that is shown
+  // in the UI. This keeps Costa-Rican/Latin-American yeismo consistent.
   if (activeLanguage === "es") {
-    const u = new SpeechSynthesisUtterance(spanishPhonetic(t));
-    u.lang = "ru-RU";
-    u.rate = Number(S.settings.voiceRate || 0.88);
-    u.onend = u.onerror = () => finishSpeechButton(button);
-    speechSynthesis.speak(u);
+    const spoken = spanishPhonetic(t);
+    const done = () => finishSpeechButton(button);
+    if (nativeSpeak(spoken, S.settings.voiceRate || 0.88)) {
+      setTimeout(done, Math.max(900, String(spoken).split(/\s+/).length * 550));
+      return;
+    }
+    try {
+      const u = new SpeechSynthesisUtterance(spoken);
+      u.lang = "ru-RU";
+      u.rate = Number(S.settings.voiceRate || 0.88);
+      u.onend = done;
+      u.onerror = () => remoteSpeak(spoken, S.settings.voiceRate || 0.88, done);
+      speechSynthesis.speak(u);
+    } catch (e) {
+      remoteSpeak(spoken, S.settings.voiceRate || 0.88, done);
+    }
     return;
   }
   if (nativeSpeak(t, S.settings.voiceRate || 0.88)) {
@@ -1075,7 +1086,7 @@ function dictionaryView(
       S.learned.size +
       '</div><button class="btn listen-selected" id="listenSelected" ' +
       (S.drill.size ? "" : "disabled") +
-      " >🧠 Зубрить (" +
+      " >▶ Прослушать выбранное (" +
       S.drill.size +
       ')</button><div class="tablewrap"><table class="dict"><thead><tr><th class="flagcol">Круг</th><th>' +
       lang.label +
@@ -1312,20 +1323,32 @@ function speakDrillTranslation(text, done) {
 function playWebDrillAudio(list, w) {
   const audio = drillAudioPool[drillIndex] || new Audio(drillAudioUrl(w.en));
   drillAudioPool[drillIndex] = audio;
+  let fallbackStarted = false;
   const next = () => {
     drillIndex = (drillIndex + 1) % list.length;
     drillCard(list);
   };
-  audio.onended = () => {
+  const afterSource = () => {
     if (!drillListening || drillPaused) return;
+    audio.onerror = null;
     drillTimer = setTimeout(() => {
       if (!drillListening || drillPaused) return;
       speakDrillTranslation(w.ru || "", () => {
         if (!drillListening || drillPaused) return;
         drillTimer = setTimeout(next, 2000);
       });
-    }, 2000);
+    }, 1200);
   };
+  const fallback = () => {
+    if (fallbackStarted || !drillListening || drillPaused) return;
+    fallbackStarted = true;
+    audio.onended = null;
+    audio.onerror = null;
+    try { audio.pause(); } catch (e) {}
+    sayWithVoice(w.en, 0, afterSource);
+  };
+  audio.onended = afterSource;
+  audio.onerror = fallback;
   audio.playbackRate = Math.max(
     0.6,
     Math.min(1.2, Number(S.settings.voiceRate) || 0.82),
@@ -1334,9 +1357,14 @@ function playWebDrillAudio(list, w) {
     navigator.mediaSession.metadata = new MediaMetadata({
       title: w.en,
       artist: "Зубрёжка · Самоучитель",
-      album: "English",
+      album: activeLanguage === "es" ? "Español" : "English",
     });
-  audio.play().catch(() => sayWithVoice(w.en, 0, audio.onended));
+  try {
+    const p = audio.play();
+    if (p && typeof p.catch === "function") p.catch(fallback);
+  } catch (e) {
+    fallback();
+  }
 }
 function startDrill() {
   const list = dictionary.words.filter((w) => S.drill.has(w.id));
@@ -1405,8 +1433,27 @@ function getEnglishVoices() {
   return v.length ? v : speechSynthesis.getVoices();
 }
 function sayWithVoice(text, voiceIndex, onend) {
+  const done = () => onend && onend();
+  if (activeLanguage === "es") {
+    const spoken = spanishPhonetic(text);
+    if (nativeSpeak(spoken, S.settings.voiceRate ?? 0.82)) {
+      setTimeout(done, Math.max(900, String(spoken).split(/\s+/).length * 550));
+      return;
+    }
+    try {
+      const u = new SpeechSynthesisUtterance(spoken);
+      u.lang = "ru-RU";
+      u.rate = Number(S.settings.voiceRate ?? 0.82);
+      u.onend = done;
+      u.onerror = () => remoteSpeak(spoken, S.settings.voiceRate ?? 0.82, done);
+      speechSynthesis.speak(u);
+    } catch (e) {
+      remoteSpeak(spoken, S.settings.voiceRate ?? 0.82, done);
+    }
+    return;
+  }
   if (window.AndroidAudio) {
-    remoteSpeak(text, S.settings.voiceRate ?? 0.82, onend);
+    remoteSpeak(text, S.settings.voiceRate ?? 0.82, done);
     return;
   }
   const u = new SpeechSynthesisUtterance(text);
@@ -1415,7 +1462,8 @@ function sayWithVoice(text, voiceIndex, onend) {
     voice = vs.find((v) => v.name === S.settings.voiceName);
   if (voice || vs.length) u.voice = voice || vs[voiceIndex % vs.length];
   u.rate = Number(S.settings.voiceRate ?? 0.82);
-  u.onend = () => onend && onend();
+  u.onend = done;
+  u.onerror = done;
   speechSynthesis.speak(u);
 }
 function reverseSequence(w, done) {
@@ -2046,8 +2094,5 @@ launchBackgroundAudio = () => {
 const startDrillWithAudioFiles = startDrill;
 startDrill = () => {
   backgroundAudioActive = false;
-  const words = dictionary.words.filter((w) => S.drill.has(w.id)).slice(0, 100);
   startDrillWithAudioFiles();
-  if (words.length && /Android/i.test(navigator.userAgent))
-    location.href = nativeAudioIntent(words, "prepare");
 };
