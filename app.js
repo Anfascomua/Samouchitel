@@ -624,6 +624,12 @@ async function readLocalNovel(type, x) {
     );
   let page = 0;
   const render = () => {
+    const pager =
+      '<div class="pager novel-pager"><button class="btn" data-novel-page="prev" ' +
+      (page === 0 ? "disabled" : "") +
+      '>← Предыдущая</button><button class="btn primary" data-novel-page="next" ' +
+      (page === pages.length - 1 ? "disabled" : "") +
+      '>Следующая →</button></div>';
     const body = pages[page]
       .map(
         (p) =>
@@ -647,13 +653,13 @@ async function readLocalNovel(type, x) {
         x.ru +
         " · " +
         x.author +
-        '</p><div class="reader">' +
+        "</p>" +
+        pager +
+        '<div class="reader">' +
         body +
-        '</div><div class="pager"><button class="btn" id="prevPage" ' +
-        (page === 0 ? "disabled" : "") +
-        '>← Назад</button><button class="btn primary" id="nextPage" ' +
-        (page === pages.length - 1 ? "disabled" : "") +
-        '>Дальше →</button></div><div id="libraryWordTranslation" class="library-translation"></div>',
+        "</div>" +
+        pager +
+        '<div id="libraryWordTranslation" class="library-translation"></div>',
       "home",
     );
     document.querySelector(".reader-fixed-header")?.remove();
@@ -667,12 +673,14 @@ async function readLocalNovel(type, x) {
       document.body.classList.remove("library-reading");
       libraryList(type);
     };
-    document.querySelector("#prevPage").onclick = () => {
-      if (page) { page--; render(); window.scrollTo(0, 0); }
-    };
-    document.querySelector("#nextPage").onclick = () => {
-      if (page < pages.length - 1) { page++; render(); window.scrollTo(0, 0); }
-    };
+    document.querySelectorAll("[data-novel-page]").forEach((button) =>
+      (button.onclick = () => {
+        if (button.dataset.novelPage === "prev" && page) page--;
+        if (button.dataset.novelPage === "next" && page < pages.length - 1) page++;
+        render();
+        window.scrollTo(0, 0);
+      }),
+    );
     wireSpeak();
     wireLibraryTranslation();
     wireSentenceTranslations();
