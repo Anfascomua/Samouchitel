@@ -257,7 +257,9 @@ function remoteSpeak(t, rate, done) {
     remoteSpeech = null;
   }
   remoteSpeech = new Audio(
-    "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=" +
+    "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=" +
+      LANGUAGES[activeLanguage].tts +
+      "&q=" +
       encodeURIComponent(t),
   );
   remoteSpeech.playbackRate = Math.max(
@@ -449,7 +451,7 @@ function speakLibraryText(text) {
     return;
   }
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = "en-US";
+  u.lang = LANGUAGES[activeLanguage].speech;
   u.rate = Number(S.settings.voiceRate ?? 0.88);
   const voices = getEnglishVoices(),
     voice = voices.find((v) => v.name === S.settings.voiceName);
@@ -1979,6 +1981,8 @@ function nativeAudioIntent(words, mode) {
     encodeURIComponent(sequence) +
     "&rate=" +
     encodeURIComponent(0.9) +
+    "&lang=" +
+    encodeURIComponent(LANGUAGES[activeLanguage].tts) +
     "#Intent;scheme=samouchitel-audio;package=com.anfas.samouchitel.audio;end"
   );
 }

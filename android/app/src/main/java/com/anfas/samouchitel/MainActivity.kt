@@ -44,13 +44,14 @@ class MainActivity : AppCompatActivity() {
             return
         }
         val raw = intent?.data?.getQueryParameter("words") ?: return
-        playlistKey = raw
+        val sourceLanguage = intent.data?.getQueryParameter("lang")?.takeIf { it == "es" || it == "en" } ?: "en"
+        playlistKey = "$sourceLanguage|$raw"
         clips = raw.split('\u001f').flatMap { item ->
             val pair = item.split('\u001e', limit = 2)
             val english = pair.getOrNull(0)?.trim().orEmpty()
             val translations = pair.getOrNull(1).orEmpty().split(';').map { it.trim() }.filter { it.isNotBlank() }
             buildList {
-                if (english.isNotBlank()) add(Clip(english, "en", "en", 2000))
+                if (english.isNotBlank()) add(Clip(english, sourceLanguage, "source", 2000))
                 translations.forEachIndexed { index, translation ->
                     add(Clip(translation, "ru", "ru", if (index == translations.lastIndex) 2000 else 1000))
                 }
