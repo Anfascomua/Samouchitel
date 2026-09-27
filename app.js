@@ -1,76 +1,1878 @@
-const S={progress:JSON.parse(localStorage.getItem("sam-progress")||"{}"),settings:JSON.parse(localStorage.getItem("sam-settings")||'{"theme":"light","font":100}'),drill:new Set(JSON.parse(localStorage.getItem("sam-drill")||"[]")),learned:new Set(JSON.parse(localStorage.getItem("sam-learned")||"[]")),favorites:new Set(JSON.parse(localStorage.getItem("sam-favorites")||"[]")),review:JSON.parse(localStorage.getItem("sam-review")||"{}"),daily:JSON.parse(localStorage.getItem("sam-daily")||"{}")};let course,dictionary,school,library;
-function refreshDrillUi(){const count=document.querySelector(".dictcount"),button=document.querySelector("#listenSelected");if(count)count.textContent=(document.querySelectorAll(".dict tbody tr").length||0)+" слов · для зубрёжки: "+S.drill.size+" · выучено: "+S.learned.size;if(button){button.disabled=!S.drill.size;button.textContent="🧠 Зубрить ("+S.drill.size+")"}}
-document.addEventListener("change",e=>{if(e.target.classList?.contains("drillcheck"))refreshDrillUi()});
-function applySettings(){if(S.settings.voiceRate==null)S.settings.voiceRate=.88;if(!S.settings.highlightLight)S.settings.highlightLight="#ffd54f";if(!S.settings.highlightDark)S.settings.highlightDark="#4dabf7";document.documentElement.dataset.theme=S.settings.theme;document.documentElement.style.fontSize=S.settings.font+"%";document.documentElement.style.setProperty("--word-light",S.settings.highlightLight);document.documentElement.style.setProperty("--word-dark",S.settings.highlightDark)}
-async function load(){applySettings();keepScreenOn();[course,dictionary,school,library]=await Promise.all([fetch("./content/en/course.json",{cache:"no-store"}).then(r=>r.json()),fetch("./content/en/dictionary.json",{cache:"no-store"}).then(r=>r.json()),fetch("./content/en/school.json",{cache:"no-store"}).then(r=>r.json()),fetch("./content/en/library.json",{cache:"no-store"}).then(r=>r.json())]);if(new URLSearchParams(location.search).has("install")){sessionStorage.removeItem("sam-current-view");home();return}let v=null;try{v=JSON.parse(sessionStorage.getItem("sam-current-view")||"null")}catch(e){}if(v?.kind==="libraryRead")libraryRead(v.type,Number(v.i));else if(v?.kind==="libraryList")libraryList(v.type);else if(v?.kind==="library")libraryView();else home()}
-function save(){localStorage.setItem("sam-progress",JSON.stringify(S.progress))}
-function saveSettings(){localStorage.setItem("sam-settings",JSON.stringify(S.settings));applySettings()}function saveDictionaryState(){localStorage.setItem("sam-drill",JSON.stringify([...S.drill]));localStorage.setItem("sam-learned",JSON.stringify([...S.learned]));localStorage.setItem("sam-favorites",JSON.stringify([...S.favorites]));localStorage.setItem("sam-review",JSON.stringify(S.review));localStorage.setItem("sam-daily",JSON.stringify(S.daily))}
-function shell(body,tab="home"){document.querySelector("#app").innerHTML='<main class="app">'+body+'</main><nav class="bottom"><div class="bottomin"><button class="nav '+(tab==="home"?"on":"")+'" data-go="home">⌂ Главная</button><button class="nav '+(tab==="words"?"on":"")+'" data-go="words">▤ Слова</button><button class="nav '+(tab==="train"?"on":"")+'" data-go="train">✓ Тренажёр</button></div></nav>';bind()}
-function bind(){document.querySelectorAll("[data-go]").forEach(x=>x.onclick=()=>({home,words,train,dictionaryView,schoolView,libraryView,studyHub,continueStudy,progressView}[x.dataset.go]?.()));document.querySelectorAll("[data-lesson]").forEach(x=>x.onclick=()=>lesson(x.dataset.lesson));const drillButton=document.querySelector("#listenSelected");if(drillButton){drillButton.insertAdjacentHTML("afterend",'<button class="btn clear-drill" id="clearDrill" type="button">Сброс</button>');document.querySelector("#clearDrill").onclick=()=>{S.drill.clear();document.querySelectorAll(".drillcheck").forEach(x=>x.checked=false);saveDictionaryState();refreshDrillUi()}}}
-function home(){let done=Object.values(S.progress).filter(Boolean).length,p=Math.round(done/course.lessons.length*100);shell('<div class="top"><div class="brand">Самоучитель</div><div class="topactions"><span class="badge">EN • A1</span><button class="gear" id="settings" aria-label="Настройки">⚙</button></div></div><section class="hero"><h1>English с нуля</h1><p>Короткие уроки, живые фразы и повторение.</p><div class="progress"><i style="width:'+p+'%"></i></div><small>'+p+'% пройдено</small></section><button class="install-app" id="installApp">📲 Установить как приложение</button><div class="grid"><div class="card" data-go="libraryView"><span class="icon">📖</span><b>Библиотека</b><small class="muted">книги и тексты для чтения</small></div><div class="card" data-go="schoolView"><span class="icon">🏫</span><b>Школа</b><small class="muted">1–11 классы</small></div><div class="card" data-go="dictionaryView"><span class="icon">📚</span><b>Словарь</b><small class="muted">база слов по уровням</small></div><div class="card" data-go="words"><span class="icon">🔊</span><b>Слова</b><small class="muted">слушать и учить</small></div><div class="card" data-go="train"><span class="icon">🧠</span><b>Тренажёр</b><small class="muted">проверить себя</small></div><div class="card"><span class="icon">🎧</span><b>Прослушка</b><small class="muted">следующий модуль</small></div><div class="card"><span class="icon">📈</span><b>Прогресс</b><small class="muted">'+done+' уроков</small></div></div><div class="section"><h2>Первые уроки</h2></div>'+course.lessons.map((l,i)=>'<div class="lesson" data-lesson="'+l.id+'"><div class="num">'+(i+1)+'</div><div><b>'+l.title+'</b><br><small>'+l.subtitle+'</small></div></div>').join(""));document.querySelector("#settings").onclick=settings;const install=document.querySelector("#installApp");install.onclick=()=>installOnlineApp(install)}
-let activeSpeechButton=null,remoteSpeech=null;function hasNative(method){return!!(window.AndroidAudio&&typeof window.AndroidAudio[method]==="function")}function nativeSpeak(t,rate){if(!hasNative("speak"))return false;AndroidAudio.speak(String(t),Math.max(.5,Math.min(1.2,Number(rate)||.88)));return true}function finishSpeechButton(button){if(activeSpeechButton===button){button.textContent=button.dataset.stopIcon||"▶";button.classList.remove("speaking");activeSpeechButton=null}}function remoteSpeak(t,rate,done){if(remoteSpeech){remoteSpeech.pause();remoteSpeech=null}remoteSpeech=new Audio("https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q="+encodeURIComponent(t));remoteSpeech.playbackRate=Math.max(.6,Math.min(1.2,Number(rate)||.88));remoteSpeech.onended=()=>{remoteSpeech=null;done&&done()};remoteSpeech.onerror=()=>{remoteSpeech=null;done&&done()};remoteSpeech.play().catch(()=>{remoteSpeech=null;done&&done()})}function stopSpeech(){if(remoteSpeech){remoteSpeech.pause();remoteSpeech=null}if(hasNative("stopSpeech"))AndroidAudio.stopSpeech();speechSynthesis.cancel();if(activeSpeechButton)finishSpeechButton(activeSpeechButton)}function speak(t,button=null){if(button&&activeSpeechButton===button){stopSpeech();return}stopSpeech();if(button){activeSpeechButton=button;button.dataset.stopIcon=button.textContent;button.textContent="■";button.classList.add("speaking")}if(nativeSpeak(t,S.settings.voiceRate||.88)){setTimeout(()=>finishSpeechButton(button),Math.max(900,String(t).split(/\s+/).length*550));return}let u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=Number(S.settings.voiceRate||.88);const voice=getEnglishVoices().find(v=>v.name===S.settings.voiceName);if(voice)u.voice=voice;u.onend=u.onerror=()=>finishSpeechButton(button);speechSynthesis.speak(u)}
-function word(w){return '<div class="word"><div class="wordline"><div><div class="en">'+w.en+'</div><div class="pron">'+(w.pronunciationRu||"")+'</div><div class="ru">'+w.ru+'</div></div><button class="speaker" data-say="'+w.en.replaceAll('"',"&quot;")+'">▶</button></div><small class="muted">'+w.example+'</small></div>'}
-function wireSpeak(){document.querySelectorAll("[data-say]").forEach(x=>x.onclick=()=>speak(x.dataset.say,x))}
-function lesson(id){let l=course.lessons.find(x=>x.id===id);shell('<button class="back" id="back">← Назад</button><h1>'+l.title+'</h1><p class="muted">'+l.explain+'</p>'+l.words.map(word).join("")+'<button class="btn" id="done">Завершить урок</button>');document.querySelector("#back").onclick=home;wireSpeak();document.querySelector("#done").onclick=()=>{S.progress[id]=true;save();home()}}
-function words(){let a=course.lessons.flatMap(x=>x.words),s=new Set();a=a.filter(x=>!s.has(x.en)&&(s.add(x.en),true));shell('<div class="pagehead"><h1>Слова и фразы</h1><button class="gear" id="settings">⚙</button></div><p class="muted">Нажмите ▶ для произношения.</p>'+a.map(word).join(""),"words");wireSpeak();document.querySelector("#settings").onclick=settings}
-function rememberView(v){sessionStorage.setItem("sam-current-view",JSON.stringify(v))}
-function libraryView(){rememberView({kind:"library"});shell('<div class="pagehead"><h1>📖 Библиотека</h1><button class="gear" id="settings">⚙</button></div><p class="muted">Читайте и слушайте английский по уровням.</p><div class="librarygrid"><button class="librarycard" data-lib="books"><span class="icon">📗</span><div><b>Книги</b><small>'+library.books.length+' адаптированных книги</small></div></button><button class="librarycard" data-lib="stories"><span class="icon">📄</span><div><b>Короткие рассказы</b><small>'+library.stories.length+' рассказа</small></div></button><button class="librarycard" data-lib="dialogues"><span class="icon">💬</span><div><b>Диалоги</b><small>'+library.dialogues.length+' бытовых диалога</small></div></button></div>',"home");document.querySelector("#settings").onclick=settings;document.querySelectorAll("[data-lib]").forEach(x=>x.onclick=()=>libraryList(x.dataset.lib))}
-function libraryList(type){rememberView({kind:"libraryList",type});const names={books:"📗 Книги",stories:"📄 Короткие рассказы",dialogues:"💬 Диалоги"},items=library[type];shell('<button class="back" id="back">← Библиотека</button><h1>'+names[type]+'</h1><div class="librarylist">'+items.map((x,i)=>'<button class="libraryitem" data-read="'+type+'|'+i+'"><span class="num">'+(i+1)+'</span><div><b>'+x.title+'</b><small>'+x.ru+' · '+x.level+'</small></div></button>').join("")+'</div>',"home");document.querySelector("#back").onclick=libraryView;document.querySelectorAll("[data-read]").forEach(x=>x.onclick=()=>{const [t,i]=x.dataset.read.split("|");libraryRead(t,+i)})}
-async function googleTranslate(text){const r=await fetch("https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ru&dt=t&q="+encodeURIComponent(text),{cache:"no-store"});if(!r.ok)throw new Error("translate");const d=await r.json();return(d[0]||[]).map(x=>x[0]||"").join("").trim()}
-function speakLibraryText(text){stopSpeech();if(nativeSpeak(text,S.settings.voiceRate??.88))return;if(window.AndroidAudio){remoteSpeak(text,S.settings.voiceRate??.88);return}const u=new SpeechSynthesisUtterance(text);u.lang="en-US";u.rate=Number(S.settings.voiceRate??.88);const voices=getEnglishVoices(),voice=voices.find(v=>v.name===S.settings.voiceName);if(voice||voices.length)u.voice=voice||voices[0];speechSynthesis.speak(u)}
-function libraryWordAtPoint(e,root){let r=null;if(document.caretRangeFromPoint)r=document.caretRangeFromPoint(e.clientX,e.clientY);else if(document.caretPositionFromPoint){const p=document.caretPositionFromPoint(e.clientX,e.clientY);if(p){r=document.createRange();r.setStart(p.offsetNode,p.offset);r.collapse(true)}}if(!r||r.startContainer.nodeType!==3||!root.contains(r.startContainer))return null;const n=r.startContainer,s=n.textContent,pos=r.startOffset,left=s.slice(0,pos).search(/[A-Za-z'-]+$/),right=s.slice(pos).search(/[^A-Za-z'-]/),st=left<0?pos:left,en=right<0?s.length:pos+right;if(en<=st)return null;const rr=document.createRange();rr.setStart(n,st);rr.setEnd(n,en);return{word:s.slice(st,en),range:rr}}
-function dictionaryTranslation(word){const key=word.toLowerCase().replace(/[^a-z'-]/g,"");const found=dictionary.words.find(w=>w.en.toLowerCase()===key);return found?(found.ru||""):""}function showLibraryTranslation(word){const box=document.querySelector("#libraryWordTranslation");if(!box)return;document.querySelectorAll(".selectable-word.selected").forEach(x=>x.classList.remove("selected"));document.querySelectorAll('.selectable-word[data-translate="'+CSS.escape(word)+'"]').forEach(x=>x.classList.add("selected"));box.textContent=dictionaryTranslation(word)||"…";box.classList.add("show");if(!dictionaryTranslation(word))googleTranslate(word).then(t=>box.textContent=t||"Перевод не найден").catch(()=>box.textContent="Перевод не найден");speakLibraryText(word)}function wireLibraryTranslation(){document.querySelectorAll(".selectable-word").forEach(el=>el.onclick=e=>{e.preventDefault();e.stopPropagation();showLibraryTranslation(el.dataset.translate)});document.querySelectorAll(".reader p,.dialogueline .dialogue-text").forEach(el=>{let timer=null;el.addEventListener("pointerdown",e=>{if(e.target.closest(".selectable-word"))return;clearTimeout(timer);timer=setTimeout(()=>speakLibraryText(el.textContent.trim()),550)});["pointerup","pointercancel","pointerleave"].forEach(type=>el.addEventListener(type,()=>clearTimeout(timer)))})}
-async function fillSentenceTranslations(){const nodes=[...document.querySelectorAll(".sentence-translation")];for(const n of nodes){try{n.textContent=await googleTranslate(n.dataset.sentence)||"—"}catch(e){n.textContent="—"}}}
-function markLibraryWords(text){return text.replace(/[A-Za-z]+(?:['’-][A-Za-z]+)*/g,w=>'<span class="selectable-word" data-translate="'+w.toLowerCase()+'">'+w+'</span>')}function sentenceBlock(text){const parts=text.match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[text];return parts.map(s=>'<div class="sentence-pair"><p>'+markLibraryWords(s.trim())+'</p><button type="button" class="sentence-translation dim" data-sentence="'+s.trim().replaceAll('"',"&quot;")+'">…</button></div>').join("")}
-function wireSentenceTranslations(bookmarkKey){document.querySelectorAll(".sentence-translation").forEach((x,n)=>x.onclick=e=>{e.stopPropagation();const makeBright=!x.classList.contains("bright");x.classList.toggle("bright",makeBright);x.classList.toggle("dim",!makeBright);if(makeBright&&bookmarkKey)localStorage.setItem(bookmarkKey,String(n));else if(!makeBright&&bookmarkKey&&localStorage.getItem(bookmarkKey)===String(n)){const bright=[...document.querySelectorAll(".sentence-translation")].map((el,i)=>el.classList.contains("bright")?i:-1).filter(i=>i>=0);if(bright.length)localStorage.setItem(bookmarkKey,String(bright[bright.length-1]));else localStorage.removeItem(bookmarkKey)}})}
-function libraryRead(type,i){rememberView({kind:"libraryRead",type,i});const x=library[type][i],body=type==="dialogues"?x.lines.map(l=>'<div class="dialoguepair"><button class="dialogueline" data-say="'+l[1].replaceAll('"',"&quot;")+'"><b>'+l[0]+':</b><span class="dialogue-text">'+markLibraryWords(l[1])+'</span><em>▶</em></button><button type="button" class="sentence-translation dim" data-sentence="'+l[1].replaceAll('"',"&quot;")+'">…</button></div>').join(""):x.chapters?x.chapters.map(ch=>'<section class="bookchapter"><h2>'+ch.title+'</h2>'+ch.text.map(p=>'<div class="readpara sentence-reader">'+sentenceBlock(p)+'<button class="speaker" data-say="'+p.replaceAll('"',"&quot;")+'">▶</button></div>').join("")+'</section>').join(""):x.text.map(p=>'<div class="readpara sentence-reader">'+sentenceBlock(p)+'<button class="speaker" data-say="'+p.replaceAll('"',"&quot;")+'">▶</button></div>').join("");shell('<div class="lessonlabel">'+x.level+'</div><h1>'+x.title+'</h1><p class="muted">'+x.ru+(x.chapters?' · '+x.chapters.length+' глав':'')+'</p><div class="reader">'+body+'</div><div id="libraryWordTranslation" class="library-translation"></div>',"home");const header=document.createElement("div");header.className="reader-fixed-header";header.innerHTML='<button class="back" id="back">← Назад</button>';document.body.appendChild(header);document.body.classList.add("library-reading");document.querySelector("#back").onclick=()=>{header.remove();document.body.classList.remove("library-reading");libraryList(type)};wireSpeak();wireLibraryTranslation();const posKey="library-pos:"+type+":"+x.id,bookmarkKey="library-sentence-bookmark:"+type+":"+x.id;wireSentenceTranslations(bookmarkKey);fillSentenceTranslations();const savedSentence=Number(localStorage.getItem(bookmarkKey));if(localStorage.getItem(bookmarkKey)!==null){const restoreSentence=()=>{const all=document.querySelectorAll(".sentence-translation");const target=all[savedSentence];if(target){target.classList.add("bright");target.classList.remove("dim");target.scrollIntoView({block:"center",behavior:"instant"})}};requestAnimationFrame(()=>requestAnimationFrame(restoreSentence));setTimeout(restoreSentence,500)};const restorePos=()=>{const saved=Number(localStorage.getItem(posKey)||0);if(saved>0)window.scrollTo({top:saved,left:0,behavior:"instant"})};requestAnimationFrame(()=>requestAnimationFrame(restorePos));setTimeout(restorePos,350);setTimeout(restorePos,900);let savePosTimer=null;const savePos=()=>{clearTimeout(savePosTimer);savePosTimer=setTimeout(()=>localStorage.setItem(posKey,String(Math.round(window.scrollY))),80)};window.onscroll=savePos;window.addEventListener("pagehide",()=>localStorage.setItem(posKey,String(Math.round(window.scrollY))),{once:true});document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")localStorage.setItem(posKey,String(Math.round(window.scrollY)))},{once:true});document.querySelector("#back").addEventListener("click",()=>localStorage.setItem(posKey,String(Math.round(window.scrollY))),{once:true})}
+let activeLanguage = localStorage.getItem("sam-language") || "en";
+const stateKey = (name) =>
+  activeLanguage === "en" ? "sam-" + name : "sam-" + activeLanguage + "-" + name;
+const LANGUAGES = {
+  en: {
+    code: "EN",
+    label: "English",
+    title: "English с нуля",
+    speech: "en-US",
+    tts: "en",
+    count: "5 000 слов",
+  },
+  es: {
+    code: "ES",
+    label: "Español",
+    title: "Испанский с нуля",
+    speech: "es-ES",
+    tts: "es",
+    count: "5 000 слов",
+  },
+};
+const S = {
+  progress: JSON.parse(localStorage.getItem(stateKey("progress")) || "{}"),
+  settings: JSON.parse(
+    localStorage.getItem("sam-settings") || '{"theme":"light","font":100}',
+  ),
+  drill: new Set(JSON.parse(localStorage.getItem(stateKey("drill")) || "[]")),
+  learned: new Set(JSON.parse(localStorage.getItem(stateKey("learned")) || "[]")),
+  favorites: new Set(JSON.parse(localStorage.getItem(stateKey("favorites")) || "[]")),
+  review: JSON.parse(localStorage.getItem(stateKey("review")) || "{}"),
+  daily: JSON.parse(localStorage.getItem(stateKey("daily")) || "{}"),
+};
+let course, dictionary, school, library;
+function refreshDrillUi() {
+  const count = document.querySelector(".dictcount"),
+    button = document.querySelector("#listenSelected");
+  if (count)
+    count.textContent =
+      (document.querySelectorAll(".dict tbody tr").length || 0) +
+      " слов · для зубрёжки: " +
+      S.drill.size +
+      " · выучено: " +
+      S.learned.size;
+  if (button) {
+    button.disabled = !S.drill.size;
+    button.textContent = "🧠 Зубрить (" + S.drill.size + ")";
+  }
+}
+document.addEventListener("change", (e) => {
+  if (e.target.classList?.contains("drillcheck")) refreshDrillUi();
+});
+function applySettings() {
+  if (S.settings.voiceRate == null) S.settings.voiceRate = 0.88;
+  if (!S.settings.highlightLight) S.settings.highlightLight = "#ffd54f";
+  if (!S.settings.highlightDark) S.settings.highlightDark = "#4dabf7";
+  document.documentElement.dataset.theme = S.settings.theme;
+  document.documentElement.style.fontSize = S.settings.font + "%";
+  document.documentElement.style.setProperty(
+    "--word-light",
+    S.settings.highlightLight,
+  );
+  document.documentElement.style.setProperty(
+    "--word-dark",
+    S.settings.highlightDark,
+  );
+}
+async function load() {
+  applySettings();
+  keepScreenOn();
+  const lang = LANGUAGES[activeLanguage] || LANGUAGES.en;
+  [course, dictionary, school, library] = await Promise.all([
+    fetch("./content/" + activeLanguage + "/course.json", {
+      cache: "no-store",
+    }).then((r) => r.json()),
+    fetch("./content/" + activeLanguage + "/dictionary.json", {
+      cache: "no-store",
+    }).then((r) => r.json()),
+    fetch("./content/en/school.json", { cache: "no-store" }).then((r) =>
+      r.json(),
+    ),
+    fetch("./content/en/library.json", { cache: "no-store" }).then((r) =>
+      r.json(),
+    ),
+  ]);
+  document.documentElement.lang = activeLanguage;
+  if (new URLSearchParams(location.search).has("install")) {
+    sessionStorage.removeItem("sam-current-view");
+    home();
+    return;
+  }
+  let v = null;
+  try {
+    v = JSON.parse(sessionStorage.getItem("sam-current-view") || "null");
+  } catch (e) {}
+  if (v?.kind === "libraryRead") libraryRead(v.type, Number(v.i));
+  else if (v?.kind === "libraryList") libraryList(v.type);
+  else if (v?.kind === "library") libraryView();
+  else home();
+}
+function save() {
+  localStorage.setItem(stateKey("progress"), JSON.stringify(S.progress));
+}
+function saveSettings() {
+  localStorage.setItem("sam-settings", JSON.stringify(S.settings));
+  applySettings();
+}
+function saveDictionaryState() {
+  localStorage.setItem(stateKey("drill"), JSON.stringify([...S.drill]));
+  localStorage.setItem(stateKey("learned"), JSON.stringify([...S.learned]));
+  localStorage.setItem(stateKey("favorites"), JSON.stringify([...S.favorites]));
+  localStorage.setItem(stateKey("review"), JSON.stringify(S.review));
+  localStorage.setItem(stateKey("daily"), JSON.stringify(S.daily));
+}
+function shell(body, tab = "home") {
+  document.querySelector("#app").innerHTML =
+    '<main class="app">' +
+    body +
+    '</main><nav class="bottom"><div class="bottomin"><button class="nav ' +
+    (tab === "home" ? "on" : "") +
+    '" data-go="home">⌂ Главная</button><button class="nav ' +
+    (tab === "words" ? "on" : "") +
+    '" data-go="words">▤ Слова</button><button class="nav ' +
+    (tab === "train" ? "on" : "") +
+    '" data-go="train">✓ Тренажёр</button></div></nav>';
+  bind();
+}
+function bind() {
+  document
+    .querySelectorAll("[data-go]")
+    .forEach(
+      (x) =>
+        (x.onclick = () =>
+          ({
+            home,
+            words,
+            train,
+            dictionaryView,
+            schoolView,
+            libraryView,
+            studyHub,
+            continueStudy,
+            progressView,
+          })[x.dataset.go]?.()),
+    );
+  document
+    .querySelectorAll("[data-lesson]")
+    .forEach((x) => (x.onclick = () => lesson(x.dataset.lesson)));
+  const drillButton = document.querySelector("#listenSelected");
+  if (drillButton) {
+    drillButton.insertAdjacentHTML(
+      "afterend",
+      '<button class="btn clear-drill" id="clearDrill" type="button">Сброс</button>',
+    );
+    document.querySelector("#clearDrill").onclick = () => {
+      S.drill.clear();
+      document
+        .querySelectorAll(".drillcheck")
+        .forEach((x) => (x.checked = false));
+      saveDictionaryState();
+      refreshDrillUi();
+    };
+  }
+}
+function languagePicker() {
+  return (
+    '<select class="language-picker" id="languagePicker" aria-label="Язык">' +
+    Object.entries(LANGUAGES)
+      .map(
+        ([id, x]) =>
+          '<option value="' +
+          id +
+          '" ' +
+          (id === activeLanguage ? "selected" : "") +
+          ">" +
+          x.code +
+          " • " +
+          x.label +
+          "</option>",
+      )
+      .join("") +
+    "</select>"
+  );
+}
+function switchLanguage(next) {
+  if (!LANGUAGES[next] || next === activeLanguage) return;
+  localStorage.setItem("sam-language", next);
+  location.reload();
+}
+function home() {
+  const lang = LANGUAGES[activeLanguage],
+    done = Object.keys(S.progress).filter(
+      (x) => x.startsWith(activeLanguage + "-") && S.progress[x],
+    ).length,
+    p = Math.round((done / course.lessons.length) * 100);
+  shell(
+    '<div class="top"><div class="brand">Самоучитель</div><div class="topactions">' +
+      languagePicker() +
+      '<button class="gear" id="settings" aria-label="Настройки">⚙</button></div></div><section class="hero"><h1>' +
+      lang.title +
+      "</h1><p>" +
+      course.subtitle +
+      '</p><div class="progress"><i style="width:' +
+      p +
+      '%"></i></div><small>' +
+      p +
+      "% пройдено · " +
+      lang.count +
+      '</small></section><button class="install-app" id="installApp">📲 Установить как приложение</button><div class="grid"><div class="card" data-go="libraryView"><span class="icon">📖</span><b>Библиотека</b><small class="muted">книги и тексты для чтения</small></div><div class="card" data-go="schoolView"><span class="icon">🏫</span><b>Школа</b><small class="muted">1–11 классы</small></div><div class="card" data-go="dictionaryView"><span class="icon">📚</span><b>Словарь</b><small class="muted">база слов по уровням</small></div><div class="card" data-go="words"><span class="icon">🔊</span><b>Слова</b><small class="muted">слушать и учить</small></div><div class="card" data-go="train"><span class="icon">🧠</span><b>Тренажёр</b><small class="muted">проверить себя</small></div><div class="card"><span class="icon">🎧</span><b>Прослушка</b><small class="muted">следующий модуль</small></div><div class="card"><span class="icon">📈</span><b>Прогресс</b><small class="muted">' +
+      done +
+      ' уроков</small></div></div><div class="section"><h2>Первые уроки</h2></div>' +
+      course.lessons
+        .map(
+          (l, i) =>
+            '<div class="lesson" data-lesson="' +
+            l.id +
+            '"><div class="num">' +
+            (i + 1) +
+            "</div><div><b>" +
+            l.title +
+            "</b><br><small>" +
+            l.subtitle +
+            "</small></div></div>",
+        )
+        .join(""),
+  );
+  document.querySelector("#settings").onclick = settings;
+  document.querySelector("#languagePicker").onchange = (e) =>
+    switchLanguage(e.target.value);
+  const install = document.querySelector("#installApp");
+  install.onclick = () => installOnlineApp(install);
+}
+let activeSpeechButton = null,
+  remoteSpeech = null;
+function hasNative(method) {
+  return !!(
+    window.AndroidAudio && typeof window.AndroidAudio[method] === "function"
+  );
+}
+function nativeSpeak(t, rate) {
+  if (!hasNative("speak")) return false;
+  AndroidAudio.speak(
+    String(t),
+    Math.max(0.5, Math.min(1.2, Number(rate) || 0.88)),
+  );
+  return true;
+}
+function finishSpeechButton(button) {
+  if (activeSpeechButton === button) {
+    button.textContent = button.dataset.stopIcon || "▶";
+    button.classList.remove("speaking");
+    activeSpeechButton = null;
+  }
+}
+function remoteSpeak(t, rate, done) {
+  if (remoteSpeech) {
+    remoteSpeech.pause();
+    remoteSpeech = null;
+  }
+  remoteSpeech = new Audio(
+    "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=" +
+      encodeURIComponent(t),
+  );
+  remoteSpeech.playbackRate = Math.max(
+    0.6,
+    Math.min(1.2, Number(rate) || 0.88),
+  );
+  remoteSpeech.onended = () => {
+    remoteSpeech = null;
+    done && done();
+  };
+  remoteSpeech.onerror = () => {
+    remoteSpeech = null;
+    done && done();
+  };
+  remoteSpeech.play().catch(() => {
+    remoteSpeech = null;
+    done && done();
+  });
+}
+function stopSpeech() {
+  if (remoteSpeech) {
+    remoteSpeech.pause();
+    remoteSpeech = null;
+  }
+  if (hasNative("stopSpeech")) AndroidAudio.stopSpeech();
+  speechSynthesis.cancel();
+  if (activeSpeechButton) finishSpeechButton(activeSpeechButton);
+}
+function speak(t, button = null) {
+  if (button && activeSpeechButton === button) {
+    stopSpeech();
+    return;
+  }
+  stopSpeech();
+  if (button) {
+    activeSpeechButton = button;
+    button.dataset.stopIcon = button.textContent;
+    button.textContent = "■";
+    button.classList.add("speaking");
+  }
+  if (nativeSpeak(t, S.settings.voiceRate || 0.88)) {
+    setTimeout(
+      () => finishSpeechButton(button),
+      Math.max(900, String(t).split(/\s+/).length * 550),
+    );
+    return;
+  }
+  let u = new SpeechSynthesisUtterance(t);
+  u.lang = LANGUAGES[activeLanguage].speech;
+  u.rate = Number(S.settings.voiceRate || 0.88);
+  const voice = getEnglishVoices().find((v) => v.name === S.settings.voiceName);
+  if (voice) u.voice = voice;
+  u.onend = u.onerror = () => finishSpeechButton(button);
+  speechSynthesis.speak(u);
+}
+function word(w) {
+  return (
+    '<div class="word"><div class="wordline"><div><div class="en">' +
+    w.en +
+    '</div><div class="pron">' +
+    (w.pronunciationRu || "") +
+    '</div><div class="ru">' +
+    w.ru +
+    '</div></div><button class="speaker" data-say="' +
+    w.en.replaceAll('"', "&quot;") +
+    '">▶</button></div><small class="muted">' +
+    w.example +
+    "</small></div>"
+  );
+}
+function wireSpeak() {
+  document
+    .querySelectorAll("[data-say]")
+    .forEach((x) => (x.onclick = () => speak(x.dataset.say, x)));
+}
+function lesson(id) {
+  let l = course.lessons.find((x) => x.id === id);
+  shell(
+    '<button class="back" id="back">← Назад</button><h1>' +
+      l.title +
+      '</h1><p class="muted">' +
+      l.explain +
+      "</p>" +
+      l.words.map(word).join("") +
+      '<button class="btn" id="done">Завершить урок</button>',
+  );
+  document.querySelector("#back").onclick = home;
+  wireSpeak();
+  document.querySelector("#done").onclick = () => {
+    S.progress[id] = true;
+    save();
+    home();
+  };
+}
+function words() {
+  let a = course.lessons.flatMap((x) => x.words),
+    s = new Set();
+  a = a.filter((x) => !s.has(x.en) && (s.add(x.en), true));
+  shell(
+    '<div class="pagehead"><h1>Слова и фразы</h1><button class="gear" id="settings">⚙</button></div><p class="muted">Нажмите ▶ для произношения.</p>' +
+      a.map(word).join(""),
+    "words",
+  );
+  wireSpeak();
+  document.querySelector("#settings").onclick = settings;
+}
+function rememberView(v) {
+  sessionStorage.setItem("sam-current-view", JSON.stringify(v));
+}
+function libraryView() {
+  rememberView({ kind: "library" });
+  shell(
+    '<div class="pagehead"><h1>📖 Библиотека</h1><button class="gear" id="settings">⚙</button></div><p class="muted">Читайте и слушайте английский по уровням.</p><div class="librarygrid"><button class="librarycard" data-lib="books"><span class="icon">📗</span><div><b>Книги</b><small>' +
+      library.books.length +
+      ' адаптированных книги</small></div></button><button class="librarycard" data-lib="stories"><span class="icon">📄</span><div><b>Короткие рассказы</b><small>' +
+      library.stories.length +
+      ' рассказа</small></div></button><button class="librarycard" data-lib="dialogues"><span class="icon">💬</span><div><b>Диалоги</b><small>' +
+      library.dialogues.length +
+      " бытовых диалога</small></div></button></div>",
+    "home",
+  );
+  document.querySelector("#settings").onclick = settings;
+  document
+    .querySelectorAll("[data-lib]")
+    .forEach((x) => (x.onclick = () => libraryList(x.dataset.lib)));
+}
+function libraryList(type) {
+  rememberView({ kind: "libraryList", type });
+  const names = {
+      books: "📗 Книги",
+      stories: "📄 Короткие рассказы",
+      dialogues: "💬 Диалоги",
+    },
+    items = library[type];
+  shell(
+    '<button class="back" id="back">← Библиотека</button><h1>' +
+      names[type] +
+      '</h1><div class="librarylist">' +
+      items
+        .map(
+          (x, i) =>
+            '<button class="libraryitem" data-read="' +
+            type +
+            "|" +
+            i +
+            '"><span class="num">' +
+            (i + 1) +
+            "</span><div><b>" +
+            x.title +
+            "</b><small>" +
+            x.ru +
+            " · " +
+            x.level +
+            "</small></div></button>",
+        )
+        .join("") +
+      "</div>",
+    "home",
+  );
+  document.querySelector("#back").onclick = libraryView;
+  document.querySelectorAll("[data-read]").forEach(
+    (x) =>
+      (x.onclick = () => {
+        const [t, i] = x.dataset.read.split("|");
+        libraryRead(t, +i);
+      }),
+  );
+}
+async function googleTranslate(text) {
+  const r = await fetch(
+    "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ru&dt=t&q=" +
+      encodeURIComponent(text),
+    { cache: "no-store" },
+  );
+  if (!r.ok) throw new Error("translate");
+  const d = await r.json();
+  return (d[0] || [])
+    .map((x) => x[0] || "")
+    .join("")
+    .trim();
+}
+function speakLibraryText(text) {
+  stopSpeech();
+  if (nativeSpeak(text, S.settings.voiceRate ?? 0.88)) return;
+  if (window.AndroidAudio) {
+    remoteSpeak(text, S.settings.voiceRate ?? 0.88);
+    return;
+  }
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "en-US";
+  u.rate = Number(S.settings.voiceRate ?? 0.88);
+  const voices = getEnglishVoices(),
+    voice = voices.find((v) => v.name === S.settings.voiceName);
+  if (voice || voices.length) u.voice = voice || voices[0];
+  speechSynthesis.speak(u);
+}
+function libraryWordAtPoint(e, root) {
+  let r = null;
+  if (document.caretRangeFromPoint)
+    r = document.caretRangeFromPoint(e.clientX, e.clientY);
+  else if (document.caretPositionFromPoint) {
+    const p = document.caretPositionFromPoint(e.clientX, e.clientY);
+    if (p) {
+      r = document.createRange();
+      r.setStart(p.offsetNode, p.offset);
+      r.collapse(true);
+    }
+  }
+  if (!r || r.startContainer.nodeType !== 3 || !root.contains(r.startContainer))
+    return null;
+  const n = r.startContainer,
+    s = n.textContent,
+    pos = r.startOffset,
+    left = s.slice(0, pos).search(/[A-Za-z'-]+$/),
+    right = s.slice(pos).search(/[^A-Za-z'-]/),
+    st = left < 0 ? pos : left,
+    en = right < 0 ? s.length : pos + right;
+  if (en <= st) return null;
+  const rr = document.createRange();
+  rr.setStart(n, st);
+  rr.setEnd(n, en);
+  return { word: s.slice(st, en), range: rr };
+}
+function dictionaryTranslation(word) {
+  const key = word.toLowerCase().replace(/[^a-z'-]/g, "");
+  const found = dictionary.words.find((w) => w.en.toLowerCase() === key);
+  return found ? found.ru || "" : "";
+}
+function showLibraryTranslation(word) {
+  const box = document.querySelector("#libraryWordTranslation");
+  if (!box) return;
+  document
+    .querySelectorAll(".selectable-word.selected")
+    .forEach((x) => x.classList.remove("selected"));
+  document
+    .querySelectorAll(
+      '.selectable-word[data-translate="' + CSS.escape(word) + '"]',
+    )
+    .forEach((x) => x.classList.add("selected"));
+  box.textContent = dictionaryTranslation(word) || "…";
+  box.classList.add("show");
+  if (!dictionaryTranslation(word))
+    googleTranslate(word)
+      .then((t) => (box.textContent = t || "Перевод не найден"))
+      .catch(() => (box.textContent = "Перевод не найден"));
+  speakLibraryText(word);
+}
+function wireLibraryTranslation() {
+  document.querySelectorAll(".selectable-word").forEach(
+    (el) =>
+      (el.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        showLibraryTranslation(el.dataset.translate);
+      }),
+  );
+  document
+    .querySelectorAll(".reader p,.dialogueline .dialogue-text")
+    .forEach((el) => {
+      let timer = null;
+      el.addEventListener("pointerdown", (e) => {
+        if (e.target.closest(".selectable-word")) return;
+        clearTimeout(timer);
+        timer = setTimeout(() => speakLibraryText(el.textContent.trim()), 550);
+      });
+      ["pointerup", "pointercancel", "pointerleave"].forEach((type) =>
+        el.addEventListener(type, () => clearTimeout(timer)),
+      );
+    });
+}
+async function fillSentenceTranslations() {
+  const nodes = [...document.querySelectorAll(".sentence-translation")];
+  for (const n of nodes) {
+    try {
+      n.textContent = (await googleTranslate(n.dataset.sentence)) || "—";
+    } catch (e) {
+      n.textContent = "—";
+    }
+  }
+}
+function markLibraryWords(text) {
+  return text.replace(
+    /[A-Za-z]+(?:['’-][A-Za-z]+)*/g,
+    (w) =>
+      '<span class="selectable-word" data-translate="' +
+      w.toLowerCase() +
+      '">' +
+      w +
+      "</span>",
+  );
+}
+function sentenceBlock(text) {
+  const parts = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [text];
+  return parts
+    .map(
+      (s) =>
+        '<div class="sentence-pair"><p>' +
+        markLibraryWords(s.trim()) +
+        '</p><button type="button" class="sentence-translation dim" data-sentence="' +
+        s.trim().replaceAll('"', "&quot;") +
+        '">…</button></div>',
+    )
+    .join("");
+}
+function wireSentenceTranslations(bookmarkKey) {
+  document.querySelectorAll(".sentence-translation").forEach(
+    (x, n) =>
+      (x.onclick = (e) => {
+        e.stopPropagation();
+        const makeBright = !x.classList.contains("bright");
+        x.classList.toggle("bright", makeBright);
+        x.classList.toggle("dim", !makeBright);
+        if (makeBright && bookmarkKey)
+          localStorage.setItem(bookmarkKey, String(n));
+        else if (
+          !makeBright &&
+          bookmarkKey &&
+          localStorage.getItem(bookmarkKey) === String(n)
+        ) {
+          const bright = [...document.querySelectorAll(".sentence-translation")]
+            .map((el, i) => (el.classList.contains("bright") ? i : -1))
+            .filter((i) => i >= 0);
+          if (bright.length)
+            localStorage.setItem(
+              bookmarkKey,
+              String(bright[bright.length - 1]),
+            );
+          else localStorage.removeItem(bookmarkKey);
+        }
+      }),
+  );
+}
+function libraryRead(type, i) {
+  rememberView({ kind: "libraryRead", type, i });
+  const x = library[type][i],
+    body =
+      type === "dialogues"
+        ? x.lines
+            .map(
+              (l) =>
+                '<div class="dialoguepair"><button class="dialogueline" data-say="' +
+                l[1].replaceAll('"', "&quot;") +
+                '"><b>' +
+                l[0] +
+                ':</b><span class="dialogue-text">' +
+                markLibraryWords(l[1]) +
+                '</span><em>▶</em></button><button type="button" class="sentence-translation dim" data-sentence="' +
+                l[1].replaceAll('"', "&quot;") +
+                '">…</button></div>',
+            )
+            .join("")
+        : x.chapters
+          ? x.chapters
+              .map(
+                (ch) =>
+                  '<section class="bookchapter"><h2>' +
+                  ch.title +
+                  "</h2>" +
+                  ch.text
+                    .map(
+                      (p) =>
+                        '<div class="readpara sentence-reader">' +
+                        sentenceBlock(p) +
+                        '<button class="speaker" data-say="' +
+                        p.replaceAll('"', "&quot;") +
+                        '">▶</button></div>',
+                    )
+                    .join("") +
+                  "</section>",
+              )
+              .join("")
+          : x.text
+              .map(
+                (p) =>
+                  '<div class="readpara sentence-reader">' +
+                  sentenceBlock(p) +
+                  '<button class="speaker" data-say="' +
+                  p.replaceAll('"', "&quot;") +
+                  '">▶</button></div>',
+              )
+              .join("");
+  shell(
+    '<div class="lessonlabel">' +
+      x.level +
+      "</div><h1>" +
+      x.title +
+      '</h1><p class="muted">' +
+      x.ru +
+      (x.chapters ? " · " + x.chapters.length + " глав" : "") +
+      '</p><div class="reader">' +
+      body +
+      '</div><div id="libraryWordTranslation" class="library-translation"></div>',
+    "home",
+  );
+  const header = document.createElement("div");
+  header.className = "reader-fixed-header";
+  header.innerHTML = '<button class="back" id="back">← Назад</button>';
+  document.body.appendChild(header);
+  document.body.classList.add("library-reading");
+  document.querySelector("#back").onclick = () => {
+    header.remove();
+    document.body.classList.remove("library-reading");
+    libraryList(type);
+  };
+  wireSpeak();
+  wireLibraryTranslation();
+  const posKey = "library-pos:" + type + ":" + x.id,
+    bookmarkKey = "library-sentence-bookmark:" + type + ":" + x.id;
+  wireSentenceTranslations(bookmarkKey);
+  fillSentenceTranslations();
+  const savedSentence = Number(localStorage.getItem(bookmarkKey));
+  if (localStorage.getItem(bookmarkKey) !== null) {
+    const restoreSentence = () => {
+      const all = document.querySelectorAll(".sentence-translation");
+      const target = all[savedSentence];
+      if (target) {
+        target.classList.add("bright");
+        target.classList.remove("dim");
+        target.scrollIntoView({ block: "center", behavior: "instant" });
+      }
+    };
+    requestAnimationFrame(() => requestAnimationFrame(restoreSentence));
+    setTimeout(restoreSentence, 500);
+  }
+  const restorePos = () => {
+    const saved = Number(localStorage.getItem(posKey) || 0);
+    if (saved > 0)
+      window.scrollTo({ top: saved, left: 0, behavior: "instant" });
+  };
+  requestAnimationFrame(() => requestAnimationFrame(restorePos));
+  setTimeout(restorePos, 350);
+  setTimeout(restorePos, 900);
+  let savePosTimer = null;
+  const savePos = () => {
+    clearTimeout(savePosTimer);
+    savePosTimer = setTimeout(
+      () => localStorage.setItem(posKey, String(Math.round(window.scrollY))),
+      80,
+    );
+  };
+  window.onscroll = savePos;
+  window.addEventListener(
+    "pagehide",
+    () => localStorage.setItem(posKey, String(Math.round(window.scrollY))),
+    { once: true },
+  );
+  document.addEventListener(
+    "visibilitychange",
+    () => {
+      if (document.visibilityState === "hidden")
+        localStorage.setItem(posKey, String(Math.round(window.scrollY)));
+    },
+    { once: true },
+  );
+  document
+    .querySelector("#back")
+    .addEventListener(
+      "click",
+      () => localStorage.setItem(posKey, String(Math.round(window.scrollY))),
+      { once: true },
+    );
+}
 
-function schoolView(){shell('<div class="pagehead"><h1>🏫 Школа</h1><button class="gear" id="settings">⚙</button></div><p class="muted">Выберите класс.</p><div class="schoolgrid">'+school.grades.map(g=>'<button class="gradecard" data-grade="'+g.grade+'"><b>'+g.grade+' класс</b><small>'+g.level+' · '+g.lessons.length+' уроков</small></button>').join("")+'</div>',"home");document.querySelector("#settings").onclick=settings;document.querySelectorAll("[data-grade]").forEach(x=>x.onclick=()=>schoolGrade(+x.dataset.grade))}
-function schoolGrade(n){const g=school.grades.find(x=>x.grade===n);shell('<button class="back" id="back">← Школа</button><h1>'+n+' класс</h1><div class="schoollist">'+g.lessons.map((l,i)=>'<button class="schoollesson real" data-sl="'+n+'|'+i+'"><span>'+(i+1)+'</span><div><b>'+l.title+'</b><small>'+l.words.length+' слов · '+l.exercises.length+' задания</small></div></button>').join("")+'</div>',"home");document.querySelector("#back").onclick=schoolView;document.querySelectorAll("[data-sl]").forEach(x=>x.onclick=()=>{const [g,l]=x.dataset.sl.split("|").map(Number);schoolLesson(g,l)})}
-function schoolLesson(n,li){const g=school.grades.find(x=>x.grade===n),l=g.lessons[li];shell('<button class="back" id="back">← '+n+' класс</button><div class="lessonlabel">Урок '+(li+1)+'</div><h1>'+l.title+'</h1><p class="schoolintro">'+l.intro+'</p><h2>Новые слова</h2>'+l.words.map(w=>'<button class="schoolword" data-say="'+w.en+'"><b>'+w.en+'</b><span>'+w.pron+'</span><em>'+w.ru+'</em></button>').join("")+(l.dialogue?'<h2>Диалог</h2><div class="dialogue">'+l.dialogue.map(x=>'<button data-say="'+x.en+'"><b>'+x.en+'</b><span>'+x.pron+'</span><em>'+x.ru+'</em></button>').join("")+'</div>':'')+'<h2>Задания</h2><div class="exercises">'+l.exercises.map((x,i)=>'<div class="exercise"><b>'+(i+1)+'. '+x.task+'</b><p>'+x.content+'</p></div>').join("")+'</div><button class="btn" id="schooldone">Урок пройден ✓</button>',"home");document.querySelector("#back").onclick=()=>schoolGrade(n);wireSpeak();document.querySelector("#schooldone").onclick=()=>schoolGrade(n)}
+function schoolView() {
+  shell(
+    '<div class="pagehead"><h1>🏫 Школа</h1><button class="gear" id="settings">⚙</button></div><p class="muted">Выберите класс.</p><div class="schoolgrid">' +
+      school.grades
+        .map(
+          (g) =>
+            '<button class="gradecard" data-grade="' +
+            g.grade +
+            '"><b>' +
+            g.grade +
+            " класс</b><small>" +
+            g.level +
+            " · " +
+            g.lessons.length +
+            " уроков</small></button>",
+        )
+        .join("") +
+      "</div>",
+    "home",
+  );
+  document.querySelector("#settings").onclick = settings;
+  document
+    .querySelectorAll("[data-grade]")
+    .forEach((x) => (x.onclick = () => schoolGrade(+x.dataset.grade)));
+}
+function schoolGrade(n) {
+  const g = school.grades.find((x) => x.grade === n);
+  shell(
+    '<button class="back" id="back">← Школа</button><h1>' +
+      n +
+      ' класс</h1><div class="schoollist">' +
+      g.lessons
+        .map(
+          (l, i) =>
+            '<button class="schoollesson real" data-sl="' +
+            n +
+            "|" +
+            i +
+            '"><span>' +
+            (i + 1) +
+            "</span><div><b>" +
+            l.title +
+            "</b><small>" +
+            l.words.length +
+            " слов · " +
+            l.exercises.length +
+            " задания</small></div></button>",
+        )
+        .join("") +
+      "</div>",
+    "home",
+  );
+  document.querySelector("#back").onclick = schoolView;
+  document.querySelectorAll("[data-sl]").forEach(
+    (x) =>
+      (x.onclick = () => {
+        const [g, l] = x.dataset.sl.split("|").map(Number);
+        schoolLesson(g, l);
+      }),
+  );
+}
+function schoolLesson(n, li) {
+  const g = school.grades.find((x) => x.grade === n),
+    l = g.lessons[li];
+  shell(
+    '<button class="back" id="back">← ' +
+      n +
+      ' класс</button><div class="lessonlabel">Урок ' +
+      (li + 1) +
+      "</div><h1>" +
+      l.title +
+      '</h1><p class="schoolintro">' +
+      l.intro +
+      "</p><h2>Новые слова</h2>" +
+      l.words
+        .map(
+          (w) =>
+            '<button class="schoolword" data-say="' +
+            w.en +
+            '"><b>' +
+            w.en +
+            "</b><span>" +
+            w.pron +
+            "</span><em>" +
+            w.ru +
+            "</em></button>",
+        )
+        .join("") +
+      (l.dialogue
+        ? '<h2>Диалог</h2><div class="dialogue">' +
+          l.dialogue
+            .map(
+              (x) =>
+                '<button data-say="' +
+                x.en +
+                '"><b>' +
+                x.en +
+                "</b><span>" +
+                x.pron +
+                "</span><em>" +
+                x.ru +
+                "</em></button>",
+            )
+            .join("") +
+          "</div>"
+        : "") +
+      '<h2>Задания</h2><div class="exercises">' +
+      l.exercises
+        .map(
+          (x, i) =>
+            '<div class="exercise"><b>' +
+            (i + 1) +
+            ". " +
+            x.task +
+            "</b><p>" +
+            x.content +
+            "</p></div>",
+        )
+        .join("") +
+      '</div><button class="btn" id="schooldone">Урок пройден ✓</button>',
+    "home",
+  );
+  document.querySelector("#back").onclick = () => schoolGrade(n);
+  wireSpeak();
+  document.querySelector("#schooldone").onclick = () => schoolGrade(n);
+}
 
-function dictionaryView(level="0",query="",topic="all",showLearned=false){const levels=dictionary.levels.map(l=>'<option value="'+l.id+'" '+(l.id===level?"selected":"")+'>'+l.name+'</option>').join("");const topics=(dictionary.topicCategories||[]).map(t=>'<option value="'+t+'" '+(t===topic?"selected":"")+'>'+t+'</option>').join("");const q=query.trim().toLowerCase();const data=dictionary.words.filter(w=>(level==="all"||w.level===level)&&(topic==="all"||(w.topics||[]).includes(topic))&&(showLearned||!S.learned.has(w.id))&&(!q||w.en.toLowerCase().includes(q)||w.ru.toLowerCase().includes(q)));shell('<div class="pagehead"><h1>Словарь</h1><button class="gear" id="settings">⚙</button></div><div class="dicttools"><select id="level"><option value="all">Все уровни</option>'+levels+'</select><select id="topic"><option value="all">Все категории</option>'+topics+'</select><label class="showlearned"><input id="showLearned" type="checkbox" '+(showLearned?"checked":"")+'> Показывать выученные</label><input id="search" placeholder="Поиск слова…" value="'+query.replaceAll('"',"&quot;")+'"></div><div class="dictcount">'+data.length+' слов · для зубрёжки: '+S.drill.size+' · выучено: '+S.learned.size+'</div><button class="btn listen-selected" id="listenSelected" '+(S.drill.size?"":"disabled")+' >🧠 Зубрить ('+S.drill.size+')</button><div class="tablewrap"><table class="dict"><thead><tr><th class="flagcol">Круг</th><th>English</th><th>Произношение</th><th>Перевод</th><th class="flagcol">Выучено</th></tr></thead><tbody>'+data.map(w=>'<tr class="'+(S.learned.has(w.id)?"learned":"")+'" data-id="'+w.id+'"><td class="flagcol"><input class="dictcheck drillcheck" type="checkbox" '+(S.drill.has(w.id)?"checked":"")+'></td><td><button class="wordplay" data-say="'+w.en+'">'+w.en+'</button></td><td class="pron">'+w.pronunciationRu+'</td><td>'+w.ru+(w.mirror?'<div class="mirror">↔ '+w.mirror+'</div>':'')+'</td><td class="flagcol"><input class="dictcheck learnedcheck" type="checkbox" '+(S.learned.has(w.id)?"checked":"")+'></td></tr>').join("")+'</tbody></table></div>',"words");wireSpeak();document.querySelector("#settings").onclick=settings;const listenBtn=document.querySelector("#listenSelected");if(listenBtn)listenBtn.onclick=startDrill;const lv=document.querySelector("#level"),tp=document.querySelector("#topic"),se=document.querySelector("#search"),sl=document.querySelector("#showLearned");lv.onchange=()=>dictionaryView(lv.value,se.value,tp.value,sl.checked);tp.onchange=()=>dictionaryView(lv.value,se.value,tp.value,sl.checked);sl.onchange=()=>dictionaryView(lv.value,se.value,tp.value,sl.checked);se.oninput=e=>{clearTimeout(window.dictTimer);window.dictTimer=setTimeout(()=>dictionaryView(lv.value,e.target.value,tp.value,sl.checked),250)};document.querySelectorAll(".drillcheck").forEach(x=>x.onchange=e=>{const id=Number(e.target.closest("tr").dataset.id);e.target.checked?S.drill.add(id):S.drill.delete(id);saveDictionaryState()});document.querySelectorAll(".learnedcheck").forEach(x=>x.onchange=e=>{const tr=e.target.closest("tr"),id=Number(tr.dataset.id);e.target.checked?S.learned.add(id):S.learned.delete(id);tr.classList.toggle("learned",e.target.checked);saveDictionaryState()})}
-let drillListening=false,drillIndex=0,drillTimer=null,drillReverse=false,drillPaused=false,nativeDrill=false,wakeLock=null,audioCtx=null,silentAudio=null,drillAudioPool=[];
-async function enableBackgroundMedia(){try{if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")await audioCtx.resume();if(!silentAudio){const sr=8000,len=sr*2,bytes=44+len*2,b=new ArrayBuffer(bytes),v=new DataView(b),ws=(o,t)=>[...t].forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));ws(0,"RIFF");v.setUint32(4,bytes-8,true);ws(8,"WAVEfmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);ws(36,"data");v.setUint32(40,len*2,true);silentAudio=new Audio(URL.createObjectURL(new Blob([b],{type:"audio/wav"})));silentAudio.loop=true;silentAudio.volume=.001;await silentAudio.play()}if("mediaSession"in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:"Зубрёжка слов",artist:"Самоучитель",album:"English"});navigator.mediaSession.setActionHandler("play",()=>{drillPaused=false;if(silentAudio)silentAudio.play();const list=dictionary.words.filter(w=>S.drill.has(w.id));if(list.length)drillCard(list)});navigator.mediaSession.setActionHandler("pause",()=>{drillPaused=true;speechSynthesis.cancel();clearTimeout(drillTimer);if(silentAudio)silentAudio.pause()});navigator.mediaSession.setActionHandler("nexttrack",()=>{const list=dictionary.words.filter(w=>S.drill.has(w.id));if(list.length){drillIndex=(drillIndex+1)%list.length;drillCard(list)}});navigator.mediaSession.setActionHandler("previoustrack",()=>{const list=dictionary.words.filter(w=>S.drill.has(w.id));if(list.length){drillIndex=(drillIndex-1+list.length)%list.length;drillCard(list)}})}}catch(e){}}
-async function keepScreenOn(){try{if("wakeLock"in navigator){if(wakeLock&&wakeLock.released)wakeLock=null;if(!wakeLock)wakeLock=await navigator.wakeLock.request("screen")}}catch(e){wakeLock=null}}
-async function releaseScreenLock(){try{if(wakeLock){await wakeLock.release();wakeLock=null}}catch(e){}}
-document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")keepScreenOn()});["pointerdown","touchstart","keydown"].forEach(ev=>document.addEventListener(ev,keepScreenOn,{passive:true}));setInterval(()=>{if(document.visibilityState==="visible")keepScreenOn()},30000);
-function launchBackgroundAudio(){const words=dictionary.words.filter(w=>S.drill.has(w.id)).slice(0,100);if(!words.length)return;const sequence=words.map(w=>w.en+"\u001e"+(w.ru||"")).join("\u001f");const url="intent://play?words="+encodeURIComponent(sequence)+"&rate="+encodeURIComponent(Number(S.settings.voiceRate??.82))+"#Intent;scheme=samouchitel-audio;package=com.anfas.samouchitel.audio;end";location.href=url}function drillAudioUrl(text){return "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q="+encodeURIComponent(text)}function prepareWebDrillAudio(list){drillAudioPool=list.map(w=>{const audio=new Audio(drillAudioUrl(w.en));audio.preload="auto";audio.load();return audio})}function stopWebDrillAudio(){const audio=drillAudioPool[drillIndex];if(audio){audio.onended=null;audio.pause();audio.currentTime=0}}function speakDrillTranslation(text,done){const parts=text.split(";").map(x=>x.trim()).filter(Boolean);let i=0;const say=()=>{if(i>=parts.length){done&&done();return}const u=new SpeechSynthesisUtterance(parts[i++]);u.lang="ru-RU";u.rate=.9;u.onend=u.onerror=()=>{if(!drillListening||drillPaused)return;drillTimer=setTimeout(say,i<parts.length?1000:0)};speechSynthesis.speak(u)};say()}function playWebDrillAudio(list,w){const audio=drillAudioPool[drillIndex]||new Audio(drillAudioUrl(w.en));drillAudioPool[drillIndex]=audio;const next=()=>{drillIndex=(drillIndex+1)%list.length;drillCard(list)};audio.onended=()=>{if(!drillListening||drillPaused)return;drillTimer=setTimeout(()=>{if(!drillListening||drillPaused)return;speakDrillTranslation(w.ru||"",()=>{if(!drillListening||drillPaused)return;drillTimer=setTimeout(next,2000)})},2000)};audio.playbackRate=Math.max(.6,Math.min(1.2,Number(S.settings.voiceRate)||.82));if("mediaSession"in navigator)navigator.mediaSession.metadata=new MediaMetadata({title:w.en,artist:"Зубрёжка · Самоучитель",album:"English"});audio.play().catch(()=>sayWithVoice(w.en,0,audio.onended))}function startDrill(){const list=dictionary.words.filter(w=>S.drill.has(w.id));if(!list.length)return;nativeDrill=hasNative("available")&&AndroidAudio.available()&&hasNative("buildAndPlay")&&hasNative("control")&&hasNative("stop");if(nativeDrill){const seq=[];list.forEach(w=>{if(drillReverse){seq.push((w.ru||""),w.en,w.en,w.en)}else seq.push(w.en)});AndroidAudio.buildAndPlay(seq.join("\u001f"),Number(S.settings.voiceRate??.88));}else{prepareWebDrillAudio(list);enableBackgroundMedia()}drillListening=true;drillPaused=false;drillIndex=0;keepScreenOn();drillCard(list)}
-function exampleSentences(w){return (w.examples||[]).map(e=>[e.en,e.pronunciationRu,e.ru])}
-function drillExamples(w){const word=w.en,low=word.toLowerCase();return exampleSentences(w).map(a=>{const t=a[0],i=t.toLowerCase().indexOf(low),html=i<0?t:t.slice(0,i)+'<span class="targetword">'+t.slice(i,i+word.length)+'</span>'+t.slice(i+word.length);return '<button class="exampleline" data-example="'+t.replaceAll('"',"&quot;")+'"><span class="example-en">'+html+'</span><span class="example-pron">'+a[1]+'</span><span class="example-ru">'+a[2]+'</span></button>'}).join("")}
-function getEnglishVoices(){const v=speechSynthesis.getVoices().filter(x=>/^en(-|_)/i.test(x.lang));return v.length?v:speechSynthesis.getVoices()}
-function sayWithVoice(text,voiceIndex,onend){if(window.AndroidAudio){remoteSpeak(text,S.settings.voiceRate??.82,onend);return}const u=new SpeechSynthesisUtterance(text);u.lang="en-US";const vs=getEnglishVoices(),voice=vs.find(v=>v.name===S.settings.voiceName);if(voice||vs.length)u.voice=voice||vs[voiceIndex%vs.length];u.rate=Number(S.settings.voiceRate??.82);u.onend=()=>onend&&onend();speechSynthesis.speak(u)}
-function reverseSequence(w,done){speechSynthesis.cancel();const ru=new SpeechSynthesisUtterance((w.ru||"").split(";")[0]);ru.lang="ru-RU";ru.rate=.9;ru.onend=()=>{let n=0;const next=()=>{if(!drillListening||drillPaused)return;if(n>=3){done&&done();return}setTimeout(()=>{sayWithVoice(w.en,n,()=>{n++;next()})},n===0?1300:1800)};next()};speechSynthesis.speak(ru)}
-function playerGlyph(symbol){return window.AndroidAudio?symbol+"\uFE0E":symbol}function drillCard(list){if(!drillListening||!list.length)return;const w=list[drillIndex%list.length],examples=drillExamples(w);shell('<div class="drilltop"><button class="back" id="stopDrill">← Словарь</button><span>'+(drillIndex+1)+' / '+list.length+'</span></div><div class="flashcard '+(drillReverse?"reverse":"")+'" id="flashSpeak">'+(drillReverse?'<div class="flashru reverse-first">'+w.ru+'</div><div class="flashen">'+w.en+'</div><div class="flashpron">'+w.pronunciationRu+'</div>':'<div class="flashen">'+w.en+'</div><div class="flashpron">'+w.pronunciationRu+'</div><div class="flashru">'+w.ru+'</div>')+(examples?'<div class="examples">'+examples+'</div>':'')+'</div><div class="drillcontrols four"><button class="btn alt playerbtn" id="prevDrill">'+playerGlyph("⏮")+'</button><button class="btn playerbtn" id="pauseDrill">'+playerGlyph(drillPaused?"▶":"⏸")+'</button><button class="btn reversebtn playerbtn '+(drillReverse?"active":"")+'" id="reverseDrill">'+playerGlyph("⇄")+'</button><button class="btn alt playerbtn" id="nextDrill">'+playerGlyph("⏭")+'</button></div><button class="btn background-drill-card" id="backgroundDrill">🎧 В фоне</button>',"words");
-const advance=()=>{if(!drillListening||drillPaused)return;clearTimeout(drillTimer);drillTimer=setTimeout(()=>{drillIndex=(drillIndex+1)%list.length;drillCard(list)},900)};
-stopSpeech();clearTimeout(drillTimer);if(!drillPaused&&!nativeDrill){if(drillReverse)reverseSequence(w,advance);else playWebDrillAudio(list,w)}
-document.querySelector("#flashSpeak").onclick=e=>{if(e.target.closest(".exampleline"))return;stopSpeech();if(drillReverse)reverseSequence(w);else sayWithVoice(w.en,0)};
-document.querySelectorAll(".exampleline").forEach(x=>x.onclick=e=>{e.stopPropagation();stopSpeech();sayWithVoice(x.dataset.example,0)});
-document.querySelector("#backgroundDrill").onclick=launchBackgroundAudio;
-document.querySelector("#stopDrill").onclick=()=>{stopDrill();dictionaryView()};
-document.querySelector("#nextDrill").onclick=()=>{stopSpeech();stopWebDrillAudio();clearTimeout(drillTimer);if(nativeDrill)AndroidAudio.control("next");drillIndex=(drillIndex+1)%list.length;drillCard(list)};
-document.querySelector("#prevDrill").onclick=()=>{stopSpeech();stopWebDrillAudio();clearTimeout(drillTimer);if(nativeDrill)AndroidAudio.control("previous");drillIndex=(drillIndex-1+list.length)%list.length;drillCard(list)};
-document.querySelector("#pauseDrill").onclick=()=>{drillPaused=!drillPaused;stopSpeech();if(drillPaused)stopWebDrillAudio();clearTimeout(drillTimer);if(nativeDrill)AndroidAudio.control(drillPaused?"pause":"resume");if(!drillPaused)keepScreenOn();drillCard(list)};
-document.querySelector("#reverseDrill").onclick=()=>{drillReverse=!drillReverse;drillPaused=false;stopSpeech();clearTimeout(drillTimer);if(nativeDrill){AndroidAudio.stop();nativeDrill=false;startDrill()}else drillCard(list)}}
-function stopDrill(){drillListening=false;drillPaused=false;clearTimeout(drillTimer);drillTimer=null;stopSpeech();stopWebDrillAudio();drillAudioPool=[];if(nativeDrill)AndroidAudio.stop();nativeDrill=false;keepScreenOn();if(silentAudio){silentAudio.pause();silentAudio=null}if('mediaSession'in navigator)navigator.mediaSession.metadata=null}
-function train(){let a=course.lessons.flatMap(x=>x.words),q=a[Math.floor(Math.random()*a.length)],o=[q,...a.filter(x=>x.en!==q.en).sort(()=>Math.random()-.5).slice(0,3)].sort(()=>Math.random()-.5);shell('<h1>Тренажёр</h1><p class="muted">Выберите перевод</p><h2>'+q.en+'</h2>'+o.map(x=>'<button class="word answer" data-answer="'+(x===q)+'">'+x.ru+'</button>').join("")+'<br><button class="btn" id="next">Следующий</button>',"train");document.querySelectorAll("[data-answer]").forEach(x=>x.onclick=()=>x.classList.add(x.dataset.answer==="true"?"ok":"no"));document.querySelector("#next").onclick=train}
-function settings(){if(S.settings.voiceRate==null)S.settings.voiceRate=.88;if(!S.settings.highlightLight)S.settings.highlightLight="#ffd54f";if(!S.settings.highlightDark)S.settings.highlightDark="#4dabf7";shell('<button class="back" data-action="back">← Назад</button><h1>Настройки</h1><section class="settings"><h2>Тема</h2><div class="seg"><button data-theme="light" class="'+(S.settings.theme==="light"?"selected":"")+'">☀ Белая</button><button data-theme="dark" class="'+(S.settings.theme==="dark"?"selected":"")+'">☾ Чёрная</button></div><h2>Масштаб шрифта</h2><div class="fontrow"><button data-font="-5">A−</button><strong id="fontvalue">'+S.settings.font+'%</strong><button data-font="5">A+</button></div><input id="fontslider" type="range" min="80" max="140" step="5" value="'+S.settings.font+'"><h2>Скорость голоса</h2><div class="fontrow"><span>Медленно</span><strong id="ratevalue">'+Number(S.settings.voiceRate).toFixed(2)+'×</strong><span>Быстро</span></div><input id="rateslider" type="range" min="0.5" max="1.5" step="0.05" value="'+S.settings.voiceRate+'"><h2>Цвет выбранного слова</h2><div class="colorrow"><label>☀ Светлая тема <input id="highlightLight" type="color" value="'+S.settings.highlightLight+'"></label><label>☾ Тёмная тема <input id="highlightDark" type="color" value="'+S.settings.highlightDark+'"></label></div><p class="muted">Цвет применяется к буквам выбранного слова в Библиотеке.</p></section>',"settings");const root=document.querySelector("#app");root.onclick=e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.action==="back"){home();return}if(b.dataset.theme){S.settings.theme=b.dataset.theme;saveSettings();settings();return}if(b.dataset.font){S.settings.font=Math.max(80,Math.min(140,S.settings.font+Number(b.dataset.font)));saveSettings();settings()}};const slider=document.querySelector("#fontslider");slider.oninput=e=>{S.settings.font=Number(e.target.value);saveSettings();document.querySelector("#fontvalue").textContent=S.settings.font+"%"};slider.onchange=()=>settings();const rate=document.querySelector("#rateslider");rate.oninput=e=>{S.settings.voiceRate=Number(e.target.value);saveSettings();document.querySelector("#ratevalue").textContent=S.settings.voiceRate.toFixed(2)+"×"};rate.onchange=()=>stopSpeech();document.querySelector("#highlightLight").oninput=e=>{S.settings.highlightLight=e.target.value;saveSettings()};document.querySelector("#highlightDark").oninput=e=>{S.settings.highlightDark=e.target.value;saveSettings()}}
+function dictionaryView(
+  level = "0",
+  query = "",
+  topic = "all",
+  showLearned = false,
+) {
+  const levels = dictionary.levels
+      .map(
+        (l) =>
+          '<option value="' +
+          l.id +
+          '" ' +
+          (l.id === level ? "selected" : "") +
+          ">" +
+          l.name +
+          "</option>",
+      )
+      .join(""),
+    lang = LANGUAGES[activeLanguage];
+  const topics = (dictionary.topicCategories || [])
+    .map(
+      (t) =>
+        '<option value="' +
+        t +
+        '" ' +
+        (t === topic ? "selected" : "") +
+        ">" +
+        t +
+        "</option>",
+    )
+    .join("");
+  const q = query.trim().toLowerCase();
+  const data = dictionary.words.filter(
+    (w) =>
+      (level === "all" || w.level === level) &&
+      (topic === "all" || (w.topics || []).includes(topic)) &&
+      (showLearned || !S.learned.has(w.id)) &&
+      (!q || w.en.toLowerCase().includes(q) || w.ru.toLowerCase().includes(q)),
+  );
+  shell(
+    '<div class="pagehead"><h1>Словарь · ' +
+      lang.code +
+      '</h1><button class="gear" id="settings">⚙</button></div><div class="dicttools"><select id="level"><option value="all">Все уровни</option>' +
+      levels +
+      '</select><select id="topic"><option value="all">Все категории</option>' +
+      topics +
+      '</select><label class="showlearned"><input id="showLearned" type="checkbox" ' +
+      (showLearned ? "checked" : "") +
+      '> Показывать выученные</label><input id="search" placeholder="Поиск слова…" value="' +
+      query.replaceAll('"', "&quot;") +
+      '"></div><div class="dictcount">' +
+      data.length +
+      " слов · для зубрёжки: " +
+      S.drill.size +
+      " · выучено: " +
+      S.learned.size +
+      '</div><button class="btn listen-selected" id="listenSelected" ' +
+      (S.drill.size ? "" : "disabled") +
+      " >🧠 Зубрить (" +
+      S.drill.size +
+      ')</button><div class="tablewrap"><table class="dict"><thead><tr><th class="flagcol">Круг</th><th>' +
+      lang.label +
+      '</th><th>Произношение</th><th>Перевод</th><th class="flagcol">Выучено</th></tr></thead><tbody>' +
+      data
+        .map(
+          (w) =>
+            '<tr class="' +
+            (S.learned.has(w.id) ? "learned" : "") +
+            '" data-id="' +
+            w.id +
+            '"><td class="flagcol"><input class="dictcheck drillcheck" type="checkbox" ' +
+            (S.drill.has(w.id) ? "checked" : "") +
+            '></td><td><button class="wordplay" data-say="' +
+            w.en +
+            '">' +
+            w.en +
+            '</button></td><td class="pron">' +
+            w.pronunciationRu +
+            "</td><td>" +
+            w.ru +
+            (w.mirror ? '<div class="mirror">↔ ' + w.mirror + "</div>" : "") +
+            '</td><td class="flagcol"><input class="dictcheck learnedcheck" type="checkbox" ' +
+            (S.learned.has(w.id) ? "checked" : "") +
+            "></td></tr>",
+        )
+        .join("") +
+      "</tbody></table></div>",
+    "words",
+  );
+  wireSpeak();
+  document.querySelector("#settings").onclick = settings;
+  const listenBtn = document.querySelector("#listenSelected");
+  if (listenBtn) listenBtn.onclick = startDrill;
+  const lv = document.querySelector("#level"),
+    tp = document.querySelector("#topic"),
+    se = document.querySelector("#search"),
+    sl = document.querySelector("#showLearned");
+  lv.onchange = () => dictionaryView(lv.value, se.value, tp.value, sl.checked);
+  tp.onchange = () => dictionaryView(lv.value, se.value, tp.value, sl.checked);
+  sl.onchange = () => dictionaryView(lv.value, se.value, tp.value, sl.checked);
+  se.oninput = (e) => {
+    clearTimeout(window.dictTimer);
+    window.dictTimer = setTimeout(
+      () => dictionaryView(lv.value, e.target.value, tp.value, sl.checked),
+      250,
+    );
+  };
+  document.querySelectorAll(".drillcheck").forEach(
+    (x) =>
+      (x.onchange = (e) => {
+        const id = Number(e.target.closest("tr").dataset.id);
+        e.target.checked ? S.drill.add(id) : S.drill.delete(id);
+        saveDictionaryState();
+      }),
+  );
+  document.querySelectorAll(".learnedcheck").forEach(
+    (x) =>
+      (x.onchange = (e) => {
+        const tr = e.target.closest("tr"),
+          id = Number(tr.dataset.id);
+        e.target.checked ? S.learned.add(id) : S.learned.delete(id);
+        tr.classList.toggle("learned", e.target.checked);
+        saveDictionaryState();
+      }),
+  );
+}
+let drillListening = false,
+  drillIndex = 0,
+  drillTimer = null,
+  drillReverse = false,
+  drillPaused = false,
+  nativeDrill = false,
+  wakeLock = null,
+  audioCtx = null,
+  silentAudio = null,
+  drillAudioPool = [];
+async function enableBackgroundMedia() {
+  try {
+    if (!audioCtx)
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") await audioCtx.resume();
+    if (!silentAudio) {
+      const sr = 8000,
+        len = sr * 2,
+        bytes = 44 + len * 2,
+        b = new ArrayBuffer(bytes),
+        v = new DataView(b),
+        ws = (o, t) =>
+          [...t].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+      ws(0, "RIFF");
+      v.setUint32(4, bytes - 8, true);
+      ws(8, "WAVEfmt ");
+      v.setUint32(16, 16, true);
+      v.setUint16(20, 1, true);
+      v.setUint16(22, 1, true);
+      v.setUint32(24, sr, true);
+      v.setUint32(28, sr * 2, true);
+      v.setUint16(32, 2, true);
+      v.setUint16(34, 16, true);
+      ws(36, "data");
+      v.setUint32(40, len * 2, true);
+      silentAudio = new Audio(
+        URL.createObjectURL(new Blob([b], { type: "audio/wav" })),
+      );
+      silentAudio.loop = true;
+      silentAudio.volume = 0.001;
+      await silentAudio.play();
+    }
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: "Зубрёжка слов",
+        artist: "Самоучитель",
+        album: "English",
+      });
+      navigator.mediaSession.setActionHandler("play", () => {
+        drillPaused = false;
+        if (silentAudio) silentAudio.play();
+        const list = dictionary.words.filter((w) => S.drill.has(w.id));
+        if (list.length) drillCard(list);
+      });
+      navigator.mediaSession.setActionHandler("pause", () => {
+        drillPaused = true;
+        speechSynthesis.cancel();
+        clearTimeout(drillTimer);
+        if (silentAudio) silentAudio.pause();
+      });
+      navigator.mediaSession.setActionHandler("nexttrack", () => {
+        const list = dictionary.words.filter((w) => S.drill.has(w.id));
+        if (list.length) {
+          drillIndex = (drillIndex + 1) % list.length;
+          drillCard(list);
+        }
+      });
+      navigator.mediaSession.setActionHandler("previoustrack", () => {
+        const list = dictionary.words.filter((w) => S.drill.has(w.id));
+        if (list.length) {
+          drillIndex = (drillIndex - 1 + list.length) % list.length;
+          drillCard(list);
+        }
+      });
+    }
+  } catch (e) {}
+}
+async function keepScreenOn() {
+  try {
+    if ("wakeLock" in navigator) {
+      if (wakeLock && wakeLock.released) wakeLock = null;
+      if (!wakeLock) wakeLock = await navigator.wakeLock.request("screen");
+    }
+  } catch (e) {
+    wakeLock = null;
+  }
+}
+async function releaseScreenLock() {
+  try {
+    if (wakeLock) {
+      await wakeLock.release();
+      wakeLock = null;
+    }
+  } catch (e) {}
+}
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") keepScreenOn();
+});
+["pointerdown", "touchstart", "keydown"].forEach((ev) =>
+  document.addEventListener(ev, keepScreenOn, { passive: true }),
+);
+setInterval(() => {
+  if (document.visibilityState === "visible") keepScreenOn();
+}, 30000);
+function launchBackgroundAudio() {
+  const words = dictionary.words.filter((w) => S.drill.has(w.id)).slice(0, 100);
+  if (!words.length) return;
+  const sequence = words
+    .map((w) => w.en + "\u001e" + (w.ru || ""))
+    .join("\u001f");
+  const url =
+    "intent://play?words=" +
+    encodeURIComponent(sequence) +
+    "&rate=" +
+    encodeURIComponent(Number(S.settings.voiceRate ?? 0.82)) +
+    "#Intent;scheme=samouchitel-audio;package=com.anfas.samouchitel.audio;end";
+  location.href = url;
+}
+function drillAudioUrl(text) {
+  return (
+    "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=" + LANGUAGES[activeLanguage].tts + "&q=" +
+    encodeURIComponent(text)
+  );
+}
+function prepareWebDrillAudio(list) {
+  drillAudioPool = list.map((w) => {
+    const audio = new Audio(drillAudioUrl(w.en));
+    audio.preload = "auto";
+    audio.load();
+    return audio;
+  });
+}
+function stopWebDrillAudio() {
+  const audio = drillAudioPool[drillIndex];
+  if (audio) {
+    audio.onended = null;
+    audio.pause();
+    audio.currentTime = 0;
+  }
+}
+function speakDrillTranslation(text, done) {
+  const parts = text
+    .split(";")
+    .map((x) => x.trim())
+    .filter(Boolean);
+  let i = 0;
+  const say = () => {
+    if (i >= parts.length) {
+      done && done();
+      return;
+    }
+    const u = new SpeechSynthesisUtterance(parts[i++]);
+    u.lang = "ru-RU";
+    u.rate = 0.9;
+    u.onend = u.onerror = () => {
+      if (!drillListening || drillPaused) return;
+      drillTimer = setTimeout(say, i < parts.length ? 1000 : 0);
+    };
+    speechSynthesis.speak(u);
+  };
+  say();
+}
+function playWebDrillAudio(list, w) {
+  const audio = drillAudioPool[drillIndex] || new Audio(drillAudioUrl(w.en));
+  drillAudioPool[drillIndex] = audio;
+  const next = () => {
+    drillIndex = (drillIndex + 1) % list.length;
+    drillCard(list);
+  };
+  audio.onended = () => {
+    if (!drillListening || drillPaused) return;
+    drillTimer = setTimeout(() => {
+      if (!drillListening || drillPaused) return;
+      speakDrillTranslation(w.ru || "", () => {
+        if (!drillListening || drillPaused) return;
+        drillTimer = setTimeout(next, 2000);
+      });
+    }, 2000);
+  };
+  audio.playbackRate = Math.max(
+    0.6,
+    Math.min(1.2, Number(S.settings.voiceRate) || 0.82),
+  );
+  if ("mediaSession" in navigator)
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: w.en,
+      artist: "Зубрёжка · Самоучитель",
+      album: "English",
+    });
+  audio.play().catch(() => sayWithVoice(w.en, 0, audio.onended));
+}
+function startDrill() {
+  const list = dictionary.words.filter((w) => S.drill.has(w.id));
+  if (!list.length) return;
+  nativeDrill =
+    hasNative("available") &&
+    AndroidAudio.available() &&
+    hasNative("buildAndPlay") &&
+    hasNative("control") &&
+    hasNative("stop");
+  if (nativeDrill) {
+    const seq = [];
+    list.forEach((w) => {
+      if (drillReverse) {
+        seq.push(w.ru || "", w.en, w.en, w.en);
+      } else seq.push(w.en);
+    });
+    AndroidAudio.buildAndPlay(
+      seq.join("\u001f"),
+      Number(S.settings.voiceRate ?? 0.88),
+    );
+  } else {
+    prepareWebDrillAudio(list);
+    enableBackgroundMedia();
+  }
+  drillListening = true;
+  drillPaused = false;
+  drillIndex = 0;
+  keepScreenOn();
+  drillCard(list);
+}
+function exampleSentences(w) {
+  return (w.examples || []).map((e) => [e.en, e.pronunciationRu, e.ru]);
+}
+function drillExamples(w) {
+  const word = w.en,
+    low = word.toLowerCase();
+  return exampleSentences(w)
+    .map((a) => {
+      const t = a[0],
+        i = t.toLowerCase().indexOf(low),
+        html =
+          i < 0
+            ? t
+            : t.slice(0, i) +
+              '<span class="targetword">' +
+              t.slice(i, i + word.length) +
+              "</span>" +
+              t.slice(i + word.length);
+      return (
+        '<button class="exampleline" data-example="' +
+        t.replaceAll('"', "&quot;") +
+        '"><span class="example-en">' +
+        html +
+        '</span><span class="example-pron">' +
+        a[1] +
+        '</span><span class="example-ru">' +
+        a[2] +
+        "</span></button>"
+      );
+    })
+    .join("");
+}
+function getEnglishVoices() {
+  const v = speechSynthesis.getVoices().filter((x) => /^en(-|_)/i.test(x.lang));
+  return v.length ? v : speechSynthesis.getVoices();
+}
+function sayWithVoice(text, voiceIndex, onend) {
+  if (window.AndroidAudio) {
+    remoteSpeak(text, S.settings.voiceRate ?? 0.82, onend);
+    return;
+  }
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "en-US";
+  const vs = getEnglishVoices(),
+    voice = vs.find((v) => v.name === S.settings.voiceName);
+  if (voice || vs.length) u.voice = voice || vs[voiceIndex % vs.length];
+  u.rate = Number(S.settings.voiceRate ?? 0.82);
+  u.onend = () => onend && onend();
+  speechSynthesis.speak(u);
+}
+function reverseSequence(w, done) {
+  speechSynthesis.cancel();
+  const ru = new SpeechSynthesisUtterance((w.ru || "").split(";")[0]);
+  ru.lang = "ru-RU";
+  ru.rate = 0.9;
+  ru.onend = () => {
+    let n = 0;
+    const next = () => {
+      if (!drillListening || drillPaused) return;
+      if (n >= 3) {
+        done && done();
+        return;
+      }
+      setTimeout(
+        () => {
+          sayWithVoice(w.en, n, () => {
+            n++;
+            next();
+          });
+        },
+        n === 0 ? 1300 : 1800,
+      );
+    };
+    next();
+  };
+  speechSynthesis.speak(ru);
+}
+function playerGlyph(symbol) {
+  return window.AndroidAudio ? symbol + "\uFE0E" : symbol;
+}
+function drillCard(list) {
+  if (!drillListening || !list.length) return;
+  const w = list[drillIndex % list.length],
+    examples = drillExamples(w);
+  shell(
+    '<div class="drilltop"><button class="back" id="stopDrill">← Словарь</button><span>' +
+      (drillIndex + 1) +
+      " / " +
+      list.length +
+      '</span></div><div class="flashcard ' +
+      (drillReverse ? "reverse" : "") +
+      '" id="flashSpeak">' +
+      (drillReverse
+        ? '<div class="flashru reverse-first">' +
+          w.ru +
+          '</div><div class="flashen">' +
+          w.en +
+          '</div><div class="flashpron">' +
+          w.pronunciationRu +
+          "</div>"
+        : '<div class="flashen">' +
+          w.en +
+          '</div><div class="flashpron">' +
+          w.pronunciationRu +
+          '</div><div class="flashru">' +
+          w.ru +
+          "</div>") +
+      (examples ? '<div class="examples">' + examples + "</div>" : "") +
+      '</div><div class="drillcontrols four"><button class="btn alt playerbtn" id="prevDrill">' +
+      playerGlyph("⏮") +
+      '</button><button class="btn playerbtn" id="pauseDrill">' +
+      playerGlyph(drillPaused ? "▶" : "⏸") +
+      '</button><button class="btn reversebtn playerbtn ' +
+      (drillReverse ? "active" : "") +
+      '" id="reverseDrill">' +
+      playerGlyph("⇄") +
+      '</button><button class="btn alt playerbtn" id="nextDrill">' +
+      playerGlyph("⏭") +
+      '</button></div><button class="btn background-drill-card" id="backgroundDrill">🎧 В фоне</button>',
+    "words",
+  );
+  const advance = () => {
+    if (!drillListening || drillPaused) return;
+    clearTimeout(drillTimer);
+    drillTimer = setTimeout(() => {
+      drillIndex = (drillIndex + 1) % list.length;
+      drillCard(list);
+    }, 900);
+  };
+  stopSpeech();
+  clearTimeout(drillTimer);
+  if (!drillPaused && !nativeDrill) {
+    if (drillReverse) reverseSequence(w, advance);
+    else playWebDrillAudio(list, w);
+  }
+  document.querySelector("#flashSpeak").onclick = (e) => {
+    if (e.target.closest(".exampleline")) return;
+    stopSpeech();
+    if (drillReverse) reverseSequence(w);
+    else sayWithVoice(w.en, 0);
+  };
+  document.querySelectorAll(".exampleline").forEach(
+    (x) =>
+      (x.onclick = (e) => {
+        e.stopPropagation();
+        stopSpeech();
+        sayWithVoice(x.dataset.example, 0);
+      }),
+  );
+  document.querySelector("#backgroundDrill").onclick = launchBackgroundAudio;
+  document.querySelector("#stopDrill").onclick = () => {
+    stopDrill();
+    dictionaryView();
+  };
+  document.querySelector("#nextDrill").onclick = () => {
+    stopSpeech();
+    stopWebDrillAudio();
+    clearTimeout(drillTimer);
+    if (nativeDrill) AndroidAudio.control("next");
+    drillIndex = (drillIndex + 1) % list.length;
+    drillCard(list);
+  };
+  document.querySelector("#prevDrill").onclick = () => {
+    stopSpeech();
+    stopWebDrillAudio();
+    clearTimeout(drillTimer);
+    if (nativeDrill) AndroidAudio.control("previous");
+    drillIndex = (drillIndex - 1 + list.length) % list.length;
+    drillCard(list);
+  };
+  document.querySelector("#pauseDrill").onclick = () => {
+    drillPaused = !drillPaused;
+    stopSpeech();
+    if (drillPaused) stopWebDrillAudio();
+    clearTimeout(drillTimer);
+    if (nativeDrill) AndroidAudio.control(drillPaused ? "pause" : "resume");
+    if (!drillPaused) keepScreenOn();
+    drillCard(list);
+  };
+  document.querySelector("#reverseDrill").onclick = () => {
+    drillReverse = !drillReverse;
+    drillPaused = false;
+    stopSpeech();
+    clearTimeout(drillTimer);
+    if (nativeDrill) {
+      AndroidAudio.stop();
+      nativeDrill = false;
+      startDrill();
+    } else drillCard(list);
+  };
+}
+function stopDrill() {
+  drillListening = false;
+  drillPaused = false;
+  clearTimeout(drillTimer);
+  drillTimer = null;
+  stopSpeech();
+  stopWebDrillAudio();
+  drillAudioPool = [];
+  if (nativeDrill) AndroidAudio.stop();
+  nativeDrill = false;
+  keepScreenOn();
+  if (silentAudio) {
+    silentAudio.pause();
+    silentAudio = null;
+  }
+  if ("mediaSession" in navigator) navigator.mediaSession.metadata = null;
+}
+function train() {
+  let a = course.lessons.flatMap((x) => x.words),
+    q = a[Math.floor(Math.random() * a.length)],
+    o = [
+      q,
+      ...a
+        .filter((x) => x.en !== q.en)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3),
+    ].sort(() => Math.random() - 0.5);
+  shell(
+    '<h1>Тренажёр</h1><p class="muted">Выберите перевод</p><h2>' +
+      q.en +
+      "</h2>" +
+      o
+        .map(
+          (x) =>
+            '<button class="word answer" data-answer="' +
+            (x === q) +
+            '">' +
+            x.ru +
+            "</button>",
+        )
+        .join("") +
+      '<br><button class="btn" id="next">Следующий</button>',
+    "train",
+  );
+  document
+    .querySelectorAll("[data-answer]")
+    .forEach(
+      (x) =>
+        (x.onclick = () =>
+          x.classList.add(x.dataset.answer === "true" ? "ok" : "no")),
+    );
+  document.querySelector("#next").onclick = train;
+}
+function settings() {
+  if (S.settings.voiceRate == null) S.settings.voiceRate = 0.88;
+  if (!S.settings.highlightLight) S.settings.highlightLight = "#ffd54f";
+  if (!S.settings.highlightDark) S.settings.highlightDark = "#4dabf7";
+  shell(
+    '<button class="back" data-action="back">← Назад</button><h1>Настройки</h1><section class="settings"><h2>Тема</h2><div class="seg"><button data-theme="light" class="' +
+      (S.settings.theme === "light" ? "selected" : "") +
+      '">☀ Белая</button><button data-theme="dark" class="' +
+      (S.settings.theme === "dark" ? "selected" : "") +
+      '">☾ Чёрная</button></div><h2>Масштаб шрифта</h2><div class="fontrow"><button data-font="-5">A−</button><strong id="fontvalue">' +
+      S.settings.font +
+      '%</strong><button data-font="5">A+</button></div><input id="fontslider" type="range" min="80" max="140" step="5" value="' +
+      S.settings.font +
+      '"><h2>Скорость голоса</h2><div class="fontrow"><span>Медленно</span><strong id="ratevalue">' +
+      Number(S.settings.voiceRate).toFixed(2) +
+      '×</strong><span>Быстро</span></div><input id="rateslider" type="range" min="0.5" max="1.5" step="0.05" value="' +
+      S.settings.voiceRate +
+      '"><h2>Цвет выбранного слова</h2><div class="colorrow"><label>☀ Светлая тема <input id="highlightLight" type="color" value="' +
+      S.settings.highlightLight +
+      '"></label><label>☾ Тёмная тема <input id="highlightDark" type="color" value="' +
+      S.settings.highlightDark +
+      '"></label></div><p class="muted">Цвет применяется к буквам выбранного слова в Библиотеке.</p></section>',
+    "settings",
+  );
+  const root = document.querySelector("#app");
+  root.onclick = (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    if (b.dataset.action === "back") {
+      home();
+      return;
+    }
+    if (b.dataset.theme) {
+      S.settings.theme = b.dataset.theme;
+      saveSettings();
+      settings();
+      return;
+    }
+    if (b.dataset.font) {
+      S.settings.font = Math.max(
+        80,
+        Math.min(140, S.settings.font + Number(b.dataset.font)),
+      );
+      saveSettings();
+      settings();
+    }
+  };
+  const slider = document.querySelector("#fontslider");
+  slider.oninput = (e) => {
+    S.settings.font = Number(e.target.value);
+    saveSettings();
+    document.querySelector("#fontvalue").textContent = S.settings.font + "%";
+  };
+  slider.onchange = () => settings();
+  const rate = document.querySelector("#rateslider");
+  rate.oninput = (e) => {
+    S.settings.voiceRate = Number(e.target.value);
+    saveSettings();
+    document.querySelector("#ratevalue").textContent =
+      S.settings.voiceRate.toFixed(2) + "×";
+  };
+  rate.onchange = () => stopSpeech();
+  document.querySelector("#highlightLight").oninput = (e) => {
+    S.settings.highlightLight = e.target.value;
+    saveSettings();
+  };
+  document.querySelector("#highlightDark").oninput = (e) => {
+    S.settings.highlightDark = e.target.value;
+    saveSettings();
+  };
+}
 
-async function setupUpdates(){if(!("serviceWorker"in navigator))return;const reg=await navigator.serviceWorker.register("./sw.js",{updateViaCache:"none"});let refreshing=false;navigator.serviceWorker.addEventListener("controllerchange",()=>{if(refreshing)return;refreshing=true;location.reload()});function offer(worker){if(!worker||!navigator.serviceWorker.controller)return;showUpdate(()=>worker.postMessage({type:"SKIP_WAITING"}))}if(reg.waiting)offer(reg.waiting);reg.addEventListener("updatefound",()=>{const w=reg.installing;if(!w)return;w.addEventListener("statechange",()=>{if(w.state==="installed")offer(w)})});setInterval(()=>reg.update(),60000)}
-function showUpdate(install){if(document.querySelector("#update-banner"))return;const el=document.createElement("div");el.id="update-banner";el.className="update-banner";el.innerHTML='<div><b>Доступно обновление</b><small>Новая версия Самоучителя готова.</small></div><button id="apply-update">Обновить</button>';document.body.appendChild(el);document.querySelector("#apply-update").onclick=install}
+async function setupUpdates() {
+  if (!("serviceWorker" in navigator)) return;
+  const reg = await navigator.serviceWorker.register("./sw.js", {
+    updateViaCache: "none",
+  });
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (refreshing) return;
+    refreshing = true;
+    location.reload();
+  });
+  function offer(worker) {
+    if (!worker || !navigator.serviceWorker.controller) return;
+    showUpdate(() => worker.postMessage({ type: "SKIP_WAITING" }));
+  }
+  if (reg.waiting) offer(reg.waiting);
+  reg.addEventListener("updatefound", () => {
+    const w = reg.installing;
+    if (!w) return;
+    w.addEventListener("statechange", () => {
+      if (w.state === "installed") offer(w);
+    });
+  });
+  setInterval(() => reg.update(), 60000);
+}
+function showUpdate(install) {
+  if (document.querySelector("#update-banner")) return;
+  const el = document.createElement("div");
+  el.id = "update-banner";
+  el.className = "update-banner";
+  el.innerHTML =
+    '<div><b>Доступно обновление</b><small>Новая версия Самоучителя готова.</small></div><button id="apply-update">Обновить</button>';
+  document.body.appendChild(el);
+  document.querySelector("#apply-update").onclick = install;
+}
 
-function today(){return new Date().toISOString().slice(0,10)}function allWords(){return dictionary.words.slice(0,5000)}function dueWords(){const now=Date.now();return allWords().filter(w=>!S.learned.has(w.id)&&(!S.review[w.id]||S.review[w.id]<=now))}function markReviewed(id,known){S.review[id]=Date.now()+(known?3:1)*86400000;S.daily={date:today(),count:(S.daily.date===today()?S.daily.count||0:0)+1};saveDictionaryState()}
-function continueStudy(){const v=JSON.parse(sessionStorage.getItem("sam-current-view")||"null");if(v?.kind==="libraryRead")libraryRead(v.type,+v.i);else if(v?.kind==="libraryList")libraryList(v.type);else {const next=course.lessons.find(x=>!S.progress[x.id])||course.lessons[0];lesson(next.id)}}
-function studyHub(){const due=dueWords(),favorites=allWords().filter(w=>S.favorites.has(w.id));shell('<button class="back" id="back">← Главная</button><h1>Практика</h1><div class="studygrid"><button class="studycard" id="continueStudy"><b>▶ Продолжить</b><small>Вернуться к последнему занятию</small></button><button class="studycard" id="reviewStudy"><b>↻ Повторение</b><small>'+due.length+' слов ждут повторения</small></button><button class="studycard" id="favoritesStudy"><b>★ Избранное</b><small>'+favorites.length+' слов и фраз</small></button><button class="studycard" id="grammarStudy"><b>✎ Грамматика</b><small>Короткое правило и практика</small></button><button class="studycard" id="dialogueStudy"><b>💬 Диалоги</b><small>Выберите реплику</small></button><button class="studycard" id="goalStudy"><b>◎ Цель на сегодня</b><small>'+((S.daily.date===today()?S.daily.count||0:0))+' / 10 повторений</small></button></div>',"train");document.querySelector("#back").onclick=home;document.querySelector("#continueStudy").onclick=continueStudy;document.querySelector("#reviewStudy").onclick=()=>reviewView(due);document.querySelector("#favoritesStudy").onclick=()=>reviewView(favorites);document.querySelector("#grammarStudy").onclick=grammarView;document.querySelector("#dialogueStudy").onclick=dialoguePractice;document.querySelector("#goalStudy").onclick=()=>reviewView(due)}
-function reviewView(list){const words=list.length?list:allWords().filter(w=>!S.learned.has(w.id)).slice(0,10);let index=0;const draw=()=>{const w=words[index];if(!w){studyHub();return}shell('<button class="back" id="back">← Практика</button><div class="flashcard"><small>Слово '+(index+1)+' из '+words.length+'</small><div class="flashru">'+w.ru+'</div><input id="answer" class="answerinput" placeholder="Напишите по-английски"><button class="btn" id="check">Проверить</button><p id="feedback" class="muted"></p></div>',"train");document.querySelector("#back").onclick=studyHub;document.querySelector("#check").onclick=()=>{const ok=document.querySelector("#answer").value.trim().toLowerCase()===w.en.toLowerCase();document.querySelector("#feedback").textContent=ok?'Верно: '+w.en:'Правильный ответ: '+w.en;markReviewed(w.id,ok);setTimeout(()=>{index++;draw()},ok?650:1500)}};draw()}
-function grammarView(){shell('<button class="back" id="back">← Практика</button><h1>Present Simple</h1><div class="grammarcard"><b>Правило</b><p>Для привычек и фактов используйте I/You/We/They + глагол: <em>I read.</em> Для he/she/it добавьте <em>-s</em>: <em>She reads.</em></p><p>Выберите верный вариант:</p><button class="grammaranswer" data-ok="0">She read every day.</button><button class="grammaranswer" data-ok="1">She reads every day.</button><button class="grammaranswer" data-ok="0">She reading every day.</button></div>',"train");document.querySelector("#back").onclick=studyHub;document.querySelectorAll(".grammaranswer").forEach(x=>x.onclick=()=>{x.classList.add(x.dataset.ok==='1'?'ok':'no')})}
-function dialoguePractice(){const lines=library.dialogues[0].lines;let index=0;const draw=()=>{const line=lines[index];shell('<button class="back" id="back">← Практика</button><h1>Диалог: в кафе</h1><div class="dialoguepractice"><p class="muted">'+line[0]+' говорит:</p><h2>'+line[1]+'</h2><p>Как ответить?</p><button class="grammaranswer" data-ok="1">A coffee, please.</button><button class="grammaranswer" data-ok="0">I am a coffee.</button><button class="grammaranswer" data-ok="0">Good night.</button></div>',"train");document.querySelector("#back").onclick=studyHub;document.querySelectorAll(".grammaranswer").forEach(x=>x.onclick=()=>{const ok=x.dataset.ok==='1';x.classList.add(ok?'ok':'no');if(ok)setTimeout(()=>{index=(index+1)%lines.length;draw()},700)})};draw()}
-function progressView(){const done=Object.keys(S.progress).filter(k=>S.progress[k]).length,reviewed=S.daily.date===today()?S.daily.count||0:0;shell('<button class="back" id="back">← Главная</button><h1>Прогресс</h1><div class="grammarcard"><p><b>Уроки:</b> '+done+' / '+course.lessons.length+'</p><p><b>Сегодня:</b> '+reviewed+' / 10 повторений</p><p><b>Избранное:</b> '+S.favorites.size+' слов</p><p><b>Выучено:</b> '+S.learned.size+' слов</p></div>',"home");document.querySelector("#back").onclick=home}
-const originalSettings=settings;settings=function(){originalSettings();const rate=document.querySelector("#rateslider");if(!rate)return;const voices=getEnglishVoices(),options=['<option value="">Автоматически</option>',...voices.map(v=>'<option value="'+v.name.replaceAll('"','&quot;')+'" '+(v.name===S.settings.voiceName?'selected':'')+'>'+v.name+' · '+v.lang+'</option>')].join('');rate.insertAdjacentHTML("afterend",'<h2>Голос диктора</h2><select id="voices" class="voice-select">'+options+'</select><p class="muted">Используется для английских слов, текстов и упражнений.</p>');document.querySelector("#voices").onchange=e=>{S.settings.voiceName=e.target.value;saveSettings()}}
-if(window.speechSynthesis){const refreshVoiceList=()=>{if(document.querySelector("#voices"))settings()};if(typeof speechSynthesis.addEventListener==="function")speechSynthesis.addEventListener("voiceschanged",refreshVoiceList);else speechSynthesis.onvoiceschanged=refreshVoiceList}
-const baseHome=home;home=function(){baseHome();const install=document.querySelector('#installApp');if(install)install.hidden=!deferredInstall;const grid=document.querySelector('.grid');grid.insertAdjacentHTML('beforeend','<div class="card" data-go="studyHub"><span class="icon">🎯</span><b>Практика</b><small class="muted">цели, повторение и диалоги</small></div><div class="card" data-go="continueStudy"><span class="icon">▶</span><b>Продолжить</b><small class="muted">вернуться к занятию</small></div><div class="card" data-go="progressView"><span class="icon">📊</span><b>Прогресс</b><small class="muted">цели и серии</small></div>');bind()}
-let deferredInstall=null;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstall=e;const button=document.querySelector('#installApp');if(button)button.hidden=false});async function installOnlineApp(button){if(deferredInstall){deferredInstall.prompt();await deferredInstall.userChoice;deferredInstall=null;button.textContent="Приложение установлено";return}button.textContent="В Chrome: ⋮ → Установить приложение"}function installPullRefresh(){let startY=0,pulling=false,armed=false;const indicator=document.createElement("div");indicator.id="pull-refresh";indicator.textContent="Потяните вниз, чтобы обновить";document.body.appendChild(indicator);const scrollTop=()=>{const host=document.body.classList.contains("library-reading")?document.querySelector("#app"):document.scrollingElement;return host?host.scrollTop:0};document.addEventListener("touchstart",e=>{if(e.touches.length!==1||scrollTop()>0)return;startY=e.touches[0].clientY;pulling=true;armed=false},{passive:true});document.addEventListener("touchmove",e=>{if(!pulling)return;const distance=e.touches[0].clientY-startY;if(distance<0){pulling=false;return}armed=distance>76;indicator.classList.toggle("show",distance>16);indicator.classList.toggle("armed",armed);indicator.textContent=armed?"Отпустите, чтобы обновить":"Потяните вниз, чтобы обновить"},{passive:true});document.addEventListener("touchend",()=>{if(!pulling)return;pulling=false;indicator.classList.remove("show","armed");if(armed){indicator.textContent="Обновление…";indicator.classList.add("show");location.reload()}},{passive:true});document.addEventListener("touchcancel",()=>{pulling=false;indicator.classList.remove("show","armed")},{passive:true})}load();setupUpdates();installPullRefresh();
+function today() {
+  return new Date().toISOString().slice(0, 10);
+}
+function allWords() {
+  return dictionary.words.slice(0, 5000);
+}
+function dueWords() {
+  const now = Date.now();
+  return allWords().filter(
+    (w) => !S.learned.has(w.id) && (!S.review[w.id] || S.review[w.id] <= now),
+  );
+}
+function markReviewed(id, known) {
+  S.review[id] = Date.now() + (known ? 3 : 1) * 86400000;
+  S.daily = {
+    date: today(),
+    count: (S.daily.date === today() ? S.daily.count || 0 : 0) + 1,
+  };
+  saveDictionaryState();
+}
+function continueStudy() {
+  const v = JSON.parse(sessionStorage.getItem("sam-current-view") || "null");
+  if (v?.kind === "libraryRead") libraryRead(v.type, +v.i);
+  else if (v?.kind === "libraryList") libraryList(v.type);
+  else {
+    const next =
+      course.lessons.find((x) => !S.progress[x.id]) || course.lessons[0];
+    lesson(next.id);
+  }
+}
+function studyHub() {
+  const due = dueWords(),
+    favorites = allWords().filter((w) => S.favorites.has(w.id));
+  shell(
+    '<button class="back" id="back">← Главная</button><h1>Практика</h1><div class="studygrid"><button class="studycard" id="continueStudy"><b>▶ Продолжить</b><small>Вернуться к последнему занятию</small></button><button class="studycard" id="reviewStudy"><b>↻ Повторение</b><small>' +
+      due.length +
+      ' слов ждут повторения</small></button><button class="studycard" id="favoritesStudy"><b>★ Избранное</b><small>' +
+      favorites.length +
+      ' слов и фраз</small></button><button class="studycard" id="grammarStudy"><b>✎ Грамматика</b><small>Короткое правило и практика</small></button><button class="studycard" id="dialogueStudy"><b>💬 Диалоги</b><small>Выберите реплику</small></button><button class="studycard" id="goalStudy"><b>◎ Цель на сегодня</b><small>' +
+      (S.daily.date === today() ? S.daily.count || 0 : 0) +
+      " / 10 повторений</small></button></div>",
+    "train",
+  );
+  document.querySelector("#back").onclick = home;
+  document.querySelector("#continueStudy").onclick = continueStudy;
+  document.querySelector("#reviewStudy").onclick = () => reviewView(due);
+  document.querySelector("#favoritesStudy").onclick = () =>
+    reviewView(favorites);
+  document.querySelector("#grammarStudy").onclick = grammarView;
+  document.querySelector("#dialogueStudy").onclick = dialoguePractice;
+  document.querySelector("#goalStudy").onclick = () => reviewView(due);
+}
+function reviewView(list) {
+  const words = list.length
+    ? list
+    : allWords()
+        .filter((w) => !S.learned.has(w.id))
+        .slice(0, 10);
+  let index = 0;
+  const draw = () => {
+    const w = words[index];
+    if (!w) {
+      studyHub();
+      return;
+    }
+    shell(
+      '<button class="back" id="back">← Практика</button><div class="flashcard"><small>Слово ' +
+        (index + 1) +
+        " из " +
+        words.length +
+        '</small><div class="flashru">' +
+        w.ru +
+        '</div><input id="answer" class="answerinput" placeholder="Напишите по-английски"><button class="btn" id="check">Проверить</button><p id="feedback" class="muted"></p></div>',
+      "train",
+    );
+    document.querySelector("#back").onclick = studyHub;
+    document.querySelector("#check").onclick = () => {
+      const ok =
+        document.querySelector("#answer").value.trim().toLowerCase() ===
+        w.en.toLowerCase();
+      document.querySelector("#feedback").textContent = ok
+        ? "Верно: " + w.en
+        : "Правильный ответ: " + w.en;
+      markReviewed(w.id, ok);
+      setTimeout(
+        () => {
+          index++;
+          draw();
+        },
+        ok ? 650 : 1500,
+      );
+    };
+  };
+  draw();
+}
+function grammarView() {
+  shell(
+    '<button class="back" id="back">← Практика</button><h1>Present Simple</h1><div class="grammarcard"><b>Правило</b><p>Для привычек и фактов используйте I/You/We/They + глагол: <em>I read.</em> Для he/she/it добавьте <em>-s</em>: <em>She reads.</em></p><p>Выберите верный вариант:</p><button class="grammaranswer" data-ok="0">She read every day.</button><button class="grammaranswer" data-ok="1">She reads every day.</button><button class="grammaranswer" data-ok="0">She reading every day.</button></div>',
+    "train",
+  );
+  document.querySelector("#back").onclick = studyHub;
+  document.querySelectorAll(".grammaranswer").forEach(
+    (x) =>
+      (x.onclick = () => {
+        x.classList.add(x.dataset.ok === "1" ? "ok" : "no");
+      }),
+  );
+}
+function dialoguePractice() {
+  const lines = library.dialogues[0].lines;
+  let index = 0;
+  const draw = () => {
+    const line = lines[index];
+    shell(
+      '<button class="back" id="back">← Практика</button><h1>Диалог: в кафе</h1><div class="dialoguepractice"><p class="muted">' +
+        line[0] +
+        " говорит:</p><h2>" +
+        line[1] +
+        '</h2><p>Как ответить?</p><button class="grammaranswer" data-ok="1">A coffee, please.</button><button class="grammaranswer" data-ok="0">I am a coffee.</button><button class="grammaranswer" data-ok="0">Good night.</button></div>',
+      "train",
+    );
+    document.querySelector("#back").onclick = studyHub;
+    document.querySelectorAll(".grammaranswer").forEach(
+      (x) =>
+        (x.onclick = () => {
+          const ok = x.dataset.ok === "1";
+          x.classList.add(ok ? "ok" : "no");
+          if (ok)
+            setTimeout(() => {
+              index = (index + 1) % lines.length;
+              draw();
+            }, 700);
+        }),
+    );
+  };
+  draw();
+}
+function progressView() {
+  const done = Object.keys(S.progress).filter((k) => S.progress[k]).length,
+    reviewed = S.daily.date === today() ? S.daily.count || 0 : 0;
+  shell(
+    '<button class="back" id="back">← Главная</button><h1>Прогресс</h1><div class="grammarcard"><p><b>Уроки:</b> ' +
+      done +
+      " / " +
+      course.lessons.length +
+      "</p><p><b>Сегодня:</b> " +
+      reviewed +
+      " / 10 повторений</p><p><b>Избранное:</b> " +
+      S.favorites.size +
+      " слов</p><p><b>Выучено:</b> " +
+      S.learned.size +
+      " слов</p></div>",
+    "home",
+  );
+  document.querySelector("#back").onclick = home;
+}
+const originalSettings = settings;
+settings = function () {
+  originalSettings();
+  const rate = document.querySelector("#rateslider");
+  if (!rate) return;
+  const voices = getEnglishVoices(),
+    options = [
+      '<option value="">Автоматически</option>',
+      ...voices.map(
+        (v) =>
+          '<option value="' +
+          v.name.replaceAll('"', "&quot;") +
+          '" ' +
+          (v.name === S.settings.voiceName ? "selected" : "") +
+          ">" +
+          v.name +
+          " · " +
+          v.lang +
+          "</option>",
+      ),
+    ].join("");
+  rate.insertAdjacentHTML(
+    "afterend",
+    '<h2>Голос диктора</h2><select id="voices" class="voice-select">' +
+      options +
+      '</select><p class="muted">Используется для английских слов, текстов и упражнений.</p>',
+  );
+  document.querySelector("#voices").onchange = (e) => {
+    S.settings.voiceName = e.target.value;
+    saveSettings();
+  };
+};
+if (window.speechSynthesis) {
+  const refreshVoiceList = () => {
+    if (document.querySelector("#voices")) settings();
+  };
+  if (typeof speechSynthesis.addEventListener === "function")
+    speechSynthesis.addEventListener("voiceschanged", refreshVoiceList);
+  else speechSynthesis.onvoiceschanged = refreshVoiceList;
+}
+const baseHome = home;
+home = function () {
+  baseHome();
+  const install = document.querySelector("#installApp");
+  if (install) install.hidden = !deferredInstall;
+  const grid = document.querySelector(".grid");
+  grid.insertAdjacentHTML(
+    "beforeend",
+    '<div class="card" data-go="studyHub"><span class="icon">🎯</span><b>Практика</b><small class="muted">цели, повторение и диалоги</small></div><div class="card" data-go="continueStudy"><span class="icon">▶</span><b>Продолжить</b><small class="muted">вернуться к занятию</small></div><div class="card" data-go="progressView"><span class="icon">📊</span><b>Прогресс</b><small class="muted">цели и серии</small></div>',
+  );
+  bind();
+};
+let deferredInstall = null;
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredInstall = e;
+  const button = document.querySelector("#installApp");
+  if (button) button.hidden = false;
+});
+async function installOnlineApp(button) {
+  if (deferredInstall) {
+    deferredInstall.prompt();
+    await deferredInstall.userChoice;
+    deferredInstall = null;
+    button.textContent = "Приложение установлено";
+    return;
+  }
+  button.textContent = "В Chrome: ⋮ → Установить приложение";
+}
+function installPullRefresh() {
+  let startY = 0,
+    pulling = false,
+    armed = false;
+  const indicator = document.createElement("div");
+  indicator.id = "pull-refresh";
+  indicator.textContent = "Потяните вниз, чтобы обновить";
+  document.body.appendChild(indicator);
+  const scrollTop = () => {
+    const host = document.body.classList.contains("library-reading")
+      ? document.querySelector("#app")
+      : document.scrollingElement;
+    return host ? host.scrollTop : 0;
+  };
+  document.addEventListener(
+    "touchstart",
+    (e) => {
+      if (e.touches.length !== 1 || scrollTop() > 0) return;
+      startY = e.touches[0].clientY;
+      pulling = true;
+      armed = false;
+    },
+    { passive: true },
+  );
+  document.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!pulling) return;
+      const distance = e.touches[0].clientY - startY;
+      if (distance < 0) {
+        pulling = false;
+        return;
+      }
+      armed = distance > 76;
+      indicator.classList.toggle("show", distance > 16);
+      indicator.classList.toggle("armed", armed);
+      indicator.textContent = armed
+        ? "Отпустите, чтобы обновить"
+        : "Потяните вниз, чтобы обновить";
+    },
+    { passive: true },
+  );
+  document.addEventListener(
+    "touchend",
+    () => {
+      if (!pulling) return;
+      pulling = false;
+      indicator.classList.remove("show", "armed");
+      if (armed) {
+        indicator.textContent = "Обновление…";
+        indicator.classList.add("show");
+        location.reload();
+      }
+    },
+    { passive: true },
+  );
+  document.addEventListener(
+    "touchcancel",
+    () => {
+      pulling = false;
+      indicator.classList.remove("show", "armed");
+    },
+    { passive: true },
+  );
+}
+load();
+setupUpdates();
+installPullRefresh();
 
-function nativeAudioIntent(words,mode){const sequence=words.map(w=>w.en+"\u001e"+(w.ru||"")).join("\u001f");return "intent://play?mode="+mode+"&words="+encodeURIComponent(sequence)+"&rate="+encodeURIComponent(.9)+"#Intent;scheme=samouchitel-audio;package=com.anfas.samouchitel.audio;end"}
-let backgroundAudioActive=false;launchBackgroundAudio=()=>{const words=dictionary.words.filter(w=>S.drill.has(w.id)).slice(0,100);if(!words.length)return;const mode=backgroundAudioActive?"stop":"play";location.href=nativeAudioIntent(words,mode);backgroundAudioActive=!backgroundAudioActive;const button=document.querySelector("#backgroundDrill");if(button)button.textContent=backgroundAudioActive?"⏹ Остановить фон":"🎧 В фоне"}
-const startDrillWithAudioFiles=startDrill;startDrill=()=>{backgroundAudioActive=false;const words=dictionary.words.filter(w=>S.drill.has(w.id)).slice(0,100);startDrillWithAudioFiles();if(words.length&&/Android/i.test(navigator.userAgent))location.href=nativeAudioIntent(words,"prepare")}
+function nativeAudioIntent(words, mode) {
+  const sequence = words
+    .map((w) => w.en + "\u001e" + (w.ru || ""))
+    .join("\u001f");
+  return (
+    "intent://play?mode=" +
+    mode +
+    "&words=" +
+    encodeURIComponent(sequence) +
+    "&rate=" +
+    encodeURIComponent(0.9) +
+    "#Intent;scheme=samouchitel-audio;package=com.anfas.samouchitel.audio;end"
+  );
+}
+let backgroundAudioActive = false;
+launchBackgroundAudio = () => {
+  const words = dictionary.words.filter((w) => S.drill.has(w.id)).slice(0, 100);
+  if (!words.length) return;
+  const mode = backgroundAudioActive ? "stop" : "play";
+  location.href = nativeAudioIntent(words, mode);
+  backgroundAudioActive = !backgroundAudioActive;
+  const button = document.querySelector("#backgroundDrill");
+  if (button)
+    button.textContent = backgroundAudioActive
+      ? "⏹ Остановить фон"
+      : "🎧 В фоне";
+};
+const startDrillWithAudioFiles = startDrill;
+startDrill = () => {
+  backgroundAudioActive = false;
+  const words = dictionary.words.filter((w) => S.drill.has(w.id)).slice(0, 100);
+  startDrillWithAudioFiles();
+  if (words.length && /Android/i.test(navigator.userAgent))
+    location.href = nativeAudioIntent(words, "prepare");
+};
