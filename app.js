@@ -722,8 +722,7 @@ function libraryRead(type, i) {
     return;
   }
   const body =
-    body =
-      type === "dialogues"
+    type === "dialogues"
         ? x.lines
             .map(
               (l) =>
