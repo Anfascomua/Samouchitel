@@ -288,6 +288,33 @@ function stopSpeech() {
   speechSynthesis.cancel();
   if (activeSpeechButton) finishSpeechButton(activeSpeechButton);
 }
+function spanishPhonetic(value) {
+  let t = String(value || "").toLowerCase().trim();
+  if (!t) return "";
+  return t
+    .replace(/güe/g, "гвэ").replace(/güi/g, "гви")
+    .replace(/que/g, "ке").replace(/qui/g, "ки")
+    .replace(/gue/g, "ге").replace(/gui/g, "ги")
+    .replace(/ch/g, "ч").replace(/ll/g, "й").replace(/rr/g, "р")
+    .replace(/ñ/g, "нь").replace(/ce/g, "се").replace(/ci/g, "си")
+    .replace(/ge/g, "хе").replace(/gi/g, "хи").replace(/h/g, "")
+    .replace(/j/g, "х").replace(/z/g, "с").replace(/v/g, "б")
+    .replace(/x/g, "кс").replace(/y\b/g, "и").replace(/y/g, "й")
+    .replace(/c/g, "к")
+    .replace(/á/g, "а").replace(/é/g, "э").replace(/í/g, "и")
+    .replace(/ó/g, "о").replace(/ú/g, "у").replace(/ü/g, "у")
+    .replace(/a/g, "а").replace(/b/g, "б").replace(/d/g, "д")
+    .replace(/e/g, "э").replace(/f/g, "ф").replace(/g/g, "г")
+    .replace(/i/g, "и").replace(/k/g, "к").replace(/l/g, "л")
+    .replace(/m/g, "м").replace(/n/g, "н").replace(/o/g, "о")
+    .replace(/p/g, "п").replace(/q/g, "к").replace(/r/g, "р")
+    .replace(/s/g, "с").replace(/t/g, "т").replace(/u/g, "у")
+    .replace(/w/g, "у");
+}
+function pronunciation(w) {
+  return w.pronunciationRu ||
+    (activeLanguage === "es" ? spanishPhonetic(w.en) : "");
+}
 function speak(t, button = null) {
   if (button && activeSpeechButton === button) {
     stopSpeech();
@@ -300,13 +327,14 @@ function speak(t, button = null) {
     button.textContent = "■";
     button.classList.add("speaking");
   }
-  // Android may fall back to a Russian system voice when Spanish is not
-  // installed, which makes it spell the word letter by letter. Google TTS
-  // receives the complete Spanish word and uses its native pronunciation.
+  // Some phones do not have a Spanish voice and spell Latin text letter by
+  // letter. Read the phonetic form instead: hola -> ола (silent h).
   if (activeLanguage === "es") {
-    remoteSpeak(t, S.settings.voiceRate || 0.88, () =>
-      finishSpeechButton(button),
-    );
+    const u = new SpeechSynthesisUtterance(spanishPhonetic(t));
+    u.lang = "ru-RU";
+    u.rate = Number(S.settings.voiceRate || 0.88);
+    u.onend = u.onerror = () => finishSpeechButton(button);
+    speechSynthesis.speak(u);
     return;
   }
   if (nativeSpeak(t, S.settings.voiceRate || 0.88)) {
@@ -329,7 +357,7 @@ function word(w) {
     '<div class="word"><div class="wordline"><div><div class="en">' +
     w.en +
     '</div><div class="pron">' +
-    (w.pronunciationRu || "") +
+    pronunciation(w) +
     '</div><div class="ru">' +
     w.ru +
     '</div></div><button class="speaker" data-say="' +
@@ -1066,7 +1094,7 @@ function dictionaryView(
             '">' +
             w.en +
             '</button></td><td class="pron">' +
-            w.pronunciationRu +
+            pronunciation(w) +
             "</td><td>" +
             w.ru +
             (w.mirror ? '<div class="mirror">↔ ' + w.mirror + "</div>" : "") +
@@ -1434,12 +1462,12 @@ function drillCard(list) {
           '</div><div class="flashen">' +
           w.en +
           '</div><div class="flashpron">' +
-          w.pronunciationRu +
+          pronunciation(w) +
           "</div>"
         : '<div class="flashen">' +
           w.en +
           '</div><div class="flashpron">' +
-          w.pronunciationRu +
+          pronunciation(w) +
           '</div><div class="flashru">' +
           w.ru +
           "</div>") +
