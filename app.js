@@ -1258,6 +1258,8 @@ function launchBackgroundAudio() {
     encodeURIComponent(sequence) +
     "&rate=" +
     encodeURIComponent(Number(S.settings.voiceRate ?? 0.82)) +
+    "&lang=" +
+    encodeURIComponent(LANGUAGES[activeLanguage].tts) +
     "#Intent;scheme=samouchitel-audio;package=com.anfas.samouchitel.audio;end";
   location.href = url;
 }
