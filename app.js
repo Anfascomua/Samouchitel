@@ -594,7 +594,35 @@ function wireSentenceTranslations(bookmarkKey) {
 }
 function libraryRead(type, i) {
   rememberView({ kind: "libraryRead", type, i });
-  const x = library[type][i],
+  const x = library[type][i];
+  if (x.externalUrl) {
+    shell(
+      '<div class="lessonlabel">' +
+        x.level +
+        "</div><h1>" +
+        x.title +
+        '</h1><p class="muted">' +
+        x.ru +
+        '</p><div class="reader"><section class="bookchapter"><p>' +
+        (x.author || "") +
+        '</p><p>Полный испанский текст открыт законно в Project Gutenberg.</p><a class="btn primary" target="_blank" rel="noopener" href="' +
+        x.externalUrl +
+        '">Открыть полный роман ↗</a></section></div>',
+      "home",
+    );
+    const header = document.createElement("div");
+    header.className = "reader-fixed-header";
+    header.innerHTML = '<button class="back" id="back">← Назад</button>';
+    document.body.appendChild(header);
+    document.body.classList.add("library-reading");
+    document.querySelector("#back").onclick = () => {
+      header.remove();
+      document.body.classList.remove("library-reading");
+      libraryList(type);
+    };
+    return;
+  }
+  const body =
     body =
       type === "dialogues"
         ? x.lines

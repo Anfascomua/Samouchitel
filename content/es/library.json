@@ -275,6 +275,38 @@
           ]
         }
       ]
+    },
+    {
+      "id": "es-open-la-barraca",
+      "title": "La Barraca",
+      "ru": "Хижина — социальный роман о Валенсии",
+      "level": "B1–B2 · полный роман",
+      "author": "Vicente Blasco Ibáñez · 1898 · общественное достояние",
+      "externalUrl": "https://www.gutenberg.org/ebooks/14944"
+    },
+    {
+      "id": "es-open-canas-y-barro",
+      "title": "Cañas y barro",
+      "ru": "Тростник и ил — роман о жизни у лагуны Альбуфера",
+      "level": "B2 · полный роман",
+      "author": "Vicente Blasco Ibáñez · 1902 · общественное достояние",
+      "externalUrl": "https://www.gutenberg.org/ebooks/57781"
+    },
+    {
+      "id": "es-open-cuatro-jinetes",
+      "title": "Los cuatro jinetes del apocalipsis",
+      "ru": "Четыре всадника Апокалипсиса — роман о Первой мировой войне",
+      "level": "B2–C1 · полный роман",
+      "author": "Vicente Blasco Ibáñez · 1916 · общественное достояние",
+      "externalUrl": "https://www.gutenberg.org/ebooks/24536"
+    },
+    {
+      "id": "es-open-sangre-y-arena",
+      "title": "Sangre y arena",
+      "ru": "Кровь и песок — роман о славе и цене успеха",
+      "level": "B2–C1 · полный роман",
+      "author": "Vicente Blasco Ibáñez · 1908 · общественное достояние",
+      "externalUrl": "https://www.gutenberg.org/ebooks/26983"
     }
   ],
   "stories": [
