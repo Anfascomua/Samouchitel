@@ -258,7 +258,7 @@ function remoteSpeak(t, rate, done) {
   }
   remoteSpeech = new Audio(
     "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=" +
-      LANGUAGES[activeLanguage].tts +
+      LANGUAGES[activeLanguage].speech +
       "&q=" +
       encodeURIComponent(t),
   );
@@ -1239,7 +1239,7 @@ function launchBackgroundAudio() {
 }
 function drillAudioUrl(text) {
   return (
-    "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=" + LANGUAGES[activeLanguage].tts + "&q=" +
+    "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=" + LANGUAGES[activeLanguage].speech + "&q=" +
     encodeURIComponent(text)
   );
 }
