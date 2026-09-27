@@ -631,6 +631,9 @@ html[data-theme="dark"] .exercise p {
   font-weight: 900;
 }
 .flashpron {
+  display: block !important;
+  visibility: visible !important;
+  min-height: 1.35em;
   font-size: 1.35rem;
   color: #2563eb;
   margin: 10px 0;
