@@ -616,6 +616,7 @@ async function readLocalNovel(type, x) {
       .split(/\n\s*\n+/)
       .map((p) => p.replace(/\n+/g, " ").replace(/\s+/g, " ").trim())
       .filter((p) => p.length > 25)
+      .filter((p) => !/^Produced by\b/i.test(p) && !/^This eBook\b/i.test(p))
       .map((p) => p.replace(/</g, "&lt;").replace(/>/g, "&gt;")),
     perPage = 9,
     pages = Array.from({ length: Math.ceil(paragraphs.length / perPage) }, (_, n) =>
