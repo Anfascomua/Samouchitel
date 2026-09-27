@@ -327,14 +327,12 @@ function speak(t, button = null) {
     button.textContent = "■";
     button.classList.add("speaking");
   }
-  // Some phones do not have a Spanish voice and spell Latin text letter by
-  // letter. Read the phonetic form instead: hola -> ола (silent h).
+  // Spanish needs a real Spanish synthesizer: it handles all pronunciation
+  // rules (h, c/z, g/j, qu/gu, ñ, ll, y and accents), not just one letter.
   if (activeLanguage === "es") {
-    const u = new SpeechSynthesisUtterance(spanishPhonetic(t));
-    u.lang = "ru-RU";
-    u.rate = Number(S.settings.voiceRate || 0.88);
-    u.onend = u.onerror = () => finishSpeechButton(button);
-    speechSynthesis.speak(u);
+    remoteSpeak(t, S.settings.voiceRate || 0.88, () =>
+      finishSpeechButton(button),
+    );
     return;
   }
   if (nativeSpeak(t, S.settings.voiceRate || 0.88)) {
