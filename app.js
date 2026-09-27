@@ -592,9 +592,97 @@ function wireSentenceTranslations(bookmarkKey) {
       }),
   );
 }
+async function readLocalNovel(type, x) {
+  let raw;
+  try {
+    raw = await fetch("./content/" + activeLanguage + "/novels/" + x.textFile, {
+      cache: "no-store",
+    }).then((r) => {
+      if (!r.ok) throw new Error("book");
+      return r.text();
+    });
+  } catch (e) {
+    shell('<h1>Книга пока загружается</h1><p class="muted">Проверьте соединение и откройте книгу ещё раз.</p>', "home");
+    return;
+  }
+  const start = raw.indexOf("*** START OF"),
+    end = raw.indexOf("*** END OF"),
+    clean = raw
+      .slice(start >= 0 ? raw.indexOf("\n", start) + 1 : 0, end >= 0 ? end : raw.length)
+      .replace(/\r/g, "")
+      .replace(/^\s*\[[^\]]+\]\s*$/gm, "")
+      .trim(),
+    paragraphs = clean
+      .split(/\n\s*\n+/)
+      .map((p) => p.replace(/\n+/g, " ").replace(/\s+/g, " ").trim())
+      .filter((p) => p.length > 25)
+      .map((p) => p.replace(/</g, "&lt;").replace(/>/g, "&gt;")),
+    perPage = 9,
+    pages = Array.from({ length: Math.ceil(paragraphs.length / perPage) }, (_, n) =>
+      paragraphs.slice(n * perPage, n * perPage + perPage),
+    );
+  let page = 0;
+  const render = () => {
+    const body = pages[page]
+      .map(
+        (p) =>
+          '<div class="readpara sentence-reader">' +
+          sentenceBlock(p) +
+          '<button class="speaker" data-say="' +
+          p.replaceAll('"', "&quot;") +
+          '">▶</button></div>',
+      )
+      .join("");
+    shell(
+      '<div class="lessonlabel">' +
+        x.level +
+        " · страница " +
+        (page + 1) +
+        " из " +
+        pages.length +
+        "</div><h1>" +
+        x.title +
+        '</h1><p class="muted">' +
+        x.ru +
+        " · " +
+        x.author +
+        '</p><div class="reader">' +
+        body +
+        '</div><div class="pager"><button class="btn" id="prevPage" ' +
+        (page === 0 ? "disabled" : "") +
+        '>← Назад</button><button class="btn primary" id="nextPage" ' +
+        (page === pages.length - 1 ? "disabled" : "") +
+        '>Дальше →</button></div><div id="libraryWordTranslation" class="library-translation"></div>',
+      "home",
+    );
+    document.querySelector(".reader-fixed-header")?.remove();
+    const header = document.createElement("div");
+    header.className = "reader-fixed-header";
+    header.innerHTML = '<button class="back" id="back">← Библиотека</button>';
+    document.body.appendChild(header);
+    document.body.classList.add("library-reading");
+    document.querySelector("#back").onclick = () => {
+      header.remove();
+      document.body.classList.remove("library-reading");
+      libraryList(type);
+    };
+    document.querySelector("#prevPage").onclick = () => {
+      if (page) { page--; render(); window.scrollTo(0, 0); }
+    };
+    document.querySelector("#nextPage").onclick = () => {
+      if (page < pages.length - 1) { page++; render(); window.scrollTo(0, 0); }
+    };
+    wireSpeak();
+    wireLibraryTranslation();
+    wireSentenceTranslations();
+    fillSentenceTranslations();
+  };
+  render();
+}
 function libraryRead(type, i) {
   rememberView({ kind: "libraryRead", type, i });
   const x = library[type][i];
+  if (x.textFile) return readLocalNovel(type, x);
   if (x.externalUrl) {
     shell(
       '<div class="lessonlabel">' +
