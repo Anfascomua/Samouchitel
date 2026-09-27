@@ -1,6 +1,249 @@
 {
-  "books": [],
-  "stories": [],
+  "books": [
+    {
+      "id": "es-book-1",
+      "title": "Una casa en la calle Sol",
+      "ru": "Дом на улице Соль",
+      "level": "A1",
+      "chapters": [
+        {
+          "title": "Глава 1. Новая комната",
+          "text": [
+            "Lucía llega a la calle Sol con una maleta azul y una caja pequeña. Busca el número catorce y llama a la puerta.",
+            "La señora Marta abre. Tiene una sonrisa amable y muestra a Lucía una habitación clara con una cama, una mesa y una ventana grande.",
+            "La habitación no es grande, pero Lucía la mira y dice: «Me gusta. Aquí puedo empezar una vida nueva»."
+          ]
+        },
+        {
+          "title": "Глава 2. Новые соседи",
+          "text": [
+            "En la cocina Lucía conoce a Diego. Él estudia música y prepara café todas las mañanas. También vive allí Ana, una profesora que trabaja cerca de la casa.",
+            "Los tres cenan juntos el primer viernes. Hablan de sus ciudades, de sus familias y de los lugares que quieren visitar.",
+            "Al final de la noche Lucía piensa que la calle Sol ya no parece desconocida."
+          ]
+        },
+        {
+          "title": "Глава 3. Маленький сад",
+          "text": [
+            "Detrás de la casa hay un jardín pequeño. Está lleno de plantas, pero necesita agua y cuidado.",
+            "Un sábado Lucía, Diego y Ana limpian el jardín. Plantan flores, ponen dos sillas y preparan limonada.",
+            "Cuando cae la tarde, los vecinos vienen a saludar. Lucía entiende que un hogar se construye también con amigos."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-book-2",
+      "title": "El viaje de Mateo",
+      "ru": "Путешествие Матео",
+      "level": "A1–A2",
+      "chapters": [
+        {
+          "title": "Глава 1. Билет в Валенсию",
+          "text": [
+            "Mateo trabaja mucho en Madrid y decide tomar unos días de vacaciones. Compra un billete de tren para Valencia.",
+            "En la estación mira la pantalla, encuentra su andén y sube al tren con una mochila y un libro."
+          ]
+        },
+        {
+          "title": "Глава 2. У моря",
+          "text": [
+            "En Valencia Mateo camina hasta la playa. El mar está tranquilo y el sol es cálido.",
+            "En un café pide arroz, pescado y agua. La camarera le recomienda visitar el mercado central al día siguiente."
+          ]
+        },
+        {
+          "title": "Глава 3. Обратно домой",
+          "text": [
+            "Mateo vuelve a Madrid con muchas fotos y un pequeño regalo para su hermana. Está cansado, pero feliz.",
+            "Durante el viaje piensa que no necesita ir muy lejos para descubrir algo nuevo."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-book-3",
+      "title": "La luz del faro",
+      "ru": "Свет маяка",
+      "level": "A2",
+      "chapters": [
+        {
+          "title": "Глава 1. Остров",
+          "text": [
+            "Sofía llega a una isla pequeña para cuidar un faro durante el invierno. El viento es fuerte y el pueblo tiene solamente una tienda y un puerto.",
+            "Cada noche Sofía enciende la gran luz del faro y escribe en un cuaderno el tiempo, el viento y los barcos que ve."
+          ]
+        },
+        {
+          "title": "Глава 2. Шторм",
+          "text": [
+            "Una noche de tormenta Sofía ve una luz extraña cerca de las rocas. Llama por radio al puerto y espera una respuesta.",
+            "Por la mañana descubre que la luz viene de una boya antigua. El cristal refleja la luz del faro cuando sube la marea."
+          ]
+        },
+        {
+          "title": "Глава 3. История острова",
+          "text": [
+            "Los pescadores arreglan la boya y agradecen a Sofía por encontrar el problema. Después le cuentan historias sobre la isla.",
+            "Al terminar el invierno, Sofía regresa a casa con un cuaderno lleno de notas y una historia que quiere escribir."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-book-costa-rica-life",
+      "title": "Costa Rica: vida entre dos costas",
+      "ru": "Коста-Рика: жизнь между двумя побережьями",
+      "level": "A2–B1",
+      "chapters": [
+        {
+          "title": "Глава 1. Небольшая страна",
+          "text": [
+            "Costa Rica es un país pequeño de América Central. Tiene costa en el océano Pacífico y en el mar Caribe. Entre los dos lados hay montañas, valles, volcanes y muchos bosques.",
+            "La capital, San José, está en el Valle Central. Allí vive una parte importante de la población. El clima es más fresco que en las costas porque la ciudad está a gran altura.",
+            "A pesar de su tamaño, el país reúne muchas formas de vida. En un solo día una persona puede ver una ciudad, un volcán y una playa."
+          ]
+        },
+        {
+          "title": "Глава 2. Pura vida",
+          "text": [
+            "En Costa Rica se escucha mucho la expresión «pura vida». Puede significar hola, gracias, todo está bien o simplemente una forma positiva de mirar el día.",
+            "Para muchas personas, pura vida no es solamente una frase. Es una idea de vivir con calma, cuidar las relaciones y disfrutar de las cosas sencillas.",
+            "En los barrios, las familias suelen conversar delante de sus casas. Los fines de semana son para visitar a los abuelos, ir al mercado o pasar tiempo cerca del mar."
+          ]
+        },
+        {
+          "title": "Глава 3. Работа и образование",
+          "text": [
+            "La vida moderna en Costa Rica combina agricultura, turismo, tecnología, comercio y servicios. Muchas personas trabajan en pequeñas empresas familiares, hoteles, escuelas, hospitales u oficinas.",
+            "El café, las bananas y la piña son productos conocidos del país. También hay empresas tecnológicas y centros de investigación en las ciudades principales.",
+            "La educación es importante para muchas familias. En cada pueblo hay escuelas, y las universidades de San José atraen a estudiantes de todo el país."
+          ]
+        },
+        {
+          "title": "Глава 4. Еда и ритм дня",
+          "text": [
+            "Un plato típico es el gallo pinto: arroz y frijoles mezclados con especias. Se puede comer en el desayuno con huevos, plátano y café.",
+            "Al mediodía muchas personas comen un casado. Normalmente lleva arroz, frijoles, ensalada, plátano y carne, pollo o pescado.",
+            "La hora de comer es también una pausa para hablar. En los mercados se encuentran frutas frescas, jugos y pequeñas sodas, que son restaurantes sencillos y familiares."
+          ]
+        },
+        {
+          "title": "Глава 5. Праздники и сообщество",
+          "text": [
+            "Las fiestas locales llenan las calles de música, comida y deporte. En muchos lugares la comunidad organiza actividades para niños, vecinos y visitantes.",
+            "El fútbol es muy popular. Cuando juega la selección nacional, familias y amigos se reúnen para ver el partido juntos.",
+            "La vida en Costa Rica no es igual en todas las regiones. Sin embargo, la cercanía entre las personas y el respeto por la naturaleza son valores que aparecen una y otra vez."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-book-costa-rica-nature",
+      "title": "Costa Rica: bosques, volcanes y océanos",
+      "ru": "Коста-Рика: леса, вулканы и океаны",
+      "level": "B1",
+      "chapters": [
+        {
+          "title": "Глава 1. Место исключительного разнообразия",
+          "text": [
+            "Costa Rica ocupa una parte pequeña del planeta, pero posee una gran variedad de especies. Su posición entre América del Norte y América del Sur convirtió el territorio en un puente natural para animales y plantas.",
+            "Las diferencias de altura, lluvia y temperatura crean muchos ecosistemas. Por eso un bosque seco del Pacífico puede ser muy distinto de una selva húmeda del Caribe.",
+            "Los parques nacionales y las reservas protegen una parte importante del territorio. Son espacios para investigar, caminar y aprender a observar sin destruir."
+          ]
+        },
+        {
+          "title": "Глава 2. Леса дождя",
+          "text": [
+            "En los bosques lluviosos la humedad está presente casi todo el año. Los árboles altos forman una capa verde que deja pasar poca luz hasta el suelo.",
+            "Allí viven monos, perezosos, ranas de colores, tucanes e innumerables insectos. Muchos animales se escuchan antes de poder verse.",
+            "Un guía local puede mostrar huellas pequeñas, nidos escondidos y plantas medicinales. Caminar despacio es importante, porque la selva revela sus detalles a quien presta atención."
+          ]
+        },
+        {
+          "title": "Глава 3. Вулканы и вода",
+          "text": [
+            "Costa Rica tiene varios volcanes. Algunos están dormidos y otros siguen siendo activos. Sus montañas forman paisajes especiales y alimentan ríos con mucha lluvia.",
+            "Cerca de los volcanes hay lagos, aguas termales y tierras fértiles. Los agricultores aprovechan el suelo rico para cultivar café, verduras y frutas.",
+            "Los volcanes también recuerdan que la naturaleza cambia. Las comunidades cercanas siguen las recomendaciones de científicos y guardaparques para vivir con seguridad."
+          ]
+        },
+        {
+          "title": "Глава 4. Море и черепахи",
+          "text": [
+            "Las dos costas del país ofrecen mundos distintos. En el Pacífico hay olas fuertes y playas largas. En el Caribe el agua suele ser más cálida y las comunidades tienen tradiciones propias.",
+            "En ciertas épocas del año, las tortugas marinas llegan a algunas playas para poner huevos. Los voluntarios y guardaparques protegen los nidos de animales y personas que pueden hacerles daño.",
+            "Ver una tortuga regresar al mar es una experiencia emocionante. También enseña que cada pequeña acción humana puede ayudar o perjudicar a la vida marina."
+          ]
+        },
+        {
+          "title": "Глава 5. Сохранение природы",
+          "text": [
+            "Proteger la naturaleza exige trabajo continuo. Los parques necesitan personal, los ríos necesitan agua limpia y las comunidades necesitan opciones económicas responsables.",
+            "El ecoturismo puede ayudar cuando respeta los lugares y da empleo a la población local. Un viajero responsable sigue los caminos, no deja basura y no alimenta animales salvajes.",
+            "La naturaleza de Costa Rica es valiosa no solo por ser bonita. Bosques, mares y montañas sostienen la vida diaria de las personas y guardan un patrimonio para el futuro."
+          ]
+        }
+      ]
+    }
+  ],
+  "stories": [
+    {
+      "id": "es-story-1",
+      "title": "La llave perdida",
+      "ru": "Потерянный ключ",
+      "level": "A1",
+      "text": [
+        "Elena llega a casa después del trabajo, pero no encuentra su llave. Mira en el bolso y en todos sus bolsillos.",
+        "Su vecino sale al pasillo y pregunta: «¿Buscas esto?». Tiene la llave en la mano.",
+        "Elena sonríe y le da las gracias. Ahora puede entrar en casa."
+      ]
+    },
+    {
+      "id": "es-story-2",
+      "title": "Un café por la mañana",
+      "ru": "Утренний кофе",
+      "level": "A1",
+      "text": [
+        "Llueve y Pablo tiene frío. Entra en un café pequeño cerca de la estación.",
+        "Pide un café con leche y se sienta junto a la ventana. Una mujer en la mesa de al lado sonríe.",
+        "Hablan del tiempo durante veinte minutos. Pablo sale del café con una amiga nueva."
+      ]
+    },
+    {
+      "id": "es-story-3",
+      "title": "El autobús equivocado",
+      "ru": "Не тот автобус",
+      "level": "A1–A2",
+      "text": [
+        "Nora toma el autobús número doce porque quiere ir al centro. Después de diez minutos ve calles que no conoce.",
+        "Pregunta al conductor y descubre que el autobús va en otra dirección.",
+        "Nora baja, cruza la calle y toma el autobús correcto. Esta vez mira el número dos veces."
+      ]
+    },
+    {
+      "id": "es-story-4",
+      "title": "La carta de la abuela",
+      "ru": "Письмо бабушки",
+      "level": "A2",
+      "text": [
+        "Carlos encuentra una carta vieja dentro de un libro de su abuela. La carta habla de un árbol que ella plantó cuando era joven.",
+        "Carlos visita el pueblo y encuentra el árbol detrás de una escuela. Ahora es alto y da mucha sombra.",
+        "Hace una foto y la envía a su abuela. Ella responde: «Algunas cosas buenas necesitan tiempo»."
+      ]
+    },
+    {
+      "id": "es-story-5",
+      "title": "Una tarde sin teléfono",
+      "ru": "День без телефона",
+      "level": "A2",
+      "text": [
+        "El teléfono de Marina se queda sin batería durante un paseo por el parque. Al principio está nerviosa porque no puede mirar mensajes.",
+        "Después escucha a los pájaros, lee un libro y habla con un señor que pasea a su perro.",
+        "Cuando vuelve a casa, carga el teléfono, pero decide dejarlo en silencio durante una hora cada día."
+      ]
+    }
+  ],
   "dialogues": [
     {
       "id": "es-dialogue-0",

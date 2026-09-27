@@ -370,7 +370,7 @@ function rememberView(v) {
 function libraryView() {
   rememberView({ kind: "library" });
   shell(
-    '<div class="pagehead"><h1>📖 Библиотека</h1><button class="gear" id="settings">⚙</button></div><p class="muted">Читайте и слушайте английский по уровням.</p><div class="librarygrid"><button class="librarycard" data-lib="books"><span class="icon">📗</span><div><b>Книги</b><small>' +
+    '<div class="pagehead"><h1>📖 Библиотека</h1><button class="gear" id="settings">⚙</button></div><p class="muted">Читайте и слушайте материалы по уровням.</p><div class="librarygrid"><button class="librarycard" data-lib="books"><span class="icon">📗</span><div><b>Книги</b><small>' +
       library.books.length +
       ' адаптированных книги</small></div></button><button class="librarycard" data-lib="stories"><span class="icon">📄</span><div><b>Короткие рассказы</b><small>' +
       library.stories.length +
@@ -428,7 +428,9 @@ function libraryList(type) {
 }
 async function googleTranslate(text) {
   const r = await fetch(
-    "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ru&dt=t&q=" +
+    "https://translate.googleapis.com/translate_a/single?client=gtx&sl=" +
+      LANGUAGES[activeLanguage].tts +
+      "&tl=ru&dt=t&q=" +
       encodeURIComponent(text),
     { cache: "no-store" },
   );
@@ -471,8 +473,8 @@ function libraryWordAtPoint(e, root) {
   const n = r.startContainer,
     s = n.textContent,
     pos = r.startOffset,
-    left = s.slice(0, pos).search(/[A-Za-z'-]+$/),
-    right = s.slice(pos).search(/[^A-Za-z'-]/),
+    left = s.slice(0, pos).search(/[A-Za-zÀ-ÿÑñÜü'-]+$/),
+    right = s.slice(pos).search(/[^A-Za-zÀ-ÿÑñÜü'-]/),
     st = left < 0 ? pos : left,
     en = right < 0 ? s.length : pos + right;
   if (en <= st) return null;
@@ -482,7 +484,7 @@ function libraryWordAtPoint(e, root) {
   return { word: s.slice(st, en), range: rr };
 }
 function dictionaryTranslation(word) {
-  const key = word.toLowerCase().replace(/[^a-z'-]/g, "");
+  const key = word.toLowerCase().replace(/[^a-zà-ÿñü'-]/g, "");
   const found = dictionary.words.find((w) => w.en.toLowerCase() === key);
   return found ? found.ru || "" : "";
 }
@@ -540,7 +542,7 @@ async function fillSentenceTranslations() {
 }
 function markLibraryWords(text) {
   return text.replace(
-    /[A-Za-z]+(?:['’-][A-Za-z]+)*/g,
+    /[A-Za-zÀ-ÿÑñÜü]+(?:['’-][A-Za-zÀ-ÿÑñÜü]+)*/g,
     (w) =>
       '<span class="selectable-word" data-translate="' +
       w.toLowerCase() +
