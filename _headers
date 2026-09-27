@@ -1,3 +1,9 @@
 /repair.html
   Cache-Control: no-store, no-cache, must-revalidate
   Clear-Site-Data: "cache", "storage", "executionContexts"
+
+/index.html
+  Cache-Control: no-store, no-cache, must-revalidate
+
+/sw.js
+  Cache-Control: no-store, no-cache, must-revalidate
