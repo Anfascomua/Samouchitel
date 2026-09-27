@@ -95,7 +95,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun downloadSpeech(clip: Clip, destination: File): Boolean {
-        val text = URLEncoder.encode(clip.text, Charsets.UTF_8.name()).replace("+", "%20")
+        // Costa Rican Spanish uses yeísmo: ll has the same sound as y.
+        // Re-spell it for the TTS engine so "allí" is synthesized as "ayí",
+        // not with a lateral "ll" sound.
+        val spoken = if (clip.lang == "es-419") clip.text.replace(Regex("ll", RegexOption.IGNORE_CASE), "y") else clip.text
+        val text = URLEncoder.encode(spoken, Charsets.UTF_8.name()).replace("+", "%20")
         repeat(3) { attempt ->
             var connection: HttpURLConnection? = null
             try {
