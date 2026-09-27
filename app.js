@@ -300,6 +300,15 @@ function speak(t, button = null) {
     button.textContent = "■";
     button.classList.add("speaking");
   }
+  // Android may fall back to a Russian system voice when Spanish is not
+  // installed, which makes it spell the word letter by letter. Google TTS
+  // receives the complete Spanish word and uses its native pronunciation.
+  if (activeLanguage === "es") {
+    remoteSpeak(t, S.settings.voiceRate || 0.88, () =>
+      finishSpeechButton(button),
+    );
+    return;
+  }
   if (nativeSpeak(t, S.settings.voiceRate || 0.88)) {
     setTimeout(
       () => finishSpeechButton(button),
@@ -445,6 +454,10 @@ async function googleTranslate(text) {
 }
 function speakLibraryText(text) {
   stopSpeech();
+  if (activeLanguage === "es") {
+    remoteSpeak(text, S.settings.voiceRate ?? 0.88);
+    return;
+  }
   if (nativeSpeak(text, S.settings.voiceRate ?? 0.88)) return;
   if (window.AndroidAudio) {
     remoteSpeak(text, S.settings.voiceRate ?? 0.88);
