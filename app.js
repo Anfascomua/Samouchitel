@@ -198,7 +198,7 @@ function home() {
       '<button class="gear" id="settings" aria-label="Настройки">⚙</button></div></div><section class="hero"><h1>' +
       lang.title +
       "</h1><p>" +
-      course.subtitle +
+      (course.subtitle || "Короткие уроки, живые фразы и повторение.") +
       '</p><div class="progress"><i style="width:' +
       p +
       '%"></i></div><small>' +
