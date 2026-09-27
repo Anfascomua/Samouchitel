@@ -75,10 +75,10 @@ async function load() {
     fetch("./content/" + activeLanguage + "/dictionary.json", {
       cache: "no-store",
     }).then((r) => r.json()),
-    fetch("./content/en/school.json", { cache: "no-store" }).then((r) =>
+    fetch("./content/" + activeLanguage + "/school.json", { cache: "no-store" }).then((r) =>
       r.json(),
     ),
-    fetch("./content/en/library.json", { cache: "no-store" }).then((r) =>
+    fetch("./content/" + activeLanguage + "/library.json", { cache: "no-store" }).then((r) =>
       r.json(),
     ),
   ]);
