@@ -849,7 +849,7 @@ function schoolLesson(n, li) {
 }
 
 function dictionaryView(
-  level = "0",
+  level = "all",
   query = "",
   topic = "all",
   showLearned = false,
