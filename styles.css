@@ -1426,6 +1426,19 @@ html[data-theme="dark"] #libraryWordTranslation.library-translation {
   color: var(--word-dark) !important;
 }
 
+/* The tapped source word uses exactly the translation-bar colour. */
+.reader .selectable-word.selected,
+.selectable-word.selected {
+  background: transparent !important;
+  color: var(--word-light) !important;
+  font-weight: 700;
+}
+html[data-theme="dark"] .reader .selectable-word.selected,
+html[data-theme="dark"] .selectable-word.selected {
+  background: transparent !important;
+  color: var(--word-dark) !important;
+}
+
 /* Keep the home header and hero balanced on narrow phone screens. */
 @media (max-width: 430px) {
   .top {
