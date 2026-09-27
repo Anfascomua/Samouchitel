@@ -288,32 +288,8 @@ function stopSpeech() {
   speechSynthesis.cancel();
   if (activeSpeechButton) finishSpeechButton(activeSpeechButton);
 }
-function spanishPhonetic(value) {
-  let t = String(value || "").toLowerCase().trim();
-  if (!t) return "";
-  return t
-    .replace(/güe/g, "гвэ").replace(/güi/g, "гви")
-    .replace(/que/g, "кэ").replace(/qui/g, "ки")
-    .replace(/gue/g, "гэ").replace(/gui/g, "ги")
-    .replace(/ch/g, "ч").replace(/ll/g, "й").replace(/rr/g, "р")
-    .replace(/ñ/g, "нь").replace(/ce/g, "сэ").replace(/ci/g, "си")
-    .replace(/ge/g, "хэ").replace(/gi/g, "хи").replace(/h/g, "")
-    .replace(/j/g, "х").replace(/z/g, "с").replace(/v/g, "б")
-    .replace(/x/g, "кс").replace(/y\b/g, "и").replace(/y/g, "й")
-    .replace(/c/g, "к")
-    .replace(/á/g, "а").replace(/é/g, "э").replace(/í/g, "и")
-    .replace(/ó/g, "о").replace(/ú/g, "у").replace(/ü/g, "у")
-    .replace(/a/g, "а").replace(/b/g, "б").replace(/d/g, "д")
-    .replace(/e/g, "э").replace(/f/g, "ф").replace(/g/g, "г")
-    .replace(/i/g, "и").replace(/k/g, "к").replace(/l/g, "л")
-    .replace(/m/g, "м").replace(/n/g, "н").replace(/o/g, "о")
-    .replace(/p/g, "п").replace(/q/g, "к").replace(/r/g, "р")
-    .replace(/s/g, "с").replace(/t/g, "т").replace(/u/g, "у")
-    .replace(/w/g, "у");
-}
 function pronunciation(w) {
-  return w.pronunciationRu ||
-    (activeLanguage === "es" ? spanishPhonetic(w.en) : "");
+  return w.pronunciationRu || "";
 }
 function speak(t, button = null) {
   if (button && activeSpeechButton === button) {
