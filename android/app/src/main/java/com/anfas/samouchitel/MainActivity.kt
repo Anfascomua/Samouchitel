@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
         val raw = intent?.data?.getQueryParameter("words") ?: return
-        val sourceLanguage = intent.data?.getQueryParameter("lang")?.takeIf { it == "es" || it == "en" } ?: "en"
+        val sourceLanguage = intent.data?.getQueryParameter("lang")?.takeIf { it == "es" || it == "en" || it == "ru" } ?: "en"
         playlistKey = "$sourceLanguage|$raw"
         clips = raw.split('\u001f').flatMap { item ->
             val pair = item.split('\u001e', limit = 2)
