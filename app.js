@@ -290,8 +290,27 @@ function stopSpeech() {
   speechSynthesis.cancel();
   if (activeSpeechButton) finishSpeechButton(activeSpeechButton);
 }
+// This transcription is displayed only. Speech always receives the original
+// Spanish text and the Spanish voice, never this Cyrillic helper text.
+function spanishDisplayPronunciation(text) {
+  let value = String(text || "").toLowerCase();
+  value = value
+    .replace(/ch/g, "ч").replace(/ll/g, "й").replace(/ñ/g, "нь").replace(/rr/g, "р")
+    .replace(/qu([eiéí])/g, "к$1").replace(/gu([eiéí])/g, "г$1").replace(/gü/g, "гу")
+    .replace(/h/g, "").replace(/j/g, "х").replace(/g(?=[eiéí])/g, "х")
+    .replace(/c(?=[eiéí])/g, "с").replace(/z/g, "с").replace(/x/g, "кс")
+    .replace(/y(?=$|[^a-záéíóúüñ])/g, "й").replace(/y/g, "й").replace(/v/g, "б").replace(/c/g, "к");
+  return value
+    .replace(/a/g, "а").replace(/á/g, "а́").replace(/e/g, "э").replace(/é/g, "э́")
+    .replace(/i/g, "и").replace(/í/g, "и́").replace(/o/g, "о").replace(/ó/g, "о́")
+    .replace(/u/g, "у").replace(/ú/g, "у́").replace(/ü/g, "у").replace(/b/g, "б")
+    .replace(/d/g, "д").replace(/f/g, "ф").replace(/k/g, "к").replace(/l/g, "л")
+    .replace(/m/g, "м").replace(/n/g, "н").replace(/p/g, "п").replace(/r/g, "р")
+    .replace(/s/g, "с").replace(/t/g, "т");
+}
 function pronunciation(w) {
-  return w.pronunciationRu || "";
+  if (w.pronunciationRu) return w.pronunciationRu;
+  return activeLanguage === "es" ? spanishDisplayPronunciation(w.en) : "";
 }
 function voiceSettingKey() {
   return activeLanguage === "es" ? "voiceNameEs" : "voiceNameEn";
