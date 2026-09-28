@@ -51,6 +51,8 @@ document.addEventListener("change", (e) => {
 });
 function applySettings() {
   if (S.settings.voiceRate == null) S.settings.voiceRate = 0.88;
+  if (S.settings.voiceName && S.settings.voiceNameEn == null)
+    S.settings.voiceNameEn = S.settings.voiceName;
   if (!S.settings.highlightLight) S.settings.highlightLight = "#ffd54f";
   if (!S.settings.highlightDark) S.settings.highlightDark = "#4dabf7";
   document.documentElement.dataset.theme = S.settings.theme;
@@ -288,32 +290,16 @@ function stopSpeech() {
   speechSynthesis.cancel();
   if (activeSpeechButton) finishSpeechButton(activeSpeechButton);
 }
-function spanishPhonetic(value) {
-  let t = String(value || "").toLowerCase().trim();
-  if (!t) return "";
-  return t
-    .replace(/güe/g, "гвэ").replace(/güi/g, "гви")
-    .replace(/que/g, "кэ").replace(/qui/g, "ки")
-    .replace(/gue/g, "гэ").replace(/gui/g, "ги")
-    .replace(/ch/g, "ч").replace(/ll/g, "й").replace(/rr/g, "р")
-    .replace(/ñ/g, "нь").replace(/ce/g, "сэ").replace(/ci/g, "си")
-    .replace(/ge/g, "хэ").replace(/gi/g, "хи").replace(/h/g, "")
-    .replace(/j/g, "х").replace(/z/g, "с").replace(/v/g, "б")
-    .replace(/x/g, "кс").replace(/y\b/g, "и").replace(/y/g, "й")
-    .replace(/c/g, "к")
-    .replace(/á/g, "а").replace(/é/g, "э").replace(/í/g, "и")
-    .replace(/ó/g, "о").replace(/ú/g, "у").replace(/ü/g, "у")
-    .replace(/a/g, "а").replace(/b/g, "б").replace(/d/g, "д")
-    .replace(/e/g, "э").replace(/f/g, "ф").replace(/g/g, "г")
-    .replace(/i/g, "и").replace(/k/g, "к").replace(/l/g, "л")
-    .replace(/m/g, "м").replace(/n/g, "н").replace(/o/g, "о")
-    .replace(/p/g, "п").replace(/q/g, "к").replace(/r/g, "р")
-    .replace(/s/g, "с").replace(/t/g, "т").replace(/u/g, "у")
-    .replace(/w/g, "у");
-}
 function pronunciation(w) {
-  return w.pronunciationRu ||
-    (activeLanguage === "es" ? spanishPhonetic(w.en) : "");
+  return w.pronunciationRu || "";
+}
+function voiceSettingKey() {
+  return activeLanguage === "es" ? "voiceNameEs" : "voiceNameEn";
+}
+function getLanguageVoices() {
+  const prefix = activeLanguage === "es" ? /^es(-|_)/i : /^en(-|_)/i;
+  const voices = speechSynthesis.getVoices().filter((voice) => prefix.test(voice.lang));
+  return voices.length ? voices : speechSynthesis.getVoices();
 }
 function speak(t, button = null) {
   if (button && activeSpeechButton === button) {
@@ -327,27 +313,6 @@ function speak(t, button = null) {
     button.textContent = "■";
     button.classList.add("speaking");
   }
-  // Spanish is spoken from the same Cyrillic transcription that is shown
-  // in the UI. This keeps Costa-Rican/Latin-American yeismo consistent.
-  if (activeLanguage === "es") {
-    const spoken = spanishPhonetic(t);
-    const done = () => finishSpeechButton(button);
-    if (nativeSpeak(spoken, S.settings.voiceRate || 0.88)) {
-      setTimeout(done, Math.max(900, String(spoken).split(/\s+/).length * 550));
-      return;
-    }
-    try {
-      const u = new SpeechSynthesisUtterance(spoken);
-      u.lang = "ru-RU";
-      u.rate = Number(S.settings.voiceRate || 0.88);
-      u.onend = done;
-      u.onerror = () => remoteSpeak(spoken, S.settings.voiceRate || 0.88, done);
-      speechSynthesis.speak(u);
-    } catch (e) {
-      remoteSpeak(spoken, S.settings.voiceRate || 0.88, done);
-    }
-    return;
-  }
   if (nativeSpeak(t, S.settings.voiceRate || 0.88)) {
     setTimeout(
       () => finishSpeechButton(button),
@@ -358,7 +323,7 @@ function speak(t, button = null) {
   let u = new SpeechSynthesisUtterance(t);
   u.lang = LANGUAGES[activeLanguage].speech;
   u.rate = Number(S.settings.voiceRate || 0.88);
-  const voice = getEnglishVoices().find((v) => v.name === S.settings.voiceName);
+  const voice = getLanguageVoices().find((v) => v.name === S.settings[voiceSettingKey()]);
   if (voice) u.voice = voice;
   u.onend = u.onerror = () => finishSpeechButton(button);
   speechSynthesis.speak(u);
@@ -493,10 +458,6 @@ async function googleTranslate(text) {
 }
 function speakLibraryText(text) {
   stopSpeech();
-  if (activeLanguage === "es") {
-    speak(text);
-    return;
-  }
   if (nativeSpeak(text, S.settings.voiceRate ?? 0.88)) return;
   if (window.AndroidAudio) {
     remoteSpeak(text, S.settings.voiceRate ?? 0.88);
@@ -505,8 +466,8 @@ function speakLibraryText(text) {
   const u = new SpeechSynthesisUtterance(text);
   u.lang = LANGUAGES[activeLanguage].speech;
   u.rate = Number(S.settings.voiceRate ?? 0.88);
-  const voices = getEnglishVoices(),
-    voice = voices.find((v) => v.name === S.settings.voiceName);
+  const voices = getLanguageVoices(),
+    voice = voices.find((v) => v.name === S.settings[voiceSettingKey()]);
   if (voice || voices.length) u.voice = voice || voices[0];
   speechSynthesis.speak(u);
 }
@@ -1270,16 +1231,14 @@ function launchBackgroundAudio() {
     "&rate=" +
     encodeURIComponent(Number(S.settings.voiceRate ?? 0.82)) +
     "&lang=" +
-    encodeURIComponent(activeLanguage === "es" ? "es" : LANGUAGES[activeLanguage].tts) +
+    encodeURIComponent(activeLanguage === "es" ? "es-419" : LANGUAGES[activeLanguage].tts) +
     "#Intent;scheme=samouchitel-audio;package=com.anfas.samouchitel.audio;end";
   location.href = url;
 }
 function drillAudioUrl(text) {
-  const language = activeLanguage === "es" ? "ru" : LANGUAGES[activeLanguage].speech;
-  const spokenText = activeLanguage === "es" ? spanishPhonetic(text) : text;
   return (
-    "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=" + language + "&q=" +
-    encodeURIComponent(spokenText)
+    "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=" + LANGUAGES[activeLanguage].speech + "&q=" +
+    encodeURIComponent(text)
   );
 }
 function prepareWebDrillAudio(list) {
@@ -1428,38 +1387,16 @@ function drillExamples(w) {
     })
     .join("");
 }
-function getEnglishVoices() {
-  const v = speechSynthesis.getVoices().filter((x) => /^en(-|_)/i.test(x.lang));
-  return v.length ? v : speechSynthesis.getVoices();
-}
 function sayWithVoice(text, voiceIndex, onend) {
   const done = () => onend && onend();
-  if (activeLanguage === "es") {
-    const spoken = spanishPhonetic(text);
-    if (nativeSpeak(spoken, S.settings.voiceRate ?? 0.82)) {
-      setTimeout(done, Math.max(900, String(spoken).split(/\s+/).length * 550));
-      return;
-    }
-    try {
-      const u = new SpeechSynthesisUtterance(spoken);
-      u.lang = "ru-RU";
-      u.rate = Number(S.settings.voiceRate ?? 0.82);
-      u.onend = done;
-      u.onerror = () => remoteSpeak(spoken, S.settings.voiceRate ?? 0.82, done);
-      speechSynthesis.speak(u);
-    } catch (e) {
-      remoteSpeak(spoken, S.settings.voiceRate ?? 0.82, done);
-    }
-    return;
-  }
   if (window.AndroidAudio) {
     remoteSpeak(text, S.settings.voiceRate ?? 0.82, done);
     return;
   }
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = "en-US";
-  const vs = getEnglishVoices(),
-    voice = vs.find((v) => v.name === S.settings.voiceName);
+  u.lang = LANGUAGES[activeLanguage].speech;
+  const vs = getLanguageVoices(),
+    voice = vs.find((v) => v.name === S.settings[voiceSettingKey()]);
   if (voice || vs.length) u.voice = voice || vs[voiceIndex % vs.length];
   u.rate = Number(S.settings.voiceRate ?? 0.82);
   u.onend = done;
@@ -1929,7 +1866,7 @@ settings = function () {
   originalSettings();
   const rate = document.querySelector("#rateslider");
   if (!rate) return;
-  const voices = getEnglishVoices(),
+  const voices = getLanguageVoices(),
     options = [
       '<option value="">Автоматически</option>',
       ...voices.map(
@@ -1937,7 +1874,7 @@ settings = function () {
           '<option value="' +
           v.name.replaceAll('"', "&quot;") +
           '" ' +
-          (v.name === S.settings.voiceName ? "selected" : "") +
+          (v.name === S.settings[voiceSettingKey()] ? "selected" : "") +
           ">" +
           v.name +
           " · " +
@@ -1949,10 +1886,10 @@ settings = function () {
     "afterend",
     '<h2>Голос диктора</h2><select id="voices" class="voice-select">' +
       options +
-      '</select><p class="muted">Используется для английских слов, текстов и упражнений.</p>',
+      '</select><p class="muted">Используется для ' + LANGUAGES[activeLanguage].label + ' слов, текстов и упражнений.</p>',
   );
   document.querySelector("#voices").onchange = (e) => {
-    S.settings.voiceName = e.target.value;
+    S.settings[voiceSettingKey()] = e.target.value;
     saveSettings();
   };
 };

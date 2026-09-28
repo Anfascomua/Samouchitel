@@ -13,7 +13,6 @@ import java.net.URLEncoder
 import java.net.HttpURLConnection
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.util.Locale
 
 /** Builds a deterministic local playlist: English audio, silence, Russian audio, silence. */
 class MainActivity : AppCompatActivity() {
@@ -22,23 +21,6 @@ class MainActivity : AppCompatActivity() {
     private var speechRate = 0.82f
     private var playlistKey = ""
     private var playAfterBuild = false
-
-    private fun spanishPhonetic(value: String): String {
-        return value.lowercase(Locale("es"))
-            .replace("güe", "гвэ").replace("güi", "гви")
-            .replace("que", "кэ").replace("qui", "ки")
-            .replace("gue", "гэ").replace("gui", "ги")
-            .replace("ch", "ч").replace("ll", "й").replace("rr", "р")
-            .replace("ñ", "нь").replace("ce", "сэ").replace("ci", "си")
-            .replace("ge", "хэ").replace("gi", "хи").replace("h", "")
-            .replace("j", "х").replace("z", "с").replace("v", "б")
-            .replace("x", "кс").replace(Regex("y\\b"), "и").replace("y", "й")
-            .replace("c", "к")
-            .replace("á", "а").replace("é", "э").replace("í", "и").replace("ó", "о").replace("ú", "у").replace("ü", "у")
-            .replace("a", "а").replace("b", "б").replace("d", "д").replace("e", "э").replace("f", "ф").replace("g", "г")
-            .replace("i", "и").replace("k", "к").replace("l", "л").replace("m", "м").replace("n", "н").replace("o", "о")
-            .replace("p", "п").replace("q", "к").replace("r", "р").replace("s", "с").replace("t", "т").replace("u", "у").replace("w", "у")
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,10 +51,7 @@ class MainActivity : AppCompatActivity() {
             val english = pair.getOrNull(0)?.trim().orEmpty()
             val translations = pair.getOrNull(1).orEmpty().split(';').map { it.trim() }.filter { it.isNotBlank() }
             buildList {
-                if (english.isNotBlank()) {
-                    val isSpanish = sourceLanguage == "es" || sourceLanguage == "es-419"
-                    add(Clip(if (isSpanish) spanishPhonetic(english) else english, if (isSpanish) "ru" else sourceLanguage, "source", 2000))
-                }
+                if (english.isNotBlank()) add(Clip(english, sourceLanguage, "source", 2000))
                 translations.forEachIndexed { index, translation ->
                     add(Clip(translation, "ru", "ru", if (index == translations.lastIndex) 2000 else 1000))
                 }
@@ -116,11 +95,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun downloadSpeech(clip: Clip, destination: File): Boolean {
-        // Costa Rican Spanish uses yeísmo: ll has the same sound as y.
-        // Re-spell it for the TTS engine so "allí" is synthesized as "ayí",
-        // not with a lateral "ll" sound.
-        val spoken = if (clip.lang == "es-419") clip.text.replace(Regex("ll", RegexOption.IGNORE_CASE), "y") else clip.text
-        val text = URLEncoder.encode(spoken, Charsets.UTF_8.name()).replace("+", "%20")
+        val text = URLEncoder.encode(clip.text, Charsets.UTF_8.name()).replace("+", "%20")
         repeat(3) { attempt ->
             var connection: HttpURLConnection? = null
             try {
