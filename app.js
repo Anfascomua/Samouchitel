@@ -403,12 +403,19 @@ function rememberView(v) {
 }
 function libraryView() {
   rememberView({ kind: "library" });
+  const magazineCard = library.magazine
+    ? '<button class="librarycard" data-lib="magazine"><span class="icon">🗞️</span><div><b>Журнал и новости</b><small>' +
+      library.magazine.length +
+      " учебных статей</small></div></button>"
+    : "";
   shell(
     '<div class="pagehead"><h1>📖 Библиотека</h1><button class="gear" id="settings">⚙</button></div><p class="muted">Читайте и слушайте материалы по уровням.</p><div class="librarygrid"><button class="librarycard" data-lib="books"><span class="icon">📗</span><div><b>Книги</b><small>' +
       library.books.length +
       ' адаптированных книги</small></div></button><button class="librarycard" data-lib="stories"><span class="icon">📄</span><div><b>Короткие рассказы</b><small>' +
       library.stories.length +
-      ' рассказа</small></div></button><button class="librarycard" data-lib="dialogues"><span class="icon">💬</span><div><b>Диалоги</b><small>' +
+      ' рассказа</small></div></button>' +
+      magazineCard +
+      '<button class="librarycard" data-lib="dialogues"><span class="icon">💬</span><div><b>Диалоги</b><small>' +
       library.dialogues.length +
       " бытовых диалога</small></div></button></div>",
     "home",
@@ -423,6 +430,7 @@ function libraryList(type) {
   const names = {
       books: "📗 Книги",
       stories: "📄 Короткие рассказы",
+      magazine: "🗞️ Журнал и новости",
       dialogues: "💬 Диалоги",
     },
     items = library[type];

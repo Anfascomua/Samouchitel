@@ -315,6 +315,83 @@
   ],
   "stories": [
     {
+      "id": "es-story-6",
+      "title": "El mercado del sábado",
+      "ru": "Субботний рынок",
+      "level": "A1–A2",
+      "text": [
+        "Cada sábado, Inés va al mercado con una bolsa de tela. Compra tomates, pan, queso y flores amarillas.",
+        "Un vendedor le ofrece probar una fruta que Inés no conoce. Es dulce, fresca y tiene un olor muy bueno.",
+        "En casa prepara una ensalada y llama a su hermana. Las dos deciden volver al mercado la próxima semana."
+      ]
+    },
+    {
+      "id": "es-story-7",
+      "title": "La bicicleta roja",
+      "ru": "Красный велосипед",
+      "level": "A2",
+      "text": [
+        "Tomás encuentra una bicicleta roja junto a la puerta del edificio. Tiene una nota: «Por favor, cuídala hasta esta tarde».",
+        "Durante el día pregunta a los vecinos, pero nadie sabe quién es el dueño. Tomás deja la bicicleta en un lugar seguro.",
+        "Al caer la tarde llega una niña con su padre. La bicicleta es suya y la niña sonríe con alivio."
+      ]
+    },
+    {
+      "id": "es-story-8",
+      "title": "El mapa de papel",
+      "ru": "Бумажная карта",
+      "level": "A2",
+      "text": [
+        "Clara visita una ciudad nueva y descubre que su teléfono no tiene batería. En una librería compra un mapa de papel.",
+        "Al principio no entiende todas las calles. Un señor le explica dónde está la plaza y dibuja una estrella en el mapa.",
+        "Clara llega a su destino y guarda el mapa como recuerdo de una tarde inesperada."
+      ]
+    },
+    {
+      "id": "es-story-9",
+      "title": "La planta de la oficina",
+      "ru": "Растение в офисе",
+      "level": "A2",
+      "text": [
+        "En la oficina de Laura hay una planta pequeña junto a la ventana. Nadie recuerda quién la trajo.",
+        "Laura empieza a darle agua los lunes. Poco a poco aparecen hojas nuevas y una flor blanca.",
+        "Ahora todos quieren cuidar la planta. La oficina parece más tranquila y más alegre."
+      ]
+    },
+    {
+      "id": "es-story-10",
+      "title": "Una noche de estrellas",
+      "ru": "Ночь звёзд",
+      "level": "A2–B1",
+      "text": [
+        "Durante un viaje por Costa Rica, Mateo se queda en una casa cerca de las montañas. Por la noche no hay luces fuertes alrededor.",
+        "La dueña de la casa le presta una manta y le señala el cielo. Mateo ve más estrellas de las que había visto nunca.",
+        "No hace fotografías. Prefiere sentarse en silencio y recordar el momento."
+      ]
+    },
+    {
+      "id": "es-story-11",
+      "title": "La receta de Rosa",
+      "ru": "Рецепт Росы",
+      "level": "B1",
+      "text": [
+        "Rosa recibe una receta escrita a mano por su tía. Hay algunas manchas de harina y una frase al final: «Cocina sin prisa».",
+        "Invita a tres amigos y preparan el plato juntos. Nadie sabe si las cantidades son exactas, pero todos ayudan.",
+        "La cena sale diferente de la original, pero Rosa decide que esa también será una receta de familia."
+      ]
+    },
+    {
+      "id": "es-story-12",
+      "title": "El último tren",
+      "ru": "Последний поезд",
+      "level": "B1",
+      "text": [
+        "Samuel pierde el último tren por unos minutos. Está cansado y piensa que tendrá que esperar hasta la mañana.",
+        "En el andén conoce a una estudiante que también perdió su tren. Los dos buscan una cafetería abierta.",
+        "Hablan de música, viajes y planes. Cuando llega el primer tren, Samuel siente que la espera fue un regalo."
+      ]
+    },
+    {
       "id": "es-story-1",
       "title": "La llave perdida",
       "ru": "Потерянный ключ",
@@ -367,6 +444,74 @@
         "El teléfono de Marina se queda sin batería durante un paseo por el parque. Al principio está nerviosa porque no puede mirar mensajes.",
         "Después escucha a los pájaros, lee un libro y habla con un señor que pasea a su perro.",
         "Cuando vuelve a casa, carga el teléfono, pero decide dejarlo en silencio durante una hora cada día."
+      ]
+    }
+  ],
+  "magazine": [
+    {
+      "id": "es-mag-1",
+      "title": "Revista · Un barrio que camina",
+      "ru": "Район, который ходит пешком",
+      "level": "A2",
+      "text": [
+        "En un barrio de San José, muchas personas han decidido caminar más y usar menos el coche para los trayectos cortos.",
+        "Los comercios han puesto bancos y agua para los visitantes. Por las tardes se ven familias, estudiantes y personas mayores en las calles.",
+        "La idea no resuelve todos los problemas de la ciudad, pero hace que los vecinos se conozcan mejor."
+      ]
+    },
+    {
+      "id": "es-mag-2",
+      "title": "Noticias locales · Biblioteca bajo los árboles",
+      "ru": "Библиотека под деревьями",
+      "level": "A2–B1",
+      "text": [
+        "Una pequeña biblioteca ha empezado a prestar libros en un parque los domingos. Los lectores pueden sentarse bajo los árboles y llevar un libro a casa.",
+        "También hay una mesa para intercambiar novelas, cómics y revistas. Los niños escuchan cuentos antes del mediodía.",
+        "El proyecto funciona con voluntarios y donaciones de los vecinos."
+      ]
+    },
+    {
+      "id": "es-mag-3",
+      "title": "Naturaleza · El bosque después de la lluvia",
+      "ru": "Лес после дождя",
+      "level": "B1",
+      "text": [
+        "Después de una lluvia intensa, el bosque tropical cambia de sonido. Se oyen gotas en las hojas, ranas cerca del agua y aves escondidas entre las ramas.",
+        "La humedad ayuda a muchas plantas, pero los senderos pueden ser resbaladizos. Por eso los guías recomiendan caminar despacio y no salir del camino.",
+        "Observar sin tocar es una forma sencilla de proteger este lugar."
+      ]
+    },
+    {
+      "id": "es-mag-4",
+      "title": "Tecnología · Reparar antes de comprar",
+      "ru": "Починить перед покупкой",
+      "level": "B1",
+      "text": [
+        "En varias ciudades han aparecido talleres donde la gente aprende a reparar lámparas, radios y pequeños electrodomésticos.",
+        "Los participantes llevan un objeto roto y trabajan con la ayuda de una persona con experiencia. A veces la reparación es simple; otras veces sirve para aprender cómo funciona el aparato.",
+        "El objetivo es gastar menos, tirar menos y compartir conocimientos."
+      ]
+    },
+    {
+      "id": "es-mag-5",
+      "title": "Cultura · Una película al aire libre",
+      "ru": "Кино под открытым небом",
+      "level": "B1",
+      "text": [
+        "Cada viernes de verano, una plaza se convierte en un pequeño cine. La entrada es gratuita y los vecinos llevan sillas, mantas y algo para compartir.",
+        "Antes de la película, un grupo local toca música durante media hora. Después, algunas personas se quedan para comentar la historia.",
+        "La actividad demuestra que la cultura puede ser cercana y sencilla."
+      ]
+    },
+    {
+      "id": "es-mag-6",
+      "title": "Viajes · Una mañana en el Caribe",
+      "ru": "Утро на Карибском побережье",
+      "level": "B1–B2",
+      "text": [
+        "El día empieza temprano en la costa caribeña. Los pescadores revisan sus redes y los cafés abren antes de que el sol sea fuerte.",
+        "Los visitantes llegan para ver el mar, pero también descubren mercados, música y recetas locales. Hablar con quienes viven allí cambia la forma de conocer un lugar.",
+        "Viajar despacio permite escuchar más, comprar en negocios pequeños y dejar una huella menor."
       ]
     }
   ],
